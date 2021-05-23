@@ -1,20 +1,20 @@
 <!doctype html>
-<html lang="zh"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"><meta><title>第一篇 监督学习 - MCFON</title><link rel="manifest" href="/manifest.json"><meta name="application-name" content="MCFON"><meta name="msapplication-TileImage" content="/img/favicon.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="MCFON"><meta name="apple-mobile-web-app-status-bar-style" content="default"><meta name="description" content="笔记摘要 统计学习或机器学习一般包括监督学习、无监督学习、强化学习，有时还包括半监督学习、主动学习监督学习 监督学习指从标注数据中学习预测模型的机器学习问题，其本质是学习输入到输出的映射的统计规律。 输入变量$X$和输出变量$Y$有不同的类型，可以是连续或是离散的。根据输入输出变量的不同类型，对预测任务给予不同的名称：输入与输出均为连续变量的预测问题称为回归问题；输出变量为有限个离散变量的预测问题"><meta property="og:type" content="blog"><meta property="og:title" content="第一篇 监督学习"><meta property="og:url" content="https://hunlp.com/posts/605.html"><meta property="og:site_name" content="MCFON"><meta property="og:description" content="笔记摘要 统计学习或机器学习一般包括监督学习、无监督学习、强化学习，有时还包括半监督学习、主动学习监督学习 监督学习指从标注数据中学习预测模型的机器学习问题，其本质是学习输入到输出的映射的统计规律。 输入变量$X$和输出变量$Y$有不同的类型，可以是连续或是离散的。根据输入输出变量的不同类型，对预测任务给予不同的名称：输入与输出均为连续变量的预测问题称为回归问题；输出变量为有限个离散变量的预测问题"><meta property="og:locale" content="zh_CN"><meta property="og:image" content="https://img-blog.csdnimg.cn/20190524102938764.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2x5YzQ0ODEzNDE4,size_16,color_FFFFFF,t_70"><meta property="article:published_time" content="2021-05-23T09:11:44.000Z"><meta property="article:modified_time" content="2021-05-23T10:17:07.561Z"><meta property="article:author" content="ฅ´ω`ฅ"><meta property="article:tag" content="统计学习方法"><meta property="article:tag" content="监督学习"><meta property="twitter:card" content="summary"><meta property="twitter:image" content="https://img-blog.csdnimg.cn/20190524102938764.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2x5YzQ0ODEzNDE4,size_16,color_FFFFFF,t_70"><script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","mainEntityOfPage":{"@type":"WebPage","@id":"https://hunlp.com/posts/605.html"},"headline":"第一篇 监督学习","image":[],"datePublished":"2021-05-23T09:11:44.000Z","dateModified":"2021-05-23T10:17:07.561Z","author":{"@type":"Person","name":"ฅ´ω`ฅ"},"publisher":{"@type":"Organization","name":"MCFON","logo":{"@type":"ImageObject","url":"https://hunlp.com/img/logo.png"}},"description":"笔记摘要 统计学习或机器学习一般包括监督学习、无监督学习、强化学习，有时还包括半监督学习、主动学习监督学习 监督学习指从标注数据中学习预测模型的机器学习问题，其本质是学习输入到输出的映射的统计规律。 输入变量$X$和输出变量$Y$有不同的类型，可以是连续或是离散的。根据输入输出变量的不同类型，对预测任务给予不同的名称：输入与输出均为连续变量的预测问题称为回归问题；输出变量为有限个离散变量的预测问题"}</script><link rel="canonical" href="https://hunlp.com/posts/605.html"><link rel="icon" href="/img/favicon.png"><link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.2/css/all.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@9.12.0/styles/atom-one-light.css"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@400;600&amp;family=Source+Code+Pro"><link rel="stylesheet" href="/css/default.css"><style>body>.footer,body>.navbar,body>.section{opacity:0}</style><!--!--><!--!--><!--!--><!--!--><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/cookieconsent@3.1.1/build/cookieconsent.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lightgallery@1.6.8/dist/css/lightgallery.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/justifiedGallery@3.7.0/dist/css/justifiedGallery.min.css"><!--!--><!--!--><!--!--><script src="https://cdn.jsdelivr.net/npm/pace-js@1.0.2/pace.min.js"></script><!--!--><!--!--><meta name="generator" content="Hexo 5.4.0"></head><body class="is-3-column"><nav class="navbar navbar-main"><div class="container"><div class="navbar-brand justify-content-center"><a class="navbar-item navbar-logo" href="/"><img src="/img/logo.png" alt="MCFON" height="28"></a></div><div class="navbar-menu"><div class="navbar-start"><a class="navbar-item" href="/">主页</a><a class="navbar-item" href="/archives">归档</a><a class="navbar-item" href="/categories">分类</a><a class="navbar-item" href="/tags">标签</a><a class="navbar-item" href="/about">关于</a></div><div class="navbar-end"><a class="navbar-item" target="_blank" rel="noopener" title="Download on GitHub" href="https://github.com/ppoffice/hexo-theme-icarus"><i class="fab fa-github"></i></a><a class="navbar-item search" title="搜索" href="javascript:;"><i class="fas fa-search"></i></a></div></div></div></nav><section class="section"><div class="container"><div class="columns"><div class="column order-2 column-main is-8-tablet is-8-desktop is-6-widescreen"><div class="card"><article class="card-content article" role="article"><div class="article-meta is-size-7 is-uppercase level is-mobile"><div class="level-left"><span class="level-item"><time dateTime="2021-05-23T09:11:44.000Z" title="2021/5/23 下午5:11:44">2021-05-23</time>发表</span><span class="level-item"><time dateTime="2021-05-23T10:17:07.561Z" title="2021/5/23 下午6:17:07">2021-05-23</time>更新</span><span class="level-item">21 分钟读完 (大约3185个字)</span></div></div><h1 class="title is-3 is-size-4-mobile">第一篇 监督学习</h1><div class="content"><h1 id="笔记摘要"><a href="#笔记摘要" class="headerlink" title="笔记摘要"></a>笔记摘要</h1><ul>
-<li>统计学习或机器学习一般包括监督学习、无监督学习、强化学习，有时还包括半监督学习、主动学习<h2 id="监督学习"><a href="#监督学习" class="headerlink" title="监督学习"></a>监督学习</h2></li>
+<html lang="zh"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"><meta><title>第一篇 监督学习 - MCFON</title><link rel="manifest" href="/manifest.json"><meta name="application-name" content="MCFON"><meta name="msapplication-TileImage" content="/img/favicon.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="MCFON"><meta name="apple-mobile-web-app-status-bar-style" content="default"><meta name="description" content="笔记摘要 统计学习或机器学习一般包括监督学习、无监督学习、强化学习，有时还包括半监督学习、主动学习监督学习 监督学习指从标注数据中学习预测模型的机器学习问题，其本质是学习输入到输出的映射的统计规律。 输入变量$X$和输出变量$Y$有不同的类型，可以是连续或是离散的。根据输入输出变量的不同类型，对预测任务给予不同的名称：输入与输出均为连续变量的预测问题称为回归问题；输出变量为有限个离散变量的预测问题"><meta property="og:type" content="blog"><meta property="og:title" content="第一篇 监督学习"><meta property="og:url" content="https://hunlp.com/posts/605.html"><meta property="og:site_name" content="MCFON"><meta property="og:description" content="笔记摘要 统计学习或机器学习一般包括监督学习、无监督学习、强化学习，有时还包括半监督学习、主动学习监督学习 监督学习指从标注数据中学习预测模型的机器学习问题，其本质是学习输入到输出的映射的统计规律。 输入变量$X$和输出变量$Y$有不同的类型，可以是连续或是离散的。根据输入输出变量的不同类型，对预测任务给予不同的名称：输入与输出均为连续变量的预测问题称为回归问题；输出变量为有限个离散变量的预测问题"><meta property="og:locale" content="zh_CN"><meta property="og:image" content="https://img-blog.csdnimg.cn/20190524102938764.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2x5YzQ0ODEzNDE4,size_16,color_FFFFFF,t_70"><meta property="article:published_time" content="2021-05-23T09:11:44.000Z"><meta property="article:modified_time" content="2021-05-23T10:17:07.561Z"><meta property="article:author" content="ฅ´ω`ฅ"><meta property="article:tag" content="统计学习方法"><meta property="article:tag" content="监督学习"><meta property="twitter:card" content="summary"><meta property="twitter:image" content="https://img-blog.csdnimg.cn/20190524102938764.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2x5YzQ0ODEzNDE4,size_16,color_FFFFFF,t_70"><script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","mainEntityOfPage":{"@type":"WebPage","@id":"https://hunlp.com/posts/605.html"},"headline":"第一篇 监督学习","image":[],"datePublished":"2021-05-23T09:11:44.000Z","dateModified":"2021-05-23T10:17:07.561Z","author":{"@type":"Person","name":"ฅ´ω`ฅ"},"publisher":{"@type":"Organization","name":"MCFON","logo":{"@type":"ImageObject","url":"https://hunlp.com/img/logo.png"}},"description":"笔记摘要 统计学习或机器学习一般包括监督学习、无监督学习、强化学习，有时还包括半监督学习、主动学习监督学习 监督学习指从标注数据中学习预测模型的机器学习问题，其本质是学习输入到输出的映射的统计规律。 输入变量$X$和输出变量$Y$有不同的类型，可以是连续或是离散的。根据输入输出变量的不同类型，对预测任务给予不同的名称：输入与输出均为连续变量的预测问题称为回归问题；输出变量为有限个离散变量的预测问题"}</script><link rel="canonical" href="https://hunlp.com/posts/605.html"><link rel="icon" href="/img/favicon.png"><link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.2/css/all.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@9.12.0/styles/atom-one-light.css"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@400;600&amp;family=Source+Code+Pro"><link rel="stylesheet" href="/css/default.css"><style>body>.footer,body>.navbar,body>.section{opacity:0}</style><!--!--><!--!--><!--!--><!--!--><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/cookieconsent@3.1.1/build/cookieconsent.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lightgallery@1.6.8/dist/css/lightgallery.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/justifiedGallery@3.7.0/dist/css/justifiedGallery.min.css"><!--!--><!--!--><!--!--><script src="https://cdn.jsdelivr.net/npm/pace-js@1.0.2/pace.min.js"></script><!--!--><!--!--><meta name="generator" content="Hexo 5.4.0"></head><body class="is-3-column"><nav class="navbar navbar-main"><div class="container"><div class="navbar-brand justify-content-center"><a class="navbar-item navbar-logo" href="/"><img src="/img/logo.png" alt="MCFON" height="28"></a></div><div class="navbar-menu"><div class="navbar-start"><a class="navbar-item" href="/">主页</a><a class="navbar-item" href="/archives">归档</a><a class="navbar-item" href="/categories">分类</a><a class="navbar-item" href="/tags">标签</a><a class="navbar-item" href="/about">关于</a></div><div class="navbar-end"><a class="navbar-item" target="_blank" rel="noopener" title="Download on GitHub" href="https://github.com/ppoffice/hexo-theme-icarus"><i class="fab fa-github"></i></a><a class="navbar-item search" title="搜索" href="javascript:;"><i class="fas fa-search"></i></a></div></div></div></nav><section class="section"><div class="container"><div class="columns"><div class="column order-2 column-main is-8-tablet is-8-desktop is-6-widescreen"><div class="card"><article class="card-content article" role="article"><div class="article-meta is-size-7 is-uppercase level is-mobile"><div class="level-left"><span class="level-item"><time dateTime="2021-05-23T09:11:44.000Z" title="2021/5/23 下午5:11:44">2021-05-23</time>发表</span><span class="level-item"><time dateTime="2021-05-23T10:17:07.561Z" title="2021/5/23 下午6:17:07">2021-05-23</time>更新</span><span class="level-item">21 分钟读完 (大约3185个字)</span></div></div><h1 class="title is-3 is-size-4-mobile">第一篇 监督学习</h1><div class="content"><h1><span id="笔记摘要">笔记摘要</span></h1><ul>
+<li>统计学习或机器学习一般包括监督学习、无监督学习、强化学习，有时还包括半监督学习、主动学习<h2><span id="监督学习">监督学习</span></h2></li>
 <li>监督学习指从标注数据中学习预测模型的机器学习问题，其本质是学习输入到输出的映射的统计规律。</li>
 <li>输入变量$X$和输出变量$Y$有不同的类型，可以是连续或是离散的。根据输入输出变量的不同类型，对预测任务给予不同的名称：输入与输出均为连续变量的预测问题称为<strong>回归问题</strong>；输出变量为有限个离散变量的预测问题称为<strong>分类问题</strong>；输入与输出变量均为变量序列的预测问题称为<strong>标注问题</strong>。<span id="more"></span>
-<h2 id="无监督学习"><a href="#无监督学习" class="headerlink" title="无监督学习"></a>无监督学习</h2></li>
+<h2><span id="无监督学习">无监督学习</span></h2></li>
 <li>无监督学习指从无标注数据中学习预测模型的机器学习问题，其本质是学习数据中的统计规律或内在结构。</li>
-<li>无监督学习旨在从假设空间中选出在给定评价标准下的最优模型，模型可以实现对数据的聚类、降维或是概率估计。<h2 id="强化学习"><a href="#强化学习" class="headerlink" title="强化学习"></a>强化学习</h2></li>
+<li>无监督学习旨在从假设空间中选出在给定评价标准下的最优模型，模型可以实现对数据的聚类、降维或是概率估计。<h2><span id="强化学习">强化学习</span></h2></li>
 <li>强化学习指智能系统在与环境的连续互动中学习最优行为策略的机器学习问题，其本质是学习最优的序贯决策。</li>
 <li> 智能系统的目标不是短期奖励的最大化，而是长期累积奖励的最大化。强化学习过程中，系统不断地试错，以达到学习最优策略地目的。</li>
 </ul>
-<h2 id="半监督学习与主动学习"><a href="#半监督学习与主动学习" class="headerlink" title="半监督学习与主动学习"></a>半监督学习与主动学习</h2><ul>
+<h2><span id="半监督学习与主动学习">半监督学习与主动学习</span></h2><ul>
 <li>半监督学习指利用标注数据和未标注数据学习预测模型地机器学习问题。其旨在利用未标注数据中的信息，辅助标注数据，进行监督学习，以较低的成本达到较好的学习效果。</li>
 <li>主动学习是指机器不断主动给出实例让教师进行标注，然后利用标注数据学习预测模型的机器学习问题。主动学习的目标是找出对学习最有帮助的实例让教师标注，以较小的标注代价达到较好的学习效果。</li>
 <li>这两种学习更接近监督学习。</li>
 </ul>
-<h2 id="实现统计学习方法的步骤"><a href="#实现统计学习方法的步骤" class="headerlink" title="实现统计学习方法的步骤"></a>实现统计学习方法的步骤</h2><ol>
+<h2><span id="实现统计学习方法的步骤">实现统计学习方法的步骤</span></h2><ol>
 <li>得到一个有限的训练数据集合</li>
 <li>确定包含所有可能的模型的<strong>假设空间</strong>，即学习<strong>模型的集合</strong></li>
 <li>确定模型选择的准则，即学习的<strong>策略</strong></li>
@@ -53,7 +53,7 @@
 <td>$\bf R\it ^n$</td>
 </tr>
 </tbody></table>
-<h2 id="损失函数与风险函数"><a href="#损失函数与风险函数" class="headerlink" title="损失函数与风险函数"></a>损失函数与风险函数</h2><ul>
+<h2><span id="损失函数与风险函数">损失函数与风险函数</span></h2><ul>
 <li><p> <strong>损失函数</strong>度量模型<strong>一次预测</strong>的好坏，<strong>风险函数</strong>度量<strong>平均意义</strong>下模型预测的好坏。</p>
 </li>
 <li><p>损失函数(loss function)或代价函数(cost function)定义为给定输入$X$的<strong>预测值$f(X)$<strong>和</strong>真实值$Y$<strong>之间的</strong>非负实值</strong>函数，记作$L(Y,f(X))$。</p>
@@ -65,7 +65,7 @@
 <li><p><strong>结构风险</strong>(structural risk)<br> $R_{srm}(f)=\frac{1}{N}\sum_{i=1}^{N}L(y_i,f(x_i))+\lambda J(f)$<br> 其中$J(f)$为模型复杂度, $\lambda \geqslant 0$是系数，用以权衡经验风险和模型复杂度。</p>
 </li>
 </ul>
-<h2 id="常用损失函数"><a href="#常用损失函数" class="headerlink" title="常用损失函数"></a>常用损失函数</h2><p>损失函数数值越小，模型就越好</p>
+<h2><span id="常用损失函数">常用损失函数</span></h2><p>损失函数数值越小，模型就越好</p>
 <ul>
 <li><p>0-1损失<br> $L(Y,f(X))=\begin{cases}1, Y \neq f(X) \0, Y=f(X) \end{cases}$</p>
 </li>
@@ -76,16 +76,16 @@
 <li><p>对数损失<br>$L(Y,P(Y|X))=−logP(Y|X)$</p>
 </li>
 </ul>
-<h2 id="ERM与SRM"><a href="#ERM与SRM" class="headerlink" title="ERM与SRM"></a>ERM与SRM</h2><p>经验风险最小化(ERM)与结构风险最小化(SRM)</p>
+<h2><span id="erm与srm">ERM与SRM</span></h2><p>经验风险最小化(ERM)与结构风险最小化(SRM)</p>
 <ul>
 <li><strong>极大似然估计</strong>是经验风险最小化的一个例子。当模型是条件概率分布，损失函数是对数损失函数时，经验风险最小化等价于极大似然估计，下面习题1.2中给出了证明。</li>
 <li>结构风险最小化等价于<strong>正则化</strong></li>
 <li><strong>贝叶斯估计</strong>中的<strong>最大后验概率估计</strong>是结构风险最小化的一个例子。当模型是条件概率分布，损失函数是对数损失函数，<strong>模型复杂度由模型的先验概率表示</strong>时，结构风险最小化等价于最大后验概率估计。</li>
 </ul>
-<h2 id="算法"><a href="#算法" class="headerlink" title="算法"></a>算法</h2><ul>
+<h2><span id="算法">算法</span></h2><ul>
 <li>算法是指学习模型的具体计算方法。统计学习基于训练数据集，根据学习策略，从假设空间中选择最优模型，最后需要考虑用什么杨的计算方法来求解最优模型。</li>
 </ul>
-<h2 id="模型评估与选择"><a href="#模型评估与选择" class="headerlink" title="模型评估与选择"></a>模型评估与选择</h2><ul>
+<h2><span id="模型评估与选择">模型评估与选择</span></h2><ul>
 <li><p>训练误差和测试误差是模型关于数据集的平均损失。</p>
 </li>
 <li><p>注意：统计学习方法具体采用的损失函数未必是评估时使用的损失函数。</p>
@@ -93,7 +93,7 @@
 <li><p>过拟合是指学习时选择的模型所包含的参数过多，以至出现这一模型对已知数据预测得很好，但对未知数据预测得很差的现象。可以说模型选择旨在避免过拟合并提高模型的预测能力。</p>
 </li>
 </ul>
-<h2 id="正则化与交叉验证"><a href="#正则化与交叉验证" class="headerlink" title="正则化与交叉验证"></a>正则化与交叉验证</h2><ul>
+<h2><span id="正则化与交叉验证">正则化与交叉验证</span></h2><ul>
 <li>模型选择的典型方法是<strong>正则化</strong>.。正则化项一般是模型复杂度的单调递增函数，模型越复杂，正则化就越大。比如，正则化项可以是模型参数向量的范数。</li>
 <li>$L(w)=\frac{1}{N}\sum_{i=1}^{N}(f(x_i;w)-y_i)^2+\frac{\lambda}{2}|w|^2$</li>
 <li>$|w|$表示向量$w$的$L_2$范数</li>
@@ -102,7 +102,7 @@
 <li>主要有简单交叉验证，S折交叉验证，留一交叉验证三种。</li>
 <li>在算法学习的过程中，测试集可能是固定的，但是验证集和训练集可能是变化的。比如S折交叉验证的情况下，分成S折之后，其中的S-1折作为训练集，1折作为验证集，计算这S个模型每个模型的平均测试误差，最后选择平均测试误差最小的模型。这个过程中用来验证模型效果的那一折数据就是验证集。</li>
 </ul>
-<h2 id="生成模型与判别模型"><a href="#生成模型与判别模型" class="headerlink" title="生成模型与判别模型"></a>生成模型与判别模型</h2><p><strong>监督学习方法</strong>可分为<strong>生成方法</strong>(generative approach)与<strong>判别方法</strong>(discriminative approach)</p>
+<h2><span id="生成模型与判别模型">生成模型与判别模型</span></h2><p><strong>监督学习方法</strong>可分为<strong>生成方法</strong>(generative approach)与<strong>判别方法</strong>(discriminative approach)</p>
 <ul>
 <li><p><strong>生成方法(generative approach)</strong></p>
 <ul>
@@ -119,7 +119,7 @@
 </ul>
 </li>
 </ul>
-<h1 id="习题解答"><a href="#习题解答" class="headerlink" title="习题解答"></a>习题解答</h1><ul>
+<h1><span id="习题解答">习题解答</span></h1><ul>
 <li><p><strong>1.1</strong>   说明伯努利模型的极大似然估计以及贝叶斯估计中的统计学方法三要素</p>
 <ul>
 <li><p>伯努利模型是定义在取值为0与1的随机变量上的概率分布。统计学分为两派：经典统计学派和贝叶斯统计学派。两者的不同主要是，经典统计学派认为模型已定，参数未知，参数是固定的，只是还不知道；贝叶斯统计学派是通过观察到的现象对概率分布中的主观认定不断进行修正。</p>
