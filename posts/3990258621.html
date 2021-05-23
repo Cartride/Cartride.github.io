@@ -2,10 +2,10 @@
 <html lang="zh"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"><meta><title>异构计算， GPU和框架选型指南 - MCFON</title><link rel="manifest" href="/manifest.json"><meta name="application-name" content="MCFON"><meta name="msapplication-TileImage" content="/img/favicon.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="MCFON"><meta name="apple-mobile-web-app-status-bar-style" content="default"><meta name="description" content="深度学习训练和推理的过程中，会涉及到大量的向量(vector)，矩阵(matrix)和张量(tensor)操作，通常需要大量的浮点计算，包括高精度（在训练的时候）和低精度（在推理和部署的时候）。GPU， 作为一种通用可编程的加速器，最初设计是用来进行图形处理和渲染功能，但是从2007年开始，英伟达(NVIDIA)公司提出了第一个可编程通用计算平台（GPU），同时提出了CUDA框架，从此开启了GPU"><meta property="og:type" content="blog"><meta property="og:title" content="异构计算， GPU和框架选型指南"><meta property="og:url" content="https://hunlp.com/posts/3990258621.html"><meta property="og:site_name" content="MCFON"><meta property="og:description" content="深度学习训练和推理的过程中，会涉及到大量的向量(vector)，矩阵(matrix)和张量(tensor)操作，通常需要大量的浮点计算，包括高精度（在训练的时候）和低精度（在推理和部署的时候）。GPU， 作为一种通用可编程的加速器，最初设计是用来进行图形处理和渲染功能，但是从2007年开始，英伟达(NVIDIA)公司提出了第一个可编程通用计算平台（GPU），同时提出了CUDA框架，从此开启了GPU"><meta property="og:locale" content="zh_CN"><meta property="og:image" content="https://tva1.sinaimg.cn/large/0082zybply1gbqz3fksevj30hg09qwfr.jpg"><meta property="og:image" content="https://tva1.sinaimg.cn/large/0082zybply1gbqz3vz02cj30au04sjrq.jpg"><meta property="og:image" content="https://tva1.sinaimg.cn/large/0082zybply1gbqz43jyp3j30fs04zgmf.jpg"><meta property="og:image" content="https://tva1.sinaimg.cn/large/0082zybply1gbqz4i2ybbj30ex08gdgr.jpg"><meta property="og:image" content="https://tva1.sinaimg.cn/large/0082zybply1gbqz4sls6tj30cy03p74v.jpg"><meta property="og:image" content="https://tva1.sinaimg.cn/large/0082zybply1gbqz55hxtej30cg04yjs4.jpg"><meta property="og:image" content="https://tva1.sinaimg.cn/large/0082zybply1gbqz5fvp0ej30dw0dfwfr.jpg"><meta property="og:image" content="https://tva1.sinaimg.cn/large/0082zybply1gbqz5t64anj311e0mmwhd.jpg"><meta property="og:image" content="https://tva1.sinaimg.cn/large/0082zybply1gbqz67t9wvj30ij0q6q5t.jpg"><meta property="og:image" content="https://tva1.sinaimg.cn/large/0082zybply1gbqz6ymcqlj30on0l241n.jpg"><meta property="article:published_time" content="2020-02-09T23:52:57.000Z"><meta property="article:modified_time" content="2020-02-11T03:24:22.866Z"><meta property="article:author" content="ฅ´ω`ฅ"><meta property="article:tag" content="GPU"><meta property="article:tag" content="CPU"><meta property="twitter:card" content="summary"><meta property="twitter:image" content="https://tva1.sinaimg.cn/large/0082zybply1gbqz3fksevj30hg09qwfr.jpg"><script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","mainEntityOfPage":{"@type":"WebPage","@id":"https://hunlp.com/posts/3990258621.html"},"headline":"异构计算， GPU和框架选型指南","image":["https://tva1.sinaimg.cn/large/0082zybply1gbqz3fksevj30hg09qwfr.jpg","https://tva1.sinaimg.cn/large/0082zybply1gbqz3vz02cj30au04sjrq.jpg","https://tva1.sinaimg.cn/large/0082zybply1gbqz43jyp3j30fs04zgmf.jpg","https://tva1.sinaimg.cn/large/0082zybply1gbqz4i2ybbj30ex08gdgr.jpg","https://tva1.sinaimg.cn/large/0082zybply1gbqz4sls6tj30cy03p74v.jpg","https://tva1.sinaimg.cn/large/0082zybply1gbqz55hxtej30cg04yjs4.jpg","https://tva1.sinaimg.cn/large/0082zybply1gbqz5fvp0ej30dw0dfwfr.jpg","https://tva1.sinaimg.cn/large/0082zybply1gbqz5t64anj311e0mmwhd.jpg","https://tva1.sinaimg.cn/large/0082zybply1gbqz67t9wvj30ij0q6q5t.jpg","https://tva1.sinaimg.cn/large/0082zybply1gbqz6ymcqlj30on0l241n.jpg"],"datePublished":"2020-02-09T23:52:57.000Z","dateModified":"2020-02-11T03:24:22.866Z","author":{"@type":"Person","name":"ฅ´ω`ฅ"},"publisher":{"@type":"Organization","name":"MCFON","logo":{"@type":"ImageObject","url":"https://hunlp.com/img/logo.png"}},"description":"深度学习训练和推理的过程中，会涉及到大量的向量(vector)，矩阵(matrix)和张量(tensor)操作，通常需要大量的浮点计算，包括高精度（在训练的时候）和低精度（在推理和部署的时候）。GPU， 作为一种通用可编程的加速器，最初设计是用来进行图形处理和渲染功能，但是从2007年开始，英伟达(NVIDIA)公司提出了第一个可编程通用计算平台（GPU），同时提出了CUDA框架，从此开启了GPU"}</script><link rel="canonical" href="https://hunlp.com/posts/3990258621.html"><link rel="icon" href="/img/favicon.png"><link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.2/css/all.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@9.12.0/styles/atom-one-light.css"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@400;600&amp;family=Source+Code+Pro"><link rel="stylesheet" href="/css/default.css"><style>body>.footer,body>.navbar,body>.section{opacity:0}</style><!--!--><!--!--><!--!--><!--!--><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/cookieconsent@3.1.1/build/cookieconsent.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lightgallery@1.6.8/dist/css/lightgallery.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/justifiedGallery@3.7.0/dist/css/justifiedGallery.min.css"><!--!--><!--!--><!--!--><script src="https://cdn.jsdelivr.net/npm/pace-js@1.0.2/pace.min.js"></script><!--!--><!--!--><meta name="generator" content="Hexo 5.4.0"></head><body class="is-3-column"><nav class="navbar navbar-main"><div class="container"><div class="navbar-brand justify-content-center"><a class="navbar-item navbar-logo" href="/"><img src="/img/logo.png" alt="MCFON" height="28"></a></div><div class="navbar-menu"><div class="navbar-start"><a class="navbar-item" href="/">主页</a><a class="navbar-item" href="/archives">归档</a><a class="navbar-item" href="/categories">分类</a><a class="navbar-item" href="/tags">标签</a><a class="navbar-item" href="/about">关于</a></div><div class="navbar-end"><a class="navbar-item" target="_blank" rel="noopener" title="Download on GitHub" href="https://github.com/ppoffice/hexo-theme-icarus"><i class="fab fa-github"></i></a><a class="navbar-item search" title="搜索" href="javascript:;"><i class="fas fa-search"></i></a></div></div></div></nav><section class="section"><div class="container"><div class="columns"><div class="column order-2 column-main is-8-tablet is-8-desktop is-6-widescreen"><div class="card"><article class="card-content article" role="article"><div class="article-meta is-size-7 is-uppercase level is-mobile"><div class="level-left"><span class="level-item"><time dateTime="2020-02-09T23:52:57.000Z" title="2020/2/10 上午7:52:57">2020-02-10</time>发表</span><span class="level-item"><time dateTime="2020-02-11T03:24:22.866Z" title="2020/2/11 上午11:24:22">2020-02-11</time>更新</span><span class="level-item"><a class="link-muted" href="/categories/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/">深度学习</a></span><span class="level-item">1 小时读完 (大约8320个字)</span></div></div><h1 class="title is-3 is-size-4-mobile">异构计算， GPU和框架选型指南</h1><div class="content"><p>深度学习训练和推理的过程中，会涉及到大量的向量(vector)，矩阵(matrix)和张量(tensor)操作，通常需要大量的浮点计算，包括高精度（在训练的时候）和低精度（在推理和部署的时候）。GPU， 作为一种通用可编程的加速器，最初设计是用来进行图形处理和渲染功能，但是从2007年开始，英伟达(NVIDIA)公司提出了第一个可编程通用计算平台（GPU），同时提出了CUDA框架，从此开启了GPU用于通用计算的新纪元。此后，不计其数的科研人员和开发者，对各种不同类型的算法用CUDA进行（部分）改写，从而达到几倍到数百倍的加速效果。尤其是在机器学习，特别是深度学习的浪潮来临后，GPU加速已经是各类工具实现的基本底层构架之一。本章里，会简单介绍GPU的基本架构，性能指标，框架选择等等和深度学习相关的内容。</p>
 <span id="more"></span>
 
-<h2><span id="什么是异构计算">什么是异构计算？</span></h2><p>异构计算是基于一个更加朴素的概念，”异构现象“，也就是不同计算平台之间，由于硬件结构（包括计算核心和内存），指令集和底层软件实现等方面的不同而有着不同的特性。异构计算就是使用结合了两个或者多个不同的计算平台，并进行协同运算。比如，比较常见的，在深度学习和机器学习中已经比较成熟的架构：CPU和GPU的异构计算;此外还有比较新的Google推出的协处理器（TPU），根据目的而定制的ASIC，可编程的FPGA等也都是现在在异构计算中使用比较多的协处理器。而，本章中会着重介绍和深度学习共同繁荣的图形加算器，也就是常说的GPU。</p>
-<h2><span id="什么是gpu">什么是GPU？</span></h2><p>GPU,就如名字所包含的内容，原本开发的目的是为了进行计算机图形渲染，而减少对于CPU的负载。由于图像的原始特性，也就是像素间的独立性，所以GPU在设计的时候就遵从了“单指令流多数据流（SIMD）”架构，使得同一个指令（比如图像的某种变换），可以同时在多一个像素点上进行计算，从而得到比较大的吞吐量，才能使得计算机可以实时渲染比较复杂的2D/3D场景。在最初的应用场景里，GPU并不是作为一种通用计算平台出现的，直到2007年左右，一家伟大的公司将GPU带到通用计算的世界里，使得其可以在相对比较友好的编程环境（CUDA/OpenCL）里加速通用程序成了可能。从此之后，GPU通用计算，也就是GPU就成了学界和工业界都频繁使用的技术，在深度学习爆发的年代里，GPU成了推动这股浪潮非常重要的力量。</p>
-<h2><span id="gpu架构简介">GPU架构简介</span></h2><p>GPU，图形显示芯片作为不同于CPU的设计逻辑和应用场景，有着非常不同的架构，本部分将简单介绍GPU究竟是如何架构，其中的计算核心有哪些特性。</p>
-<h3><span id="如何通俗理解gpu的架构">如何通俗理解GPU的架构？</span></h3><p>首先，下图简单地展示了几个GPU不同于CPU的特性：</p>
+<h2 id="什么是异构计算？"><a href="#什么是异构计算？" class="headerlink" title="什么是异构计算？"></a>什么是异构计算？</h2><p>异构计算是基于一个更加朴素的概念，”异构现象“，也就是不同计算平台之间，由于硬件结构（包括计算核心和内存），指令集和底层软件实现等方面的不同而有着不同的特性。异构计算就是使用结合了两个或者多个不同的计算平台，并进行协同运算。比如，比较常见的，在深度学习和机器学习中已经比较成熟的架构：CPU和GPU的异构计算;此外还有比较新的Google推出的协处理器（TPU），根据目的而定制的ASIC，可编程的FPGA等也都是现在在异构计算中使用比较多的协处理器。而，本章中会着重介绍和深度学习共同繁荣的图形加算器，也就是常说的GPU。</p>
+<h2 id="什么是GPU？"><a href="#什么是GPU？" class="headerlink" title="什么是GPU？"></a>什么是GPU？</h2><p>GPU,就如名字所包含的内容，原本开发的目的是为了进行计算机图形渲染，而减少对于CPU的负载。由于图像的原始特性，也就是像素间的独立性，所以GPU在设计的时候就遵从了“单指令流多数据流（SIMD）”架构，使得同一个指令（比如图像的某种变换），可以同时在多一个像素点上进行计算，从而得到比较大的吞吐量，才能使得计算机可以实时渲染比较复杂的2D/3D场景。在最初的应用场景里，GPU并不是作为一种通用计算平台出现的，直到2007年左右，一家伟大的公司将GPU带到通用计算的世界里，使得其可以在相对比较友好的编程环境（CUDA/OpenCL）里加速通用程序成了可能。从此之后，GPU通用计算，也就是GPU就成了学界和工业界都频繁使用的技术，在深度学习爆发的年代里，GPU成了推动这股浪潮非常重要的力量。</p>
+<h2 id="GPU架构简介"><a href="#GPU架构简介" class="headerlink" title="GPU架构简介"></a>GPU架构简介</h2><p>GPU，图形显示芯片作为不同于CPU的设计逻辑和应用场景，有着非常不同的架构，本部分将简单介绍GPU究竟是如何架构，其中的计算核心有哪些特性。</p>
+<h3 id="如何通俗理解GPU的架构？"><a href="#如何通俗理解GPU的架构？" class="headerlink" title="如何通俗理解GPU的架构？"></a>如何通俗理解GPU的架构？</h3><p>首先，下图简单地展示了几个GPU不同于CPU的特性：</p>
 <ul>
 <li>计算核心： 图中的CPU,i7-5960，Intel的第五代Broadwell架构，其中包括了8个CPU核心(支持16线程)，也就是理论上可以有16个不同的运算同时进行。除了8个核心计算单元，大部分的芯片面积是被3级缓存，内存和控制电路占据了。同样的，来自Nvidia的GTX980GPU，在差不多的芯片面积上，大部分是计算单元，16个SM，也就是流处理单元，每个流处理单元中包含着128个CUDA计算核心，所以总共来说，有2048个GPU运算单元，相应地这颗GPU理论上可以在一个时钟周期内可以进行2048次单精度运算。</li>
 </ul>
@@ -20,10 +20,10 @@
 </ul>
 <p><img src="https://tva1.sinaimg.cn/large/0082zybply1gbqz4i2ybbj30ex08gdgr.jpg"></p>
 <p><img src="https://tva1.sinaimg.cn/large/0082zybply1gbqz4sls6tj30cy03p74v.jpg"></p>
-<h3><span id="cuda-核心是什么">CUDA 核心是什么？</span></h3><p>上面提到在一个GPU芯片里，会很几千个CUDA核心，被分布在多个流处理单元（SM）中，比如上面提到早期的GTX980中的16个SM中各包含了128个CUDA核心。如下图所示，作为GPU架构中的最小单元，其实它的设计和CPU有着非常类似的结构，其中包括了一个浮点运算单元和整型运算单元，和控制单元。同一个流处理器中，所有的CUDA核心将同步执行同一个指令，但是作用于不同的数据点上。</p>
+<h3 id="CUDA-核心是什么？"><a href="#CUDA-核心是什么？" class="headerlink" title="CUDA 核心是什么？"></a>CUDA 核心是什么？</h3><p>上面提到在一个GPU芯片里，会很几千个CUDA核心，被分布在多个流处理单元（SM）中，比如上面提到早期的GTX980中的16个SM中各包含了128个CUDA核心。如下图所示，作为GPU架构中的最小单元，其实它的设计和CPU有着非常类似的结构，其中包括了一个浮点运算单元和整型运算单元，和控制单元。同一个流处理器中，所有的CUDA核心将同步执行同一个指令，但是作用于不同的数据点上。</p>
 <p><img src="https://tva1.sinaimg.cn/large/0082zybply1gbqz55hxtej30cg04yjs4.jpg"></p>
 <p>一般来说，更加多的CUDA核心意味着有更多的并行执行单元，所以也就可以片面地认为是有更加高的性能。但是，其实这个也是取决于很多方面，最重要的是算法在并行实现的时候有没有高效地调度和内存的使用优化。在现在我们使用的大部分GPU加速的深度学习框架里，包括Tensorflow，PyTorch等都是依赖于底层的GPU的矩阵加速代码的实现。为此Nvidia公司也是制定和实现了统一的接口，比如cuDNN，方便上层框架更好的利用GPU的性能。</p>
-<h3><span id="为什么要使用gpu">为什么要使用GPU？</span></h3><p>对于并行计算来说，可以非常粗略地分为：</p>
+<h3 id="为什么要使用GPU？"><a href="#为什么要使用GPU？" class="headerlink" title="为什么要使用GPU？"></a>为什么要使用GPU？</h3><p>对于并行计算来说，可以非常粗略地分为：</p>
 <ul>
 <li>并行指令： 也就是多个指令可以同时分配到不同的计算核心上同时进行，而他们的操作是不同的，并且他们之间相互独立，不需要额外的同步和信息共享。</li>
 <li>并行数据流： 如果数据本身存在的天然的独立性，比如图像中的每一个像素，那么在对这个图像做处理的过程中，同一个指令可以同时作用于每一个像素。在这种情况下，这个对于完整图像的操作可以并行化。理论上，如果内存不是问题，并且计算单元的数量大于整个图像中总像素点的话，这个操作可以在一个时钟周期内完成。</li>
@@ -31,10 +31,10 @@
 <p>GPU整体的架构而言，某种意义上是同时支持以上两种并行模式。在同一个流处理器中，采用了“单一指令并行数据流的模式”，而在多个流处理器中，同一时间可以派发不同的指令。从这一点出发，GPU芯片算是一个非常灵活的架构。一个芯片中，流处理器的个数和其中包含的CUDA核心的数量也是一种面向应用设计时候找到的一个平衡点。</p>
 <p>基于深度学习中大部分的操作的天然并行性（大量的矩阵操作），GPU在当下还是一种非常适合的计算平台。一个非常典型的例子就是常见的矩阵相乘（如下图），要计算Z = X×Y，通过并行计算，X和Y中的行向量和列向量的逐元素相乘就可以同时进行，只要得到结果后再进行累加，而且累加的过程中也是可以进行并行化，使得效率有非常大的提高。Nvidia也是制定和开发了一套底层类库，CUBlas方便开发者。我们熟悉的几大框架(e.g. Tensorflow, PyTorch等)也是遵循和使用了这些并行类库，所以才使得训练和部署性能有了非常多的提高。</p>
 <p><img src="https://tva1.sinaimg.cn/large/0082zybply1gbqz5fvp0ej30dw0dfwfr.jpg"></p>
-<h3><span id="深度学习中的gpu应用">深度学习中的GPU应用</span></h3><p>深度学习在最近几年内出现的井喷现象背后也是GPU的存在和发展作为坚实的推动力量。</p>
+<h3 id="深度学习中的GPU应用"><a href="#深度学习中的GPU应用" class="headerlink" title="深度学习中的GPU应用"></a>深度学习中的GPU应用</h3><p>深度学习在最近几年内出现的井喷现象背后也是GPU的存在和发展作为坚实的推动力量。</p>
 <p>哪些场景使用GPU</p>
 <p>ImageNet的例子</p>
-<h3><span id="1535-新图灵架构里的tensor-core对深度学习有什么作用">15.3.5 新图灵架构里的tensor core对深度学习有什么作用？</span></h3><h2><span id="154-cuda-框架">15.4 CUDA 框架</span></h2><h3><span id="1541-做cuda编程难不难">15.4.1 做CUDA编程难不难？</span></h3><h3><span id="1542-cudnn">15.4.2 cuDNN</span></h3><h2><span id="155-gpu硬件环境配置推荐">15.5 GPU硬件环境配置推荐</span></h2><h3><span id="1551-gpu主要性能指标">15.5.1 GPU主要性能指标</span></h3><p>GPU的性能主要由以下三个参数构成：</p>
+<h3 id="15-3-5-新图灵架构里的tensor-core对深度学习有什么作用？"><a href="#15-3-5-新图灵架构里的tensor-core对深度学习有什么作用？" class="headerlink" title="15.3.5 新图灵架构里的tensor core对深度学习有什么作用？"></a>15.3.5 新图灵架构里的tensor core对深度学习有什么作用？</h3><h2 id="15-4-CUDA-框架"><a href="#15-4-CUDA-框架" class="headerlink" title="15.4 CUDA 框架"></a>15.4 CUDA 框架</h2><h3 id="15-4-1-做CUDA编程难不难？"><a href="#15-4-1-做CUDA编程难不难？" class="headerlink" title="15.4.1 做CUDA编程难不难？"></a>15.4.1 做CUDA编程难不难？</h3><h3 id="15-4-2-cuDNN"><a href="#15-4-2-cuDNN" class="headerlink" title="15.4.2 cuDNN"></a>15.4.2 cuDNN</h3><h2 id="15-5-GPU硬件环境配置推荐"><a href="#15-5-GPU硬件环境配置推荐" class="headerlink" title="15.5 GPU硬件环境配置推荐"></a>15.5 GPU硬件环境配置推荐</h2><h3 id="15-5-1-GPU主要性能指标"><a href="#15-5-1-GPU主要性能指标" class="headerlink" title="15.5.1 GPU主要性能指标"></a>15.5.1 GPU主要性能指标</h3><p>GPU的性能主要由以下三个参数构成：</p>
 <ol>
 <li>计算能力。通常我们关心的是32位浮点计算能力。16位浮点训练也开始流行，如果只做预测的话也可以用8位整数。</li>
 <li>内存大小。当模型越大，或者训练时的批量越大时，所需要的GPU内存就越多。</li>
@@ -50,7 +50,7 @@
 </ol>
 <p>如果大家继续比较GTX较早的系列，也可以发现类似的规律。据此，我们推荐大家在能力范围内尽可能买较新的GPU。</p>
 <p>对于RTX系列，新增了Tensor Cores单元及支持FP16，使得显卡的可选择范围更加多元。</p>
-<h3><span id="购买建议">购买建议</span></h3><p>首先给出一些总体的建议：</p>
+<h3 id="购买建议"><a href="#购买建议" class="headerlink" title="购买建议"></a>购买建议</h3><p>首先给出一些总体的建议：</p>
 <p>性价比高但较贵：RTX 2070，GTX 1080 Ti</p>
 <p>性价比高又便宜：RTX 2060，GTX 1060（6GB）</p>
 <p>当使用数据集&gt; 250GB：GTX Titan X（Maxwell） ，NVIDIA Titan X Pascal或NVIDIA Titan Xp</p>
@@ -66,9 +66,9 @@
 <p>Nvidia有面向个人用户（例如GTX系列）和企业用户（例如Tesla系列）的两类GPU。这两类GPU的计算能力相当。然而，面向企业用户的GPU通常使用被动散热并增加了内存校验，从而更适合数据中心，并通常要比面向个人用户的GPU贵上10倍。</p>
 <p>如果你是拥有100台机器以上的大公司用户，通常可以考虑针对企业用户的Nvidia Tesla系列。如果你是拥有10到100台机器的实验室和中小公司用户，预算充足的情况下可以考虑Nvidia DGX系列，否则可以考虑购买如Supermicro之类的性价比比较高的服务器，然后再购买安装GTX系列的GPU。</p>
 <p>Nvidia一般每一两年发布一次新版本的GPU，例如2017年发布的是GTX 1000系列。每个系列中会有数个不同的型号，分别对应不同的性能。</p>
-<h2><span id="软件环境搭建">软件环境搭建</span></h2><p>深度学习其实就是指基于一套完整的软件系统来构建算法，训练模型。如何搭建一套完整的软件系统，比如操作系统的选择？安装环境中遇到的问题等等，本节做一个简单的总结。</p>
-<h3><span id="操作系统选择">操作系统选择？</span></h3><p>针对硬件厂商来说，比如NVIDIA，对各个操作系统的支持都是比较好的 ，比如Windows系列,Linux系列，但是由于Linux系统对专业技术人员比较友好，所以目前几乎所有的深度学习系统构建都是基于Linux的，比较常用的系统如Ubuntu系列，CentOS系列等等。<br>在构建系统的时候，如何选择合适的操作系是一个刚刚入门深度学习的工作者面临的问题，在这里给出几点建议：<br>（1）刚刚入门，熟悉Windows系统，但是对Linux和深度学习都不太熟，这个时候可以基于windows系列系统来做入门学习<br>（2）简单了解Linux的使用，不太懂深度学习相关知识，可以直接基于Linux系统来搭建框架，跑一些开源的项目，慢慢深入研究学习<br>（3）熟悉Linux，不熟悉深度学习理论，毫无疑问，强烈推荐使用Linux系统，安装软件简单，工作效率高<br>总之一句话，如果不熟悉Linux，就先慢慢熟悉，最终还是要回归到Linux系统来构建深度学习系统</p>
-<h3><span id="常用基础软件安装">常用基础软件安装？</span></h3><p>目前有众多深度学习框架可供大家使用，但是所有框架基本都有一个共同的特点，目前几乎都是基于Nvidia的GPU来训练模型，要想更好的使用Nvidia的GPU，cuda和cudnn就是必备的软件安装。  </p>
+<h2 id="软件环境搭建"><a href="#软件环境搭建" class="headerlink" title="软件环境搭建"></a>软件环境搭建</h2><p>深度学习其实就是指基于一套完整的软件系统来构建算法，训练模型。如何搭建一套完整的软件系统，比如操作系统的选择？安装环境中遇到的问题等等，本节做一个简单的总结。</p>
+<h3 id="操作系统选择？"><a href="#操作系统选择？" class="headerlink" title="操作系统选择？"></a>操作系统选择？</h3><p>针对硬件厂商来说，比如NVIDIA，对各个操作系统的支持都是比较好的 ，比如Windows系列,Linux系列，但是由于Linux系统对专业技术人员比较友好，所以目前几乎所有的深度学习系统构建都是基于Linux的，比较常用的系统如Ubuntu系列，CentOS系列等等。<br>在构建系统的时候，如何选择合适的操作系是一个刚刚入门深度学习的工作者面临的问题，在这里给出几点建议：<br>（1）刚刚入门，熟悉Windows系统，但是对Linux和深度学习都不太熟，这个时候可以基于windows系列系统来做入门学习<br>（2）简单了解Linux的使用，不太懂深度学习相关知识，可以直接基于Linux系统来搭建框架，跑一些开源的项目，慢慢深入研究学习<br>（3）熟悉Linux，不熟悉深度学习理论，毫无疑问，强烈推荐使用Linux系统，安装软件简单，工作效率高<br>总之一句话，如果不熟悉Linux，就先慢慢熟悉，最终还是要回归到Linux系统来构建深度学习系统</p>
+<h3 id="常用基础软件安装？"><a href="#常用基础软件安装？" class="headerlink" title="常用基础软件安装？"></a>常用基础软件安装？</h3><p>目前有众多深度学习框架可供大家使用，但是所有框架基本都有一个共同的特点，目前几乎都是基于Nvidia的GPU来训练模型，要想更好的使用Nvidia的GPU，cuda和cudnn就是必备的软件安装。  </p>
 <ol>
 <li><p><strong>安装cuda</strong><br>上文中有关于cuda的介绍，这里只是简单介绍基于Linux系统安装cuda的具体步骤，可以根据自己的需要安装cuda8.0或者cuda9.0，这两种版本的安装步骤基本一致，这里以最常用的ubuntu 16.04 lts版本为例：  </p>
 <ol>
@@ -102,8 +102,8 @@
 <li><p><strong>安装cudnn</strong><br>cudnn是Nvidia的专门针对深度学习的加速库。。。</p>
 </li>
 </ol>
-<h3><span id="本机安装还是使用docker">本机安装还是使用docker？</span></h3><h3><span id="gpu驱动问题">GPU驱动问题</span></h3><h2><span id="框架选择">框架选择</span></h2><h3><span id="主流框架比较">主流框架比较</span></h3><p>（一个大表格比较）</p>
-<h3><span id="框架详细信息">框架详细信息</span></h3><ul>
+<h3 id="本机安装还是使用docker？"><a href="#本机安装还是使用docker？" class="headerlink" title="本机安装还是使用docker？"></a>本机安装还是使用docker？</h3><h3 id="GPU驱动问题"><a href="#GPU驱动问题" class="headerlink" title="GPU驱动问题"></a>GPU驱动问题</h3><h2 id="框架选择"><a href="#框架选择" class="headerlink" title="框架选择"></a>框架选择</h2><h3 id="主流框架比较"><a href="#主流框架比较" class="headerlink" title="主流框架比较"></a>主流框架比较</h3><p>（一个大表格比较）</p>
+<h3 id="框架详细信息"><a href="#框架详细信息" class="headerlink" title="框架详细信息"></a>框架详细信息</h3><ul>
 <li>Tensorflow<br>Tensorflow是Google于2015年开源的基于数据流编程的深度学习框架，得益于Google强大的技术实力和品牌背书，目前Tensorflow发展迅猛，其用户量远远超过其它框架用户。<br>优点：  <ol>
 <li>由谷歌开发、维护，因此可以保障支持、开发的持续性</li>
 <li>巨大、活跃的社区</li>
@@ -195,7 +195,7 @@
 <li><p>其他国内自主开发开源框架</p>
 </li>
 </ul>
-<h3><span id="哪些框架对于部署环境友好">哪些框架对于部署环境友好？</span></h3><ul>
+<h3 id="哪些框架对于部署环境友好？"><a href="#哪些框架对于部署环境友好？" class="headerlink" title="哪些框架对于部署环境友好？"></a>哪些框架对于部署环境友好？</h3><ul>
 <li><p>Tensorflow Serving</p>
 </li>
 <li><p>ONNX 标准</p>
@@ -207,40 +207,40 @@
 <li><p>Clipper</p>
 </li>
 </ul>
-<h3><span id="移动平台的框架如何选择">移动平台的框架如何选择？</span></h3><ul>
+<h3 id="移动平台的框架如何选择？"><a href="#移动平台的框架如何选择？" class="headerlink" title="移动平台的框架如何选择？"></a>移动平台的框架如何选择？</h3><ul>
 <li><p>Tensorflow Lite</p>
 </li>
 <li><p>Caffe2</p>
 </li>
 </ul>
-<h2><span id="其他">其他</span></h2><h3><span id="多gpu环境的配置">多GPU环境的配置</span></h3><ul>
+<h2 id="其他"><a href="#其他" class="headerlink" title="其他"></a>其他</h2><h3 id="多GPU环境的配置"><a href="#多GPU环境的配置" class="headerlink" title="多GPU环境的配置"></a>多GPU环境的配置</h3><ul>
 <li><p>Tensorflow</p>
 </li>
 <li><p>PyTorch</p>
 </li>
 </ul>
-<h3><span id="是不是可以分布式训练">是不是可以分布式训练？</span></h3><h3><span id="可以在spark环境里训练或者部署模型吗">可以在SPARK环境里训练或者部署模型吗？</span></h3><h3><span id="怎么进一步优化性能">怎么进一步优化性能？</span></h3><ul>
+<h3 id="是不是可以分布式训练？"><a href="#是不是可以分布式训练？" class="headerlink" title="是不是可以分布式训练？"></a>是不是可以分布式训练？</h3><h3 id="可以在SPARK环境里训练或者部署模型吗？"><a href="#可以在SPARK环境里训练或者部署模型吗？" class="headerlink" title="可以在SPARK环境里训练或者部署模型吗？"></a>可以在SPARK环境里训练或者部署模型吗？</h3><h3 id="怎么进一步优化性能？"><a href="#怎么进一步优化性能？" class="headerlink" title="怎么进一步优化性能？"></a>怎么进一步优化性能？</h3><ul>
 <li><p>TVM</p>
 </li>
 <li><p>nGraph</p>
 </li>
 </ul>
-<h3><span id="tpu和gpu的区别">TPU和GPU的区别？</span></h3><h3><span id="未来量子计算对于深度学习等ai技术的影响">未来量子计算对于深度学习等AI技术的影响？</span></h3><hr>
-<h2><span id="gpu购买指南">GPU购买指南</span></h2><p>深度学习训练通常需要大量的计算资源。GPU目前是深度学习最常使用的计算加速硬件。相对于CPU来说，GPU更便宜且计算更加密集。一方面，相同计算能力的GPU的价格一般是CPU价格的十分之一。另一方面，一台服务器通常可以搭载8块或者16块GPU。因此，GPU数量可以看作是衡量一台服务器的深度学习计算能力的一个标准。</p>
-<h3><span id="如何选择gpu">如何选择GPU</span></h3><h3><span id="gpu的主要性能指标">GPU的主要性能指标</span></h3><p>在选择GPU时，首先要考虑的第一个GPU性能问题是什么呢：是否为cuda核心？时钟速度多大？内存大小多少？<br>这些都不是，对于深度学习性能而言，最重要的特征是内存带宽（memory bandwidth）。<br>简而言之：GPU针对内存带宽进行了优化，但同时牺牲了内存访问时间（延迟）。CPU的设计恰恰相反：如果涉及少量内存（例如几个数字相乘（3 * 6 * 9）），CPU可以快速计算，但是对于大量内存（如矩阵乘法（A * B * C）则很慢。由于内存带宽的限制，当涉及大量内存的问题时，GPU快速计算的优势往往会受到限制。当然，GPU和CPU之间还有更复杂的区别，关于为何GPU如此适用于处理深度学习问题，另做探讨。</p>
+<h3 id="TPU和GPU的区别？"><a href="#TPU和GPU的区别？" class="headerlink" title="TPU和GPU的区别？"></a>TPU和GPU的区别？</h3><h3 id="未来量子计算对于深度学习等AI技术的影响？"><a href="#未来量子计算对于深度学习等AI技术的影响？" class="headerlink" title="未来量子计算对于深度学习等AI技术的影响？"></a>未来量子计算对于深度学习等AI技术的影响？</h3><hr>
+<h2 id="GPU购买指南"><a href="#GPU购买指南" class="headerlink" title="GPU购买指南"></a>GPU购买指南</h2><p>深度学习训练通常需要大量的计算资源。GPU目前是深度学习最常使用的计算加速硬件。相对于CPU来说，GPU更便宜且计算更加密集。一方面，相同计算能力的GPU的价格一般是CPU价格的十分之一。另一方面，一台服务器通常可以搭载8块或者16块GPU。因此，GPU数量可以看作是衡量一台服务器的深度学习计算能力的一个标准。</p>
+<h3 id="如何选择GPU"><a href="#如何选择GPU" class="headerlink" title="如何选择GPU"></a>如何选择GPU</h3><h3 id="GPU的主要性能指标"><a href="#GPU的主要性能指标" class="headerlink" title="GPU的主要性能指标"></a>GPU的主要性能指标</h3><p>在选择GPU时，首先要考虑的第一个GPU性能问题是什么呢：是否为cuda核心？时钟速度多大？内存大小多少？<br>这些都不是，对于深度学习性能而言，最重要的特征是内存带宽（memory bandwidth）。<br>简而言之：GPU针对内存带宽进行了优化，但同时牺牲了内存访问时间（延迟）。CPU的设计恰恰相反：如果涉及少量内存（例如几个数字相乘（3 * 6 * 9）），CPU可以快速计算，但是对于大量内存（如矩阵乘法（A * B * C）则很慢。由于内存带宽的限制，当涉及大量内存的问题时，GPU快速计算的优势往往会受到限制。当然，GPU和CPU之间还有更复杂的区别，关于为何GPU如此适用于处理深度学习问题，另做探讨。</p>
 <p>所以如果你想购买一个快速的GPU，首先要关注的是GPU的带宽（bandwidth）。</p>
-<h3><span id="整机配置">整机配置</span></h3><p>通常，我们主要用GPU做深度学习训练。因此，不需要购买高端的CPU。至于整机配置，尽量参考网上推荐的中高档的配置就好。不过，考虑到GPU的功耗、散热和体积，我们在整机配置上也需要考虑以下三个额外因素。</p>
+<h3 id="整机配置"><a href="#整机配置" class="headerlink" title="整机配置"></a>整机配置</h3><p>通常，我们主要用GPU做深度学习训练。因此，不需要购买高端的CPU。至于整机配置，尽量参考网上推荐的中高档的配置就好。不过，考虑到GPU的功耗、散热和体积，我们在整机配置上也需要考虑以下三个额外因素。</p>
 <ol>
 <li>机箱体积。GPU尺寸较大，通常考虑较大且自带风扇的机箱。</li>
 <li>电源。购买GPU时需要查一下GPU的功耗，例如50W到300W不等。购买电源要确保功率足够，且不会过载机房的供电。</li>
 <li>主板的PCIe卡槽。推荐使用PCIe 3.0 16x来保证充足的GPU到主内存的带宽。如果搭载多块GPU，要仔细阅读主板说明，以确保多块GPU一起使用时仍然是16x带宽。注意，有些主板搭载4块GPU时会降到8x甚至4x带宽。</li>
 </ol>
-<h3><span id="小结">小结</span></h3><ul>
+<h3 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h3><ul>
 <li>在预算范围之内，尽可能买较新的GPU。</li>
 <li>整机配置需要考虑到GPU的功耗、散热和体积。</li>
 </ul>
-<h2><span id="框架选型">框架选型</span></h2><p>目前常用的框架有tensorflow,keras,pytorch,mxnet等等，各个框架的优缺点在此简单介绍：</p>
-<h3><span id="常用框架简介">常用框架简介</span></h3><ol>
+<h2 id="框架选型"><a href="#框架选型" class="headerlink" title="框架选型"></a>框架选型</h2><p>目前常用的框架有tensorflow,keras,pytorch,mxnet等等，各个框架的优缺点在此简单介绍：</p>
+<h3 id="常用框架简介"><a href="#常用框架简介" class="headerlink" title="常用框架简介"></a>常用框架简介</h3><ol>
 <li><p>tensorflow：<br>tensorflow由于有google的强大背书，加上其优秀的分布式设计，丰富的教程资源和论坛，工业部署方便，基本很多人都是从tensorflow入门的<br>优点：google的强大背书，分布式训练，教程资源丰富，常见问题基本都可以在互联网中找到解决办法，工业部署方便<br>缺点: 接口混乱，官方文档不够简洁，清晰，</p>
 </li>
 <li><p>keras:<br>keras是一种高层编程接口，其可以选择不同的后端，比如tensorflow，therao等等<br>优点：接口简洁，上手快，文档好，资源多<br>缺点: 封装的太好了导致不理解其技术细节</p>
@@ -258,8 +258,8 @@
 <li>目前工业部署，tensorflow是首选,资源丰富，并且在分布式训练这一块基本一家独大</li>
 <li>mxnet的gluon接口有比较丰富的中文资源（教程：zh.gluon.ai，论坛：discuss.gluon.ai）,gluoncv模块（<a target="_blank" rel="noopener" href="https://gluon-cv.mxnet.io),gluonnlp模块(https//gluon-nlp.mxnet.io%EF%BC%89">https://gluon-cv.mxnet.io）,gluonNLP模块（https://gluon-nlp.mxnet.io）</a></li>
 </ol>
-<h2><span id="模型部署">模型部署</span></h2><p>我们一般都是通过python或者其他语言来编码训练模型，然后基于后端来进行部署<br>一般的框架都有自身的部署框架，比如tensorflow，pytorch，caffe2，mxnet等等<br>有一些框架是专门做推理部署使用的，比如<br> (1)tensorRT<br> (2)TVM<br> (3)ONNX</p>
-<h2><span id="相关文献">相关文献</span></h2><p> [1] Aston Zhang, Mu Li, Zachary C. Lipton, and Alex J. Smola. <a target="_blank" rel="noopener" href="https://github.com/d2l-ai/d2l-zh/blob/master/chapter_appendix/buy-gpu.md">《动手学深度学习》附录 购买GPU</a>, 2019.<br> [2] Tim Dettmers. <a target="_blank" rel="noopener" href="http://timdettmers.com/2019/04/03/which-gpu-for-deep-learning/">Which GPU(s) to Get for Deep Learning: My Experience and Advice for Using GPUs in Deep Learning</a>, 2019.</p>
+<h2 id="模型部署"><a href="#模型部署" class="headerlink" title="模型部署"></a>模型部署</h2><p>我们一般都是通过python或者其他语言来编码训练模型，然后基于后端来进行部署<br>一般的框架都有自身的部署框架，比如tensorflow，pytorch，caffe2，mxnet等等<br>有一些框架是专门做推理部署使用的，比如<br> (1)tensorRT<br> (2)TVM<br> (3)ONNX</p>
+<h2 id="相关文献"><a href="#相关文献" class="headerlink" title="相关文献"></a>相关文献</h2><p> [1] Aston Zhang, Mu Li, Zachary C. Lipton, and Alex J. Smola. <a target="_blank" rel="noopener" href="https://github.com/d2l-ai/d2l-zh/blob/master/chapter_appendix/buy-gpu.md">《动手学深度学习》附录 购买GPU</a>, 2019.<br> [2] Tim Dettmers. <a target="_blank" rel="noopener" href="http://timdettmers.com/2019/04/03/which-gpu-for-deep-learning/">Which GPU(s) to Get for Deep Learning: My Experience and Advice for Using GPUs in Deep Learning</a>, 2019.</p>
 </div><div class="article-licensing box"><div class="licensing-title"><p>异构计算， GPU和框架选型指南</p><p><a href="https://hunlp.com/posts/3990258621.html">https://hunlp.com/posts/3990258621.html</a></p></div><div class="licensing-meta level is-mobile"><div class="level-left"><div class="level-item is-narrow"><div><h6>作者</h6><p>ฅ´ω`ฅ</p></div></div><div class="level-item is-narrow"><div><h6>发布于</h6><p>2020-02-10</p></div></div><div class="level-item is-narrow"><div><h6>更新于</h6><p>2020-02-11</p></div></div><div class="level-item is-narrow"><div><h6>许可协议</h6><p><a class="icons" rel="noopener" target="_blank" title="Creative Commons" href="https://creativecommons.org/"><i class="icon fab fa-creative-commons"></i></a><a class="icons" rel="noopener" target="_blank" title="Attribution" href="https://creativecommons.org/licenses/by/4.0/"><i class="icon fab fa-creative-commons-by"></i></a><a class="icons" rel="noopener" target="_blank" title="Noncommercial" href="https://creativecommons.org/licenses/by-nc/4.0/"><i class="icon fab fa-creative-commons-nc"></i></a></p></div></div></div></div></div><div class="article-tags is-size-7 mb-4"><span class="mr-2">#</span><a class="link-muted mr-2" rel="tag" href="/tags/GPU/">GPU</a><a class="link-muted mr-2" rel="tag" href="/tags/CPU/">CPU</a></div><div class="bdsharebuttonbox"><a class="bds_more" href="#" data-cmd="more"></a><a class="bds_qzone" href="#" data-cmd="qzone" title="分享到QQ空间"></a><a class="bds_tsina" href="#" data-cmd="tsina" title="分享到新浪微博"></a><a class="bds_tqq" href="#" data-cmd="tqq" title="分享到腾讯微博"></a><a class="bds_renren" href="#" data-cmd="renren" title="分享到人人网"></a><a class="bds_weixin" href="#" data-cmd="weixin" title="分享到微信"></a></div><script>window._bd_share_config = { "common": { "bdSnsKey": {}, "bdText": "", "bdMini": "2", "bdPic": "", "bdStyle": "0", "bdSize": "16" }, "share": {} }; with (document) 0[(getElementsByTagName('head')[0] || body).appendChild(createElement('script')).src = 'http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion=' + ~(-new Date() / 36e5)];</script></article></div><div class="card"><div class="card-content"><h3 class="menu-label has-text-centered">喜欢这篇文章？打赏一下作者吧</h3><div class="buttons is-centered"><a class="button donate" data-type="alipay"><span class="icon is-small"><i class="fab fa-alipay"></i></span><span>支付宝</span><span class="qrcode"><img src="/" alt="支付宝"></span></a><a class="button donate" data-type="wechat"><span class="icon is-small"><i class="fab fa-weixin"></i></span><span>微信</span><span class="qrcode"><img src="/" alt="微信"></span></a></div></div></div><nav class="post-navigation mt-4 level is-mobile"><div class="level-start"><a class="article-nav-prev level level-item link-muted" href="/posts/1235119209.html"><i class="level-item fas fa-chevron-left"></i><span class="level-item">4种不同颜色的色块，它们的颜色真的不同吗</span></a></div><div class="level-end"><a class="article-nav-next level level-item link-muted" href="/posts/1772150868.html"><span class="level-item">梯度提升树(GBDT)原理小结</span><i class="level-item fas fa-chevron-right"></i></a></div></nav><div class="card"><div class="card-content"><h3 class="title is-5">评论</h3><div id="comment-container"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1.7.2/dist/gitalk.css"><script src="https://cdn.jsdelivr.net/npm/gitalk@1.7.2/dist/gitalk.min.js"></script><script>var gitalk = new Gitalk({
             id: "ed1583d7c06a68a560aefbab4de35b50",
             repo: "Cartride.github.io",
