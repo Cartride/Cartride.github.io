@@ -11,151 +11,108 @@
     
         gtag('config', 'UA-131608076-1');</script><!--!--><!--!--><!--!--><script src="https://cdn.jsdelivr.net/npm/pace-js@1.0.2/pace.min.js"></script><!--!--><!--!--><meta name="generator" content="Hexo 5.4.0"></head><body class="is-3-column"><nav class="navbar navbar-main"><div class="container"><div class="navbar-brand justify-content-center"><a class="navbar-item navbar-logo" href="/"><img src="/img/logo.png" alt="MCFON" height="28"></a></div><div class="navbar-menu"><div class="navbar-start"><a class="navbar-item" href="/">主页</a><a class="navbar-item" href="/archives">归档</a><a class="navbar-item" href="/categories">分类</a><a class="navbar-item" href="/tags">标签</a><a class="navbar-item" href="/about">关于</a></div><div class="navbar-end"><a class="navbar-item" target="_blank" rel="noopener" title="Download on GitHub" href="https://github.com/ppoffice/hexo-theme-icarus"><i class="fab fa-github"></i></a><a class="navbar-item is-hidden-tablet catalogue" title="目录" href="javascript:;"><i class="fas fa-list-ul"></i></a><a class="navbar-item search" title="搜索" href="javascript:;"><i class="fas fa-search"></i></a></div></div></div></nav><section class="section"><div class="container"><div class="columns"><div class="column order-2 column-main is-8-tablet is-8-desktop is-9-widescreen"><div class="card"><article class="card-content article" role="article"><h1 class="title is-size-3 is-size-4-mobile has-text-weight-normal"><i class="fas fa-angle-double-right"></i>逻辑斯谛回归与最大熵模型</h1><div class="article-meta is-size-7 is-uppercase level is-mobile"><div class="level-left"><span class="level-item"><i class="far fa-calendar-alt"> </i><time dateTime="${date_xml(page.date)}" title="${date_xml(page.date)}">2021-05-27</time></span><span class="level-item is-hidden-mobile"><i class="far fa-calendar-check"> </i><time dateTime="${date_xml(page.updated)}" title="${date_xml(page.updated)}">2021-05-29</time></span><span class="level-item"><a class="link-muted" href="/categories/%E7%BB%9F%E8%AE%A1%E5%AD%A6%E4%B9%A0%E6%96%B9%E6%B3%95/">统计学习方法</a></span><span class="level-item">13 分钟读完 (大约1961个字)</span></div></div><div class="content"><ul>
 <li>logistic regression是统计学习中的经典分类方法。最大熵是概率模型学习的一个准则，推广到分类问题得到最大熵模型(maxium entropy model)</li>
-<li>这两种模型都属于对数线性模型 <span id="more"></span></li>
+<li>这两种模型都属于对数线性模型<span id="more"></span></li>
 </ul>
-<h2 id="逻辑斯谛回归模型">逻辑斯谛回归模型</h2>
-<ul>
+<h2 id="逻辑斯谛回归模型"><a href="#逻辑斯谛回归模型" class="headerlink" title="逻辑斯谛回归模型"></a>逻辑斯谛回归模型</h2><ul>
 <li>二项逻辑斯谛回归模型是一种分类模型，由条件概率分布P(Y|X)表示，形式为参数化的逻辑斯谛分布。</li>
 <li>分类问题，可以表示成one-hot的形式，而one-hot可以认为是一种确定概率的表达。而最大熵模型，是一种不确定的概率表达，其中这个概率，是一个条件概率，是构建的特征函数生成的概率。</li>
 </ul>
-<h3 id="逻辑斯谛分布">逻辑斯谛分布</h3>
-<ul>
-<li><p><span class="math inline">\(X\)</span>是连续随机变量，<span class="math inline">\(X\)</span>服从逻辑斯谛分布 <span class="math display">\[
-F(x)=P(X\leqslant x)=\frac{1}{1+\exp(-(x-\mu)/\gamma)}
-\]</span></p></li>
-<li><p>关于逻辑斯谛， 更常见的一种表达是Logistic function <span class="math display">\[
-\sigma(z)=\frac{1}{1+\exp(-z)}
-\]</span></p></li>
-<li><p>这个函数把实数域映射到(0, 1)区间，这个范围正好是概率的范围， 而且可导，对于0输入， 得到的是0.5，可以用来表示等可能性。</p></li>
+<h3 id="逻辑斯谛分布"><a href="#逻辑斯谛分布" class="headerlink" title="逻辑斯谛分布"></a>逻辑斯谛分布</h3><ul>
+<li><p>$X$是连续随机变量，$X$服从逻辑斯谛分布<br>$$<br>F(x)=P(X\leqslant x)=\frac{1}{1+\exp(-(x-\mu)/\gamma)}<br>$$</p>
+</li>
+<li><p>关于逻辑斯谛， 更常见的一种表达是Logistic function<br>$$<br>\sigma(z)=\frac{1}{1+\exp(-z)}<br>$$</p>
+</li>
+<li><p>这个函数把实数域映射到(0, 1)区间，这个范围正好是概率的范围， 而且可导，对于0输入， 得到的是0.5，可以用来表示等可能性。</p>
+</li>
 </ul>
-<h3 id="二项逻辑斯谛回归模型">二项逻辑斯谛回归模型</h3>
-<ul>
-<li>二项逻辑斯谛回归模型是如下的条件概率分布：(这里的<span class="math inline">\(w\)</span>是对扩充的权值向量，包含参数<span class="math inline">\(b\)</span>) <span class="math display">\[
-\begin{aligned}
-P(Y=1|x)&amp;=\frac{\exp(w\cdot x)}{1+\exp(w\cdot x)}\\
-&amp;=\frac{\exp(w\cdot x)/\exp(w\cdot x)}{(1+\exp(w\cdot x))/(\exp(w\cdot x))}\\
-&amp;=\frac{1}{e^{-(w\cdot x)}+1}\\
-P(Y=0|x)&amp;=\frac{1}{1+\exp(w\cdot x)}\\
-&amp;=1-\frac{1}{1+e^{-(w\cdot x)}}\\
-&amp;=\frac{e^{-(w\cdot x)}}{1+e^{-(w\cdot x)}}
-\end{aligned}
-\]</span> ### 模型参数估计</li>
-<li>应用极大似然估计法估计模型参数，从而得到回归模型，具体步骤为求对数似然函数，并对<span class="math inline">\(L(w)\)</span>求极大值，得到<span class="math inline">\(w\)</span>的估计值</li>
+<h3 id="二项逻辑斯谛回归模型"><a href="#二项逻辑斯谛回归模型" class="headerlink" title="二项逻辑斯谛回归模型"></a>二项逻辑斯谛回归模型</h3><ul>
+<li>二项逻辑斯谛回归模型是如下的条件概率分布：(这里的$w$是对扩充的权值向量，包含参数$b$)<br>$$<br>\begin{aligned}<br>P(Y=1|x)&amp;=\frac{\exp(w\cdot x)}{1+\exp(w\cdot x)}\<br>&amp;=\frac{\exp(w\cdot x)/\exp(w\cdot x)}{(1+\exp(w\cdot x))/(\exp(w\cdot x))}\<br>&amp;=\frac{1}{e^{-(w\cdot x)}+1}\<br>P(Y=0|x)&amp;=\frac{1}{1+\exp(w\cdot x)}\<br>&amp;=1-\frac{1}{1+e^{-(w\cdot x)}}\<br>&amp;=\frac{e^{-(w\cdot x)}}{1+e^{-(w\cdot x)}}<br>\end{aligned}<br>$$<h3 id="模型参数估计"><a href="#模型参数估计" class="headerlink" title="模型参数估计"></a>模型参数估计</h3></li>
+<li>应用极大似然估计法估计模型参数，从而得到回归模型，具体步骤为求对数似然函数，并对$L(w)$求极大值，得到$w$的估计值</li>
 </ul>
-<p><span class="math display">\[
-\begin{aligned}
-L(w)&amp;=\sum_{i=1}^N[y_i\log\pi(x_i)+(1-y_i)\log(1-\pi(x_i))]\\
-&amp;=\sum_{i=1}^N[y_i(w\cdot x_i)-\log(1+\exp(w\cdot x_i))]\\
-\end{aligned}
-\]</span> * 上述过程将<span class="math inline">\(P(Y=1|x)=\pi(x)\)</span>代入<span class="math inline">\(L(w)\)</span>中,从而对<span class="math inline">\(L(w)\)</span>求极大值，得到<span class="math inline">\(w\)</span>的估计值，这样问题就变成了以对数似然函数为目标函数的最优化问题。通常采用的方法是梯度下降法以及拟牛顿法。</p>
-<h3 id="多项逻辑斯谛回归">多项逻辑斯谛回归</h3>
+<p>$$<br>\begin{aligned}<br>L(w)&amp;=\sum_{i=1}^N[y_i\log\pi(x_i)+(1-y_i)\log(1-\pi(x_i))]\<br>&amp;=\sum_{i=1}^N[y_i(w\cdot x_i)-\log(1+\exp(w\cdot x_i))]\<br>\end{aligned}<br>$$</p>
 <ul>
-<li>假设离散型随机变量<span class="math inline">\(Y\)</span>的取值集合是<span class="math inline">\({1,2,\dots,K}\)</span>, 多项逻辑斯谛回归模型是 <span class="math display">\[
-\begin{aligned}
-P(Y=k|x)&amp;=\frac{\exp(w_k\cdot x)}{1+\sum_{k=1}^{K-1}\exp(w_k\cdot x)}, k=1,2,\dots,K-1\\
-P(Y=K|x)&amp;=\frac{1}{1+\sum_{k=1}^{K-1}\exp(w_k\cdot x)}\\
-\end{aligned}
-\]</span></li>
+<li>上述过程将$P(Y=1|x)=\pi(x)$代入$L(w)$中,从而对$L(w)$求极大值，得到$w$的估计值，这样问题就变成了以对数似然函数为目标函数的最优化问题。通常采用的方法是梯度下降法以及拟牛顿法。</li>
+</ul>
+<h3 id="多项逻辑斯谛回归"><a href="#多项逻辑斯谛回归" class="headerlink" title="多项逻辑斯谛回归"></a>多项逻辑斯谛回归</h3><ul>
+<li>假设离散型随机变量$Y$的取值集合是${1,2,\dots,K}$, 多项逻辑斯谛回归模型是<br>$$<br>\begin{aligned}<br>P(Y=k|x)&amp;=\frac{\exp(w_k\cdot x)}{1+\sum_{k=1}^{K-1}\exp(w_k\cdot x)}, k=1,2,\dots,K-1\<br>P(Y=K|x)&amp;=\frac{1}{1+\sum_{k=1}^{K-1}\exp(w_k\cdot x)}\<br>\end{aligned}<br>$$</li>
 <li>上述两式和为1</li>
 </ul>
-<h2 id="最大熵模型">最大熵模型</h2>
-<ul>
-<li><p>最大熵模型是由最大熵原理推导实现的，而最大熵原理是概率模型的一个准则。最大熵原理认为，学习概率模型时，在所有可能的概率模型中，熵最大的模型就是最好的模型。通常用约束条件来确定概率模型的集合。 ### 联合熵</p>
-<ul>
-<li><p><span class="math inline">\(H(X, Y) = H(X) + H(Y|X) = H(Y)+H(X|Y) = H(X|Y)+H(Y|X)+I(X;Y)\)</span></p></li>
-<li><p>如果<span class="math inline">\(X\)</span>和<span class="math inline">\(Y\)</span>独立同分布，联合概率分布<span class="math inline">\(P(X,Y)=P(X)P(Y)\)</span></p></li>
-</ul></li>
+<h2 id="最大熵模型"><a href="#最大熵模型" class="headerlink" title="最大熵模型"></a>最大熵模型</h2><ul>
+<li><p>最大熵模型是由最大熵原理推导实现的，而最大熵原理是概率模型的一个准则。最大熵原理认为，学习概率模型时，在所有可能的概率模型中，熵最大的模型就是最好的模型。通常用约束条件来确定概率模型的集合。</p>
+<h3 id="联合熵"><a href="#联合熵" class="headerlink" title="联合熵"></a>联合熵</h3><ul>
+<li><p>$H(X, Y) = H(X) + H(Y|X) = H(Y)+H(X|Y) = H(X|Y)+H(Y|X)+I(X;Y)$</p>
+</li>
+<li><p>如果$X$和$Y$独立同分布，联合概率分布$P(X,Y)=P(X)P(Y)$ </p>
+</li>
 </ul>
-<h3 id="条件熵">条件熵</h3>
-<ul>
-<li><p>条件熵是最大熵原理提出的基础，最大的是条件熵，书中(定义6.3)</p></li>
-<li><p>条件熵衡量了条件概率分布的均匀性</p></li>
+</li>
 </ul>
-<p><span class="math display">\[\begin{aligned}
-   p^*&amp;=\arg\max\limits_{p\in \mathcal C}H(p)\\
-   &amp;=\arg \max\limits_{p\in \mathcal C}(-\sum\limits_{x,y} {\tilde p(x)p(y|x)\log p(y|x) })
-   \end{aligned} \]</span></p>
-<h3 id="互信息">互信息</h3>
-<ul>
-<li><p>互信息(mutual information)，对应熵里面的交集，常用来描述差异性</p></li>
-<li><p>一般的，熵<span class="math inline">\(H(Y)\)</span>与条件熵<span class="math inline">\(H(Y|X)\)</span>之差称为互信息</p></li>
-<li><p><strong>相关性主要刻画线性，互信息刻画非线性</strong></p></li>
-<li><p>互信息和条件熵之间的关系 <span class="math display">\[
- I(x,y)=H(x)-H(x|y)=H(y)-H(y|x)
- \]</span></p></li>
+<h3 id="条件熵"><a href="#条件熵" class="headerlink" title="条件熵"></a>条件熵</h3><ul>
+<li><p>条件熵是最大熵原理提出的基础，最大的是条件熵，书中(定义6.3)</p>
+</li>
+<li><p>条件熵衡量了条件概率分布的均匀性</p>
+</li>
 </ul>
-<h3 id="信息增益">信息增益</h3>
-<ul>
-<li><p>这个对应的是Chapter5的内容，决策树学习应用信息增益准则选择特征 <span class="math display">\[
-   g(D,A)=H(D)-H(D|A)
-   \]</span></p></li>
-<li><p>信息增益表示得知<span class="math inline">\(X\)</span>的信息而使类<span class="math inline">\(Y\)</span>的信息的不确定性减少的程度。</p></li>
-<li><p>在决策树学习中，信息增益等价于训练数据集中类与特征的互信息。</p></li>
+<p>  $$\begin{aligned}<br>   p^*&amp;=\arg\max\limits_{p\in \mathcal C}H(p)\<br>   &amp;=\arg \max\limits_{p\in \mathcal C}(-\sum\limits_{x,y} {\tilde p(x)p(y|x)\log p(y|x) })<br>   \end{aligned} $$</p>
+<h3 id="互信息"><a href="#互信息" class="headerlink" title="互信息"></a>互信息</h3><ul>
+<li><p>互信息(mutual information)，对应熵里面的交集，常用来描述差异性</p>
+</li>
+<li><p>一般的，熵$H(Y)$与条件熵$H(Y|X)$之差称为互信息</p>
+</li>
+<li><p> <strong>相关性主要刻画线性，互信息刻画非线性</strong></p>
+</li>
+<li><p>互信息和条件熵之间的关系<br> $$<br> I(x,y)=H(x)-H(x|y)=H(y)-H(y|x)<br> $$</p>
+</li>
 </ul>
-<h3 id="相对熵-kl-散度">相对熵 (KL 散度)</h3>
-<ul>
-<li><p>相对熵(Relative Entropy)描述差异性，从分布的角度描述差异性，可用于度量两个概率分布之间的差异</p></li>
-<li><p>KL散度不是一个度量，度量要满足交换性</p></li>
-<li><p>KL散度满足非负性</p></li>
+<h3 id="信息增益"><a href="#信息增益" class="headerlink" title="信息增益"></a>信息增益</h3><ul>
+<li><p>这个对应的是Chapter5的内容，决策树学习应用信息增益准则选择特征<br>$$<br>g(D,A)=H(D)-H(D|A)<br>$$</p>
+</li>
+<li><p>信息增益表示得知$X$的信息而使类$Y$的信息的不确定性减少的程度。</p>
+</li>
+<li><p>在决策树学习中，信息增益等价于训练数据集中类与特征的互信息。</p>
+</li>
 </ul>
-<h3 id="最大熵模型的学习">最大熵模型的学习</h3>
-<ul>
+<h3 id="相对熵-KL-散度"><a href="#相对熵-KL-散度" class="headerlink" title="相对熵 (KL 散度)"></a>相对熵 (KL 散度)</h3><ul>
+<li><p>相对熵(Relative Entropy)描述差异性，从分布的角度描述差异性，可用于度量两个概率分布之间的差异</p>
+</li>
+<li><p>KL散度不是一个度量，度量要满足交换性</p>
+</li>
+<li><p>KL散度满足非负性</p>
+</li>
+</ul>
+<h3 id="最大熵模型的学习"><a href="#最大熵模型的学习" class="headerlink" title="最大熵模型的学习"></a>最大熵模型的学习</h3><ul>
 <li>最大熵模型的学习过程就是求解最大熵模型的过程。最大熵模型的学习可以形式化为约束最优的问题。自然而然想到了拉格朗日，这里用到了拉格朗日的对偶性，将原始问题转化为对偶问题，通过解对偶问题而得到原始问题的解。</li>
-<li>简单来说，约束最优化问题包含<span class="math inline">\(\leqslant0\)</span>，和<span class="math inline">\(=0\)</span>两种约束条件 <span class="math display">\[
-\begin{aligned} 
-   \min_{x \in R^n}\quad &amp;f(x) \\
-   s.t.\quad&amp;c_i(x) \leqslant 0 , i=1,2,\ldots,k\\
-   &amp;h_j(x) = 0 , j=1,2,\ldots,l
-  \end{aligned}
-\]</span></li>
+<li>简单来说，约束最优化问题包含$\leqslant0$，和$=0$两种约束条件<br>$$<br>\begin{aligned}<br>   \min_{x \in R^n}\quad &amp;f(x) \<br>   s.t.\quad&amp;c_i(x) \leqslant 0 , i=1,2,\ldots,k\<br>   &amp;h_j(x) = 0 , j=1,2,\ldots,l<br>  \end{aligned}<br>$$</li>
 <li>引入广义拉格朗日函数</li>
 </ul>
-<p><span class="math display">\[
-L(x,\alpha,\beta) = f(x) + \sum_{i=0}^k \alpha_ic_i(x) + \sum_{j=1}^l \beta_jh_j(x)
-\]</span></p>
+<p>$$<br>L(x,\alpha,\beta) = f(x) + \sum_{i=0}^k \alpha_ic_i(x) + \sum_{j=1}^l \beta_jh_j(x)<br>$$</p>
 <ul>
-<li><p>在KKT的条件下，原始问题和对偶问题的最优值相等 <span class="math display">\[
-∇_xL(x^∗,α^∗,β^∗)=0\\
-∇_αL(x^∗,α^∗,β^∗)=0\\
-∇_βL(x^∗,α^∗,β^∗)=0\\
-α_i^∗c_i(x^*)=0,i=1,2,…,k\\
-c_i(x^*)≤0,i=1,2,…,k\\
-α^∗_i≥0,i=1,2,…,k\\
-h_j(x^∗)=0,j=1,2,…,l
-\]</span></p></li>
-<li><p>前面三个条件是由解析函数的知识，对于各个变量的偏导数为0，后面四个条件就是原始问题的约束条件以及拉格朗日乘子需要满足的约束,第四个条件是<strong>KKT的对偶互补条件</strong></p></li>
-<li><p>回到最大熵模型的学习，书中详细介绍了约束最优化问题</p></li>
-<li><p>在<span class="math inline">\(L(P, w)\)</span>对<span class="math inline">\(P\)</span>求偏导并令其为零解得 <span class="math display">\[
-P(y|x)=\exp{\left(\sum_{i=1}^{n}w_if_i(x,y)+w_0-1\right)}=\frac{\exp{\left(\sum\limits_{i=1}^{n}w_if_i(x,y)\right)}}{\exp{\left(1-w_0\right)}}
-\]</span></p></li>
-<li><p>因为<span class="math inline">\(\sum\limits_{y}P(y|x)=1\)</span>，然后得到模型</p></li>
+<li>在KKT的条件下，原始问题和对偶问题的最优值相等<br>$$<br>∇_xL(x^∗,α^∗,β^∗)=0\<br>∇_αL(x^∗,α^∗,β^∗)=0\<br>∇_βL(x^∗,α^∗,β^∗)=0\<br>α_i^∗c_i(x^*)=0,i=1,2,…,k\<br>c_i(x^*)≤0,i=1,2,…,k\<br>α^∗_i≥0,i=1,2,…,k\<br>h_j(x^∗)=0,j=1,2,…,l<br>$$</li>
+<li>前面三个条件是由解析函数的知识，对于各个变量的偏导数为0，后面四个条件就是原始问题的约束条件以及拉格朗日乘子需要满足的约束,第四个条件是<strong>KKT的对偶互补条件</strong></li>
 </ul>
-<p><span class="math display">\[
-P_w(y|x)=\frac{1}{Z_w(x)}\exp{\sum\limits_{i=1}^{n}w_if_i(x,y)}\\
-\]</span> <span class="math display">\[
-其中，Z_w(x)=\sum_{y}\exp({\sum_{i=1}^{n}w_if_i(x,y))}
-\]</span> * 这里<span class="math inline">\(Z_w(x)\)</span>先用来代替<span class="math inline">\(\exp(1-w_0)\)</span>,<span class="math inline">\(Z_w\)</span>是归一化因子</p>
 <ul>
-<li><p>并不是因为概率为1推导出了<span class="math inline">\(Z_w\)</span>的表达式，这样一个表达式是凑出来的，意思就是遍历<span class="math inline">\(y\)</span>的所有取值，求分子表达式的占比</p></li>
-<li><p>对偶函数的极大化等价于最大熵模型的极大似然估计</p></li>
-<li><p>已知训练数据的经验分布<span class="math inline">\(\widetilde {P}(X,Y)\)</span>,条件概率分布<span class="math inline">\(P(Y|X)\)</span>的对数似然函数表示为</p></li>
+<li>回到最大熵模型的学习，书中详细介绍了约束最优化问题</li>
+<li>在$L(P, w)$对$P$求偏导并令其为零解得<br>$$<br>P(y|x)=\exp{\left(\sum_{i=1}^{n}w_if_i(x,y)+w_0-1\right)}=\frac{\exp{\left(\sum\limits_{i=1}^{n}w_if_i(x,y)\right)}}{\exp{\left(1-w_0\right)}}<br>$$</li>
+<li>因为$\sum\limits_{y}P(y|x)=1$，然后得到模型</li>
 </ul>
-<p><span class="math display">\[L_{\widetilde {P}}(P_w)=\log\prod_{x,y}P(y|x)^{\widetilde {P}(x,y)}=\sum \limits_{x,y}\widetilde {P}(x,y)\log{P}(y|x)
-\]</span></p>
+<p>$$<br>P_w(y|x)=\frac{1}{Z_w(x)}\exp{\sum\limits_{i=1}^{n}w_if_i(x,y)}\<br>$$<br>$$<br>其中，Z_w(x)=\sum_{y}\exp({\sum_{i=1}^{n}w_if_i(x,y))}<br>$$</p>
 <ul>
-<li>当条件分布概率<span class="math inline">\(P(y|x)\)</span>是最大熵模型时</li>
+<li><p>这里$Z_w(x)$先用来代替$\exp(1-w_0)$,$Z_w$是归一化因子</p>
+</li>
+<li><p>并不是因为概率为1推导出了$Z_w$的表达式，这样一个表达式是凑出来的，意思就是遍历$y$的所有取值，求分子表达式的占比</p>
+</li>
+<li><p>对偶函数的极大化等价于最大熵模型的极大似然估计</p>
+</li>
+<li><p>已知训练数据的经验分布$\widetilde {P}(X,Y)$,条件概率分布$P(Y|X)$的对数似然函数表示为</p>
+</li>
 </ul>
-<p><span class="math display">\[
-\begin{aligned}
-L_{\widetilde {P}}(P_w)&amp;=\sum \limits_{x,y}\widetilde {P}(x,y)\log{P}(y|x)\\
-&amp;=\sum \limits_{x,y}\widetilde {P}(x,y)\sum \limits_{i=1}^{n}w_if_i(x,y) -\sum \limits_{x,y}\widetilde{P}(x,y)\log{(Z_w(x))}\\
-&amp;=\sum \limits_{x,y}\widetilde {P}(x,y)\sum \limits_{i=1}^{n}w_if_i(x,y) -\sum \limits_{x,y}\widetilde{P}(x)P(y|x)\log{(Z_w(x))}\\
-&amp;=\sum \limits_{x,y}\widetilde {P}(x,y)\sum \limits_{i=1}^{n}w_if_i(x,y) -\sum \limits_{x}\widetilde{P}(x)\log{(Z_w(x))}\sum_{y}P(y|x)\\
-&amp;=\sum \limits_{x,y}\widetilde {P}(x,y)\sum \limits_{i=1}^{n}w_if_i(x,y) -\sum \limits_{x}\widetilde{P}(x)\log{(Z_w(x))}
-\end{aligned}
-\]</span></p>
+<p>$$L_{\widetilde {P}}(P_w)=\log\prod_{x,y}P(y|x)^{\widetilde {P}(x,y)}=\sum \limits_{x,y}\widetilde {P}(x,y)\log{P}(y|x)<br>$$</p>
 <ul>
-<li>推导过程用到了<span class="math inline">\(\sum\limits_yP(y|x)=1\)</span></li>
+<li>当条件分布概率$P(y|x)$是最大熵模型时</li>
+</ul>
+<p>$$<br>\begin{aligned}<br>L_{\widetilde {P}}(P_w)&amp;=\sum \limits_{x,y}\widetilde {P}(x,y)\log{P}(y|x)\<br>&amp;=\sum \limits_{x,y}\widetilde {P}(x,y)\sum \limits_{i=1}^{n}w_if_i(x,y) -\sum \limits_{x,y}\widetilde{P}(x,y)\log{(Z_w(x))}\<br>&amp;=\sum \limits_{x,y}\widetilde {P}(x,y)\sum \limits_{i=1}^{n}w_if_i(x,y) -\sum \limits_{x,y}\widetilde{P}(x)P(y|x)\log{(Z_w(x))}\<br>&amp;=\sum \limits_{x,y}\widetilde {P}(x,y)\sum \limits_{i=1}^{n}w_if_i(x,y) -\sum \limits_{x}\widetilde{P}(x)\log{(Z_w(x))}\sum_{y}P(y|x)\<br>&amp;=\sum \limits_{x,y}\widetilde {P}(x,y)\sum \limits_{i=1}^{n}w_if_i(x,y) -\sum \limits_{x}\widetilde{P}(x)\log{(Z_w(x))}<br>\end{aligned}<br>$$</p>
+<ul>
+<li>推导过程用到了$\sum\limits_yP(y|x)=1$</li>
 </ul>
 </div><div class="article-licensing box"><div class="licensing-title"><p>逻辑斯谛回归与最大熵模型</p><p><a href="https://hunlp.com/posts/12171.html">https://hunlp.com/posts/12171.html</a></p></div><div class="licensing-meta level is-mobile"><div class="level-left"><div class="level-item is-narrow"><div><h6>作者</h6><p>ฅ´ω`ฅ</p></div></div><div class="level-item is-narrow"><div><h6>发布于</h6><p>2021-05-27</p></div></div><div class="level-item is-narrow"><div><h6>更新于</h6><p>2021-05-29</p></div></div><div class="level-item is-narrow"><div><h6>许可协议</h6><p><a class="icons" rel="noopener" target="_blank" title="Creative Commons" href="https://creativecommons.org/"><i class="icon fab fa-creative-commons"></i></a><a class="icons" rel="noopener" target="_blank" title="Attribution" href="https://creativecommons.org/licenses/by/4.0/"><i class="icon fab fa-creative-commons-by"></i></a><a class="icons" rel="noopener" target="_blank" title="Noncommercial" href="https://creativecommons.org/licenses/by-nc/4.0/"><i class="icon fab fa-creative-commons-nc"></i></a></p></div></div></div></div></div><hr style="height:1px;margin:1rem 0"><div class="level is-mobile is-flex"><div class="article-tags is-size-7 is-uppercase"><i class="fas fa-tags has-text-grey"></i> <a class="link-muted" rel="tag" href="/tags/%E7%AC%94%E8%AE%B0/">笔记, </a><a class="link-muted" rel="tag" href="/tags/%E9%80%BB%E8%BE%91%E5%9B%9E%E5%BD%92/">逻辑回归 </a></div></div><div class="bdsharebuttonbox"><a class="bds_more" href="#" data-cmd="more"></a><a class="bds_qzone" href="#" data-cmd="qzone" title="分享到QQ空间"></a><a class="bds_tsina" href="#" data-cmd="tsina" title="分享到新浪微博"></a><a class="bds_tqq" href="#" data-cmd="tqq" title="分享到腾讯微博"></a><a class="bds_renren" href="#" data-cmd="renren" title="分享到人人网"></a><a class="bds_weixin" href="#" data-cmd="weixin" title="分享到微信"></a></div><script>window._bd_share_config = { "common": { "bdSnsKey": {}, "bdText": "", "bdMini": "2", "bdPic": "", "bdStyle": "0", "bdSize": "16" }, "share": {} }; with (document) 0[(getElementsByTagName('head')[0] || body).appendChild(createElement('script')).src = 'http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion=' + ~(-new Date() / 36e5)];</script></article></div><div class="card"><div class="card-content"><h3 class="menu-label has-text-centered">喜欢这篇文章？打赏一下作者吧</h3><div class="buttons is-centered"><a class="button donate" data-type="alipay"><span class="icon is-small"><i class="fab fa-alipay"></i></span><span>支付宝</span><span class="qrcode"><img src="/" alt="支付宝"></span></a><a class="button donate" data-type="wechat"><span class="icon is-small"><i class="fab fa-weixin"></i></span><span>微信</span><span class="qrcode"><img src="/" alt="微信"></span></a></div></div></div><nav class="post-navigation mt-4 level is-mobile"><div class="level-start"><a class="article-nav-prev level level-item link-muted" href="/posts/49107.html"><i class="level-item fas fa-chevron-left"></i><span class="level-item">支持向量机</span></a></div><div class="level-end"><a class="article-nav-next level level-item link-muted" href="/posts/51507.html"><span class="level-item">决策树</span><i class="level-item fas fa-chevron-right"></i></a></div></nav><div class="card"><div class="card-content"><h3 class="title is-5">评论</h3><div id="comment-container"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1.7.2/dist/gitalk.css"><script src="https://cdn.jsdelivr.net/npm/gitalk@1.7.2/dist/gitalk.min.js"></script><script>var gitalk = new Gitalk({
             id: "b0dabb2949b8b3a652fb5d9a728052d8",
@@ -173,7 +130,7 @@ L_{\widetilde {P}}(P_w)&amp;=\sum \limits_{x,y}\widetilde {P}(x,y)\log{P}(y|x)\\
             enableHotKey: true,
             
         })
-        gitalk.render('comment-container')</script></div></div></div><div class="column column-left is-4-tablet is-4-desktop is-3-widescreen  order-1 is-sticky"><div class="card widget" id="toc" data-type="toc"><div class="card-content"><div class="menu"><h3 class="menu-label">目录</h3><ul class="menu-list"><li><a class="level is-mobile" href="#逻辑斯谛回归模型"><span class="level-left"><span class="level-item">1</span><span class="level-item">逻辑斯谛回归模型</span></span></a><ul class="menu-list"><li><a class="level is-mobile" href="#逻辑斯谛分布"><span class="level-left"><span class="level-item">1.1</span><span class="level-item">逻辑斯谛分布</span></span></a></li><li><a class="level is-mobile" href="#二项逻辑斯谛回归模型"><span class="level-left"><span class="level-item">1.2</span><span class="level-item">二项逻辑斯谛回归模型</span></span></a></li><li><a class="level is-mobile" href="#多项逻辑斯谛回归"><span class="level-left"><span class="level-item">1.3</span><span class="level-item">多项逻辑斯谛回归</span></span></a></li></ul></li><li><a class="level is-mobile" href="#最大熵模型"><span class="level-left"><span class="level-item">2</span><span class="level-item">最大熵模型</span></span></a><ul class="menu-list"><li><a class="level is-mobile" href="#条件熵"><span class="level-left"><span class="level-item">2.1</span><span class="level-item">条件熵</span></span></a></li><li><a class="level is-mobile" href="#互信息"><span class="level-left"><span class="level-item">2.2</span><span class="level-item">互信息</span></span></a></li><li><a class="level is-mobile" href="#信息增益"><span class="level-left"><span class="level-item">2.3</span><span class="level-item">信息增益</span></span></a></li><li><a class="level is-mobile" href="#相对熵-kl-散度"><span class="level-left"><span class="level-item">2.4</span><span class="level-item">相对熵 (KL 散度)</span></span></a></li><li><a class="level is-mobile" href="#最大熵模型的学习"><span class="level-left"><span class="level-item">2.5</span><span class="level-item">最大熵模型的学习</span></span></a></li></ul></li></ul></div></div><style>#toc .menu-list > li > a.is-active + .menu-list { display: block; }#toc .menu-list > li > a + .menu-list { display: none; }</style><script src="/js/toc.js" defer></script></div></div><!--!--></div></div></section><footer class="footer"><div class="container"><div class="level"><div class="level-start"><a class="footer-logo is-block mb-2" href="/"><img src="/img/logo.png" alt="MCFON" height="28"></a><p class="is-size-7"><span>&copy; 2021 ฅ´ω`ฅ</span>  Powered by <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a> &amp; <a href="https://github.com/ppoffice/hexo-theme-icarus" target="_blank" rel="noopener">Icarus</a></p></div><div class="level-end"><div class="field has-addons"><p class="control"><a class="button is-transparent is-large" target="_blank" rel="noopener" title="Creative Commons" href="https://creativecommons.org/"><i class="fab fa-creative-commons"></i></a></p><p class="control"><a class="button is-transparent is-large" target="_blank" rel="noopener" title="Attribution 4.0 International" href="https://creativecommons.org/licenses/by/4.0/"><i class="fab fa-creative-commons-by"></i></a></p><p class="control"><a class="button is-transparent is-large" target="_blank" rel="noopener" title="Download on GitHub" href="https://github.com/ppoffice/hexo-theme-icarus"><i class="fab fa-github"></i></a></p></div></div></div></div></footer><script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script><script src="https://cdn.jsdelivr.net/npm/moment@2.22.2/min/moment-with-locales.min.js"></script><script src="https://cdn.jsdelivr.net/npm/clipboard@2.0.4/dist/clipboard.min.js" defer></script><script>moment.locale("zh-CN");</script><script>var IcarusThemeSettings = {
+        gitalk.render('comment-container')</script></div></div></div><div class="column column-left is-4-tablet is-4-desktop is-3-widescreen  order-1 is-sticky"><div class="card widget" id="toc" data-type="toc"><div class="card-content"><div class="menu"><h3 class="menu-label">目录</h3><ul class="menu-list"><li><a class="level is-mobile" href="#逻辑斯谛回归模型"><span class="level-left"><span class="level-item">1</span><span class="level-item">逻辑斯谛回归模型</span></span></a><ul class="menu-list"><li><a class="level is-mobile" href="#逻辑斯谛分布"><span class="level-left"><span class="level-item">1.1</span><span class="level-item">逻辑斯谛分布</span></span></a></li><li><a class="level is-mobile" href="#二项逻辑斯谛回归模型"><span class="level-left"><span class="level-item">1.2</span><span class="level-item">二项逻辑斯谛回归模型</span></span></a></li><li><a class="level is-mobile" href="#模型参数估计"><span class="level-left"><span class="level-item">1.3</span><span class="level-item">模型参数估计</span></span></a></li><li><a class="level is-mobile" href="#多项逻辑斯谛回归"><span class="level-left"><span class="level-item">1.4</span><span class="level-item">多项逻辑斯谛回归</span></span></a></li></ul></li><li><a class="level is-mobile" href="#最大熵模型"><span class="level-left"><span class="level-item">2</span><span class="level-item">最大熵模型</span></span></a><ul class="menu-list"><li><a class="level is-mobile" href="#联合熵"><span class="level-left"><span class="level-item">2.1</span><span class="level-item">联合熵</span></span></a></li><li><a class="level is-mobile" href="#条件熵"><span class="level-left"><span class="level-item">2.2</span><span class="level-item">条件熵</span></span></a></li><li><a class="level is-mobile" href="#互信息"><span class="level-left"><span class="level-item">2.3</span><span class="level-item">互信息</span></span></a></li><li><a class="level is-mobile" href="#信息增益"><span class="level-left"><span class="level-item">2.4</span><span class="level-item">信息增益</span></span></a></li><li><a class="level is-mobile" href="#相对熵-KL-散度"><span class="level-left"><span class="level-item">2.5</span><span class="level-item">相对熵 (KL 散度)</span></span></a></li><li><a class="level is-mobile" href="#最大熵模型的学习"><span class="level-left"><span class="level-item">2.6</span><span class="level-item">最大熵模型的学习</span></span></a></li></ul></li></ul></div></div><style>#toc .menu-list > li > a.is-active + .menu-list { display: block; }#toc .menu-list > li > a + .menu-list { display: none; }</style><script src="/js/toc.js" defer></script></div></div><!--!--></div></div></section><footer class="footer"><div class="container"><div class="level"><div class="level-start"><a class="footer-logo is-block mb-2" href="/"><img src="/img/logo.png" alt="MCFON" height="28"></a><p class="is-size-7"><span>&copy; 2021 ฅ´ω`ฅ</span>  Powered by <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a> &amp; <a href="https://github.com/ppoffice/hexo-theme-icarus" target="_blank" rel="noopener">Icarus</a></p></div><div class="level-end"><div class="field has-addons"><p class="control"><a class="button is-transparent is-large" target="_blank" rel="noopener" title="Creative Commons" href="https://creativecommons.org/"><i class="fab fa-creative-commons"></i></a></p><p class="control"><a class="button is-transparent is-large" target="_blank" rel="noopener" title="Attribution 4.0 International" href="https://creativecommons.org/licenses/by/4.0/"><i class="fab fa-creative-commons-by"></i></a></p><p class="control"><a class="button is-transparent is-large" target="_blank" rel="noopener" title="Download on GitHub" href="https://github.com/ppoffice/hexo-theme-icarus"><i class="fab fa-github"></i></a></p></div></div></div></div></footer><script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script><script src="https://cdn.jsdelivr.net/npm/moment@2.22.2/min/moment-with-locales.min.js"></script><script src="https://cdn.jsdelivr.net/npm/clipboard@2.0.4/dist/clipboard.min.js" defer></script><script>moment.locale("zh-CN");</script><script>var IcarusThemeSettings = {
             article: {
                 highlight: {
                     clipboard: true,
