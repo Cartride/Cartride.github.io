@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="zh"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"><meta><title>提升方法 - MCFON</title><link rel="manifest" href="/manifest.json"><meta name="application-name" content="MCFON"><meta name="msapplication-TileImage" content="/img/favicon.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="MCFON"><meta name="apple-mobile-web-app-status-bar-style" content="default"><meta name="description" content="笔记摘要 在PAC（概率近似正确(PAC, Probably approximately correct)）学习框架下，一个概念是强可学习的充分必要条件是这个概念是弱可学习的。 提升方法的两个问题   在每一轮如何改变训练数据的权值或概率分布 如何将弱分类器组合成一个强分类器   Adaboost的解决方案：   提高那些被前一轮弱分类器错误分类样本的权值，降低那些被正确分类的样本的权值 加权多数"><meta property="og:type" content="blog"><meta property="og:title" content="提升方法"><meta property="og:url" content="https://hunlp.com/posts/55282.html"><meta property="og:site_name" content="MCFON"><meta property="og:description" content="笔记摘要 在PAC（概率近似正确(PAC, Probably approximately correct)）学习框架下，一个概念是强可学习的充分必要条件是这个概念是弱可学习的。 提升方法的两个问题   在每一轮如何改变训练数据的权值或概率分布 如何将弱分类器组合成一个强分类器   Adaboost的解决方案：   提高那些被前一轮弱分类器错误分类样本的权值，降低那些被正确分类的样本的权值 加权多数"><meta property="og:locale" content="zh_CN"><meta property="og:image" content="https://img-blog.csdnimg.cn/20190719200718138.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2x5YzQ0ODEzNDE4,size_16,color_FFFFFF,t_70"><meta property="article:published_time" content="2021-03-29T11:57:18.000Z"><meta property="article:modified_time" content="2021-05-31T15:32:41.730Z"><meta property="article:author" content="ฅ´ω`ฅ"><meta property="article:tag" content="笔记"><meta property="article:tag" content="AdaBoost"><meta property="twitter:card" content="summary"><meta property="twitter:image" content="https://img-blog.csdnimg.cn/20190719200718138.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2x5YzQ0ODEzNDE4,size_16,color_FFFFFF,t_70"><script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","mainEntityOfPage":{"@type":"WebPage","@id":"https://hunlp.com/posts/55282.html"},"headline":"提升方法","image":[],"datePublished":"2021-03-29T11:57:18.000Z","dateModified":"2021-05-31T15:32:41.730Z","author":{"@type":"Person","name":"ฅ´ω`ฅ"},"publisher":{"@type":"Organization","name":"MCFON","logo":{"@type":"ImageObject","url":"https://hunlp.com/img/logo.png"}},"description":"笔记摘要 在PAC（概率近似正确(PAC, Probably approximately correct)）学习框架下，一个概念是强可学习的充分必要条件是这个概念是弱可学习的。 提升方法的两个问题   在每一轮如何改变训练数据的权值或概率分布 如何将弱分类器组合成一个强分类器   Adaboost的解决方案：   提高那些被前一轮弱分类器错误分类样本的权值，降低那些被正确分类的样本的权值 加权多数"}</script><link rel="canonical" href="https://hunlp.com/posts/55282.html"><link rel="icon" href="/img/favicon.png"><link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.2/css/all.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@9.12.0/styles/atom-one-light.css"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@400;600&amp;family=Source+Code+Pro"><link rel="stylesheet" href="/css/default.css"><style>body>.footer,body>.navbar,body>.section{opacity:0}</style><!--!--><script>var _hmt = _hmt || [];
+<html lang="zh"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"><meta><title>提升方法 - MCFON</title><link rel="manifest" href="/manifest.json"><meta name="application-name" content="MCFON"><meta name="msapplication-TileImage" content="/img/favicon.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="MCFON"><meta name="apple-mobile-web-app-status-bar-style" content="default"><meta name="description" content="笔记摘要  在PAC（概率近似正确(PAC, Probably approximately correct)）学习框架下，一个概念是强可学习的充分必要条件是这个概念是弱可学习的。 提升方法的两个问题   在每一轮如何改变训练数据的权值或概率分布 如何将弱分类器组合成一个强分类器   Adaboost的解决方案：   提高那些被前一轮弱分类器错误分类样本的权值，降低那些被正确分类的样本的权值 加权多"><meta property="og:type" content="blog"><meta property="og:title" content="提升方法"><meta property="og:url" content="https://hunlp.com/posts/55282.html"><meta property="og:site_name" content="MCFON"><meta property="og:description" content="笔记摘要  在PAC（概率近似正确(PAC, Probably approximately correct)）学习框架下，一个概念是强可学习的充分必要条件是这个概念是弱可学习的。 提升方法的两个问题   在每一轮如何改变训练数据的权值或概率分布 如何将弱分类器组合成一个强分类器   Adaboost的解决方案：   提高那些被前一轮弱分类器错误分类样本的权值，降低那些被正确分类的样本的权值 加权多"><meta property="og:locale" content="zh_CN"><meta property="og:image" content="https://img-blog.csdnimg.cn/20190719200718138.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2x5YzQ0ODEzNDE4,size_16,color_FFFFFF,t_70"><meta property="article:published_time" content="2021-03-29T11:57:18.000Z"><meta property="article:modified_time" content="2021-05-31T15:32:41.730Z"><meta property="article:author" content="ฅ´ω`ฅ"><meta property="article:tag" content="笔记"><meta property="article:tag" content="AdaBoost"><meta property="twitter:card" content="summary"><meta property="twitter:image" content="https://img-blog.csdnimg.cn/20190719200718138.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2x5YzQ0ODEzNDE4,size_16,color_FFFFFF,t_70"><script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","mainEntityOfPage":{"@type":"WebPage","@id":"https://hunlp.com/posts/55282.html"},"headline":"提升方法","image":[],"datePublished":"2021-03-29T11:57:18.000Z","dateModified":"2021-05-31T15:32:41.730Z","author":{"@type":"Person","name":"ฅ´ω`ฅ"},"publisher":{"@type":"Organization","name":"MCFON","logo":{"@type":"ImageObject","url":"https://hunlp.com/img/logo.png"}},"description":"笔记摘要  在PAC（概率近似正确(PAC, Probably approximately correct)）学习框架下，一个概念是强可学习的充分必要条件是这个概念是弱可学习的。 提升方法的两个问题   在每一轮如何改变训练数据的权值或概率分布 如何将弱分类器组合成一个强分类器   Adaboost的解决方案：   提高那些被前一轮弱分类器错误分类样本的权值，降低那些被正确分类的样本的权值 加权多"}</script><link rel="canonical" href="https://hunlp.com/posts/55282.html"><link rel="icon" href="/img/favicon.png"><link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.2/css/all.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@9.12.0/styles/atom-one-light.css"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@400;600&amp;family=Source+Code+Pro"><link rel="stylesheet" href="/css/default.css"><style>body>.footer,body>.navbar,body>.section{opacity:0}</style><!--!--><script>var _hmt = _hmt || [];
         (function() {
             var hm = document.createElement("script");
             hm.src = "//hm.baidu.com/hm.js?b99420d7a06d2b3361a8efeaf6e20764";
@@ -9,119 +9,138 @@
         function gtag(){dataLayer.push(arguments);}
         gtag('js', new Date());
     
-        gtag('config', 'UA-131608076-1');</script><!--!--><!--!--><!--!--><script src="https://cdn.jsdelivr.net/npm/pace-js@1.0.2/pace.min.js"></script><!--!--><!--!--><meta name="generator" content="Hexo 5.4.0"></head><body class="is-3-column"><nav class="navbar navbar-main"><div class="container"><div class="navbar-brand justify-content-center"><a class="navbar-item navbar-logo" href="/"><img src="/img/logo.png" alt="MCFON" height="28"></a></div><div class="navbar-menu"><div class="navbar-start"><a class="navbar-item" href="/">主页</a><a class="navbar-item" href="/archives">归档</a><a class="navbar-item" href="/categories">分类</a><a class="navbar-item" href="/tags">标签</a><a class="navbar-item" href="/about">关于</a></div><div class="navbar-end"><a class="navbar-item" target="_blank" rel="noopener" title="Download on GitHub" href="https://github.com/ppoffice/hexo-theme-icarus"><i class="fab fa-github"></i></a><a class="navbar-item is-hidden-tablet catalogue" title="目录" href="javascript:;"><i class="fas fa-list-ul"></i></a><a class="navbar-item search" title="搜索" href="javascript:;"><i class="fas fa-search"></i></a></div></div></div></nav><section class="section"><div class="container"><div class="columns"><div class="column order-2 column-main is-8-tablet is-8-desktop is-9-widescreen"><div class="card"><article class="card-content article" role="article"><h1 class="title is-size-3 is-size-4-mobile has-text-weight-normal"><i class="fas fa-angle-double-right"></i>提升方法</h1><div class="article-meta is-size-7 is-uppercase level is-mobile"><div class="level-left"><span class="level-item"><i class="far fa-calendar-alt"> </i><time dateTime="${date_xml(page.date)}" title="${date_xml(page.date)}">2021-03-29</time></span><span class="level-item is-hidden-mobile"><i class="far fa-calendar-check"> </i><time dateTime="${date_xml(page.updated)}" title="${date_xml(page.updated)}">2021-05-31</time></span><span class="level-item"><a class="link-muted" href="/categories/%E7%BB%9F%E8%AE%A1%E5%AD%A6%E4%B9%A0%E6%96%B9%E6%B3%95/">统计学习方法</a></span><span class="level-item">11 分钟读完 (大约1719个字)</span></div></div><div class="content"><h2 id="笔记摘要"><a href="#笔记摘要" class="headerlink" title="笔记摘要"></a>笔记摘要</h2><ul>
+        gtag('config', 'UA-131608076-1');</script><!--!--><!--!--><!--!--><script src="https://cdn.jsdelivr.net/npm/pace-js@1.0.2/pace.min.js"></script><!--!--><!--!--><meta name="generator" content="Hexo 5.4.0"></head><body class="is-3-column"><nav class="navbar navbar-main"><div class="container"><div class="navbar-brand justify-content-center"><a class="navbar-item navbar-logo" href="/"><img src="/img/logo.png" alt="MCFON" height="28"></a></div><div class="navbar-menu"><div class="navbar-start"><a class="navbar-item" href="/">主页</a><a class="navbar-item" href="/archives">归档</a><a class="navbar-item" href="/categories">分类</a><a class="navbar-item" href="/tags">标签</a><a class="navbar-item" href="/about">关于</a></div><div class="navbar-end"><a class="navbar-item" target="_blank" rel="noopener" title="Download on GitHub" href="https://github.com/ppoffice/hexo-theme-icarus"><i class="fab fa-github"></i></a><a class="navbar-item is-hidden-tablet catalogue" title="目录" href="javascript:;"><i class="fas fa-list-ul"></i></a><a class="navbar-item search" title="搜索" href="javascript:;"><i class="fas fa-search"></i></a></div></div></div></nav><section class="section"><div class="container"><div class="columns"><div class="column order-2 column-main is-8-tablet is-8-desktop is-9-widescreen"><div class="card"><article class="card-content article" role="article"><h1 class="title is-size-3 is-size-4-mobile has-text-weight-normal"><i class="fas fa-angle-double-right"></i>提升方法</h1><div class="article-meta is-size-7 is-uppercase level is-mobile"><div class="level-left"><span class="level-item"><i class="far fa-calendar-alt"> </i><time dateTime="${date_xml(page.date)}" title="${date_xml(page.date)}">2021-03-29</time></span><span class="level-item is-hidden-mobile"><i class="far fa-calendar-check"> </i><time dateTime="${date_xml(page.updated)}" title="${date_xml(page.updated)}">2021-05-31</time></span><span class="level-item"><a class="link-muted" href="/categories/%E7%BB%9F%E8%AE%A1%E5%AD%A6%E4%B9%A0%E6%96%B9%E6%B3%95/">统计学习方法</a></span><span class="level-item">11 分钟读完 (大约1719个字)</span></div></div><div class="content"><h2 id="笔记摘要">笔记摘要</h2>
+<ul>
 <li>在PAC（概率近似正确(PAC, Probably approximately correct)）学习框架下，一个概念是强可学习的<strong>充分必要条件</strong>是这个概念是弱可学习的。</li>
 <li>提升方法的两个问题</li>
 </ul>
-<ol>
+<ol type="1">
 <li>在每一轮如何改变训练数据的权值或概率分布</li>
 <li>如何将<strong>弱分类器</strong>组合成一个<strong>强分类器</strong></li>
 </ol>
 <ul>
 <li>Adaboost的解决方案：</li>
 </ul>
-<ol start="3">
+<ol start="3" type="1">
 <li>提高那些被前一轮弱分类器错误分类样本的权值，降低那些被正确分类的样本的权值</li>
-<li>加权多数表决的方法，加大分类误差率小的弱分类器的权值，减小分类误差率大的弱分类器的权值<span id="more"></span></li>
+<li>加权多数表决的方法，加大分类误差率小的弱分类器的权值，减小分类误差率大的弱分类器的权值 <span id="more"></span></li>
 </ol>
-<h3 id="AdaBoost算法"><a href="#AdaBoost算法" class="headerlink" title="AdaBoost算法"></a>AdaBoost算法</h3><ul>
-<li>输入：弱学习算法和训练数据集<br>$T={(x_1,y_1), (x_2,y_2),…,(x_N,y_N)}, x\in X \subseteq R^n$</li>
-<li>输出：最终分类器$G(x)$</li>
+<h3 id="adaboost算法">AdaBoost算法</h3>
+<ul>
+<li>输入：弱学习算法和训练数据集 <span class="math inline">\(T=\{(x_1,y_1), (x_2,y_2),...,(x_N,y_N)\}, x\in X \subseteq R^n\)</span></li>
+<li>输出：最终分类器<span class="math inline">\(G(x)\)</span></li>
 <li>步骤</li>
 </ul>
-<ol>
-<li>初始化训练数据的权值分布 $D_1=(w_{11},\cdots,w_{1i},\cdots,w_{1N},w_{1i}=\frac{1}{N})​$</li>
-<li>m = 1,2, $\cdots$,M<br> ( a ) 使用具有权值分布$D_m$的训练数据集学习，得到基本的分类器<br> $$G_m(x):X→{-1,+1}$$<br> ( b ) 计算$G_m(x)$在训练集上的分类误差率<br> $$e_m=\sum_{i=1}^{N}P(G_m(x_i)\not= y_i)=\sum_{i=1}^{N}w_{mi}I(G_m(x_i)\not=y_i)$$<br> ( c ) 计算$G_m(x)$的系数<br> $$\alpha_m=\frac{1}{2}log\frac{1-e_m}{e_m}$$<br> ( d ) 更新训练数据集的权值分布<br> $$w_{m+1,i}=\frac{w_{mi}}{Z_m}exp(-\alpha_my_iG_m(x_i))​$$<br> $$Z_m=\sum_{i=1}^Nw_{mi}exp(-\alpha_my_iG_m(x_i))$$</li>
-<li>$f(x)=\sum_{m=1}^M\alpha_mG_m(x)$</li>
-<li>最终分类器$G(x)=sign(f(x))=sign(\sum_{m=1}^M\alpha_mG_m(x))$</li>
+<ol type="1">
+<li>初始化训练数据的权值分布 <span class="math inline">\(D_1=(w_{11},\cdots,w_{1i},\cdots,w_{1N},w_{1i}=\frac{1}{N})​\)</span></li>
+<li>m = 1,2, <span class="math inline">\(\cdots\)</span>,M ( a ) 使用具有权值分布<span class="math inline">\(D_m\)</span>的训练数据集学习，得到基本的分类器 <span class="math display">\[G_m(x):X→\{-1,+1\}\]</span> ( b ) 计算<span class="math inline">\(G_m(x)\)</span>在训练集上的分类误差率<br />
+<span class="math display">\[e_m=\sum_{i=1}^{N}P(G_m(x_i)\not= y_i)=\sum_{i=1}^{N}w_{mi}I(G_m(x_i)\not=y_i)\]</span> ( c ) 计算<span class="math inline">\(G_m(x)\)</span>的系数 <span class="math display">\[\alpha_m=\frac{1}{2}log\frac{1-e_m}{e_m}\]</span> ( d ) 更新训练数据集的权值分布 <span class="math display">\[w_{m+1,i}=\frac{w_{mi}}{Z_m}exp(-\alpha_my_iG_m(x_i))​\]</span> <span class="math display">\[Z_m=\sum_{i=1}^Nw_{mi}exp(-\alpha_my_iG_m(x_i))\]</span></li>
+<li><span class="math inline">\(f(x)=\sum_{m=1}^M\alpha_mG_m(x)\)</span></li>
+<li>最终分类器<span class="math inline">\(G(x)=sign(f(x))=sign(\sum_{m=1}^M\alpha_mG_m(x))\)</span></li>
 </ol>
 <ul>
 <li>误分类样本在下一轮学习中起更大的作用。不改变所给的训练数据，而不断改变训练数据权值的分布，使得训练数据在基本分类器的学习中起不同的作用， 这是AdaBoost的一个特点</li>
 <li>利用基本分类器的线性组合构建最终分类器使AdaBoost的另一特点</li>
 </ul>
-<h3 id="AdaBoost算法的训练误差分析"><a href="#AdaBoost算法的训练误差分析" class="headerlink" title="AdaBoost算法的训练误差分析"></a>AdaBoost算法的训练误差分析</h3><ul>
-<li>AdaBoost算法最终分类器的训练误差界为<br>$$<br>\frac{1}{N}\sum\limits_{i=1}\limits^N I(G(x_i)\neq y_i)\le\frac{1}{N}\sum\limits_i\exp(-y_i f(x_i))=\prod\limits_m Z_m<br>$$<br>这个的意思就是说指数损失是0-1损失的上界，这个上界使通过递推得到的，是归一化系数的连乘</li>
+<h3 id="adaboost算法的训练误差分析">AdaBoost算法的训练误差分析</h3>
+<ul>
+<li>AdaBoost算法最终分类器的训练误差界为 <span class="math display">\[
+\frac{1}{N}\sum\limits_{i=1}\limits^N I(G(x_i)\neq y_i)\le\frac{1}{N}\sum\limits_i\exp(-y_i f(x_i))=\prod\limits_m Z_m
+\]</span> 这个的意思就是说指数损失是0-1损失的上界，这个上界使通过递推得到的，是归一化系数的连乘</li>
 </ul>
-<h3 id="AdaBoost算法的解释"><a href="#AdaBoost算法的解释" class="headerlink" title="AdaBoost算法的解释"></a>AdaBoost算法的解释</h3><ul>
+<h3 id="adaboost算法的解释">AdaBoost算法的解释</h3>
+<ul>
 <li>模型为加法模型， 损失函数为指数函数， 学习算法为前向分步算法时的二分类学习方法。根据这些条件可以推导出AdaBoost</li>
 </ul>
-<h4 id="前向分步算法"><a href="#前向分步算法" class="headerlink" title="前向分步算法"></a>前向分步算法</h4><ul>
-<li><p>输入：训练数据集$T={(x_1,y_1),(x_2,y_2),…,(x_N, y_N)}, x_i \in  X \sube \R^n, y_i\in {-1, 1}$， 损失函数$L(y, f(x))$; 基函数集合${b(x;\gamma)}$</p>
-</li>
-<li><p>输出：加法模型$f(x)$</p>
-</li>
-<li><p>步骤：</p>
-</li>
+<h4 id="前向分步算法">前向分步算法</h4>
+<ul>
+<li><p>输入：训练数据集<span class="math inline">\(T={(x_1,y_1),(x_2,y_2),...,(x_N, y_N)}, x_i \in X \sube \R^n, y_i\in \{-1, 1\}\)</span>， 损失函数<span class="math inline">\(L(y, f(x))\)</span>; 基函数集合<span class="math inline">\(\{b(x;\gamma)\}\)</span></p></li>
+<li><p>输出：加法模型<span class="math inline">\(f(x)\)</span></p></li>
+<li><p>步骤：</p></li>
 </ul>
-<ol>
-<li><p>初始化$f_0(x)=0$</p>
-</li>
-<li><p>对$m=1,2,\cdots,M$, 极小化损失函数<br>$$<br>(\beta_m,\gamma_m)=\arg\min \limits_ {\beta,\gamma}\sum_{i=1}^NL(y_i, f_{m-1}(x_i)+\beta b(x_i;\gamma))<br>$$</p>
-</li>
-<li><p>更新<br>$$<br>f_m(x)=f_{m-1}(x)+\beta _mb(x;\gamma_m)<br>$$</p>
-</li>
-<li><p>得到加法模型<br>$$<br>f(x)=f_M(x)=\sum_{m=1}^M\beta_m b(x;\gamma_m)<br>$$</p>
-</li>
+<ol type="1">
+<li><p>初始化<span class="math inline">\(f_0(x)=0\)</span></p></li>
+<li><p>对<span class="math inline">\(m=1,2,\cdots,M\)</span>, 极小化损失函数 <span class="math display">\[
+(\beta_m,\gamma_m)=\arg\min \limits_ {\beta,\gamma}\sum_{i=1}^NL(y_i, f_{m-1}(x_i)+\beta b(x_i;\gamma))
+\]</span></p></li>
+<li><p>更新 <span class="math display">\[
+f_m(x)=f_{m-1}(x)+\beta _mb(x;\gamma_m)
+\]</span></p></li>
+<li><p>得到加法模型 <span class="math display">\[
+f(x)=f_M(x)=\sum_{m=1}^M\beta_m b(x;\gamma_m)
+\]</span></p></li>
 </ol>
-<h3 id="提升树"><a href="#提升树" class="headerlink" title="提升树"></a>提升树</h3><ul>
+<h3 id="提升树">提升树</h3>
+<ul>
 <li>提升树是以分类树或回归树为基本分类器的提升方法，被认为是统计学习中性能最好的方法之一</li>
 <li>提升方法实际采用加法模型（即基函数的线性组合）与前向分步算法</li>
 </ul>
-<h4 id="提升树模型"><a href="#提升树模型" class="headerlink" title="提升树模型"></a>提升树模型</h4><ul>
+<h4 id="提升树模型">提升树模型</h4>
+<ul>
 <li>以决策树为基函数的提升方法称为提升树</li>
-<li>提升树模型可以表示成决策树的加法模型<br>$$<br>f_M(x)=\sum_{m=1}^MT(x;\Theta_m)<br>$$</li>
+<li>提升树模型可以表示成决策树的加法模型 <span class="math display">\[
+f_M(x)=\sum_{m=1}^MT(x;\Theta_m)
+\]</span></li>
 </ul>
-<h4 id="提升树算法"><a href="#提升树算法" class="headerlink" title="提升树算法"></a>提升树算法</h4><ul>
+<h4 id="提升树算法">提升树算法</h4>
+<ul>
 <li>针对不同问题的提升树学习算法， 其主要区别在于使用的损失函数不同：</li>
 </ul>
-<ol>
+<ol type="1">
 <li>平方误差损失函数用于回归问题</li>
 <li>指数损失函数用于分类问题</li>
 <li>一般损失函数的一般决策问题</li>
 </ol>
-<h4 id="回归问题的提升树算法"><a href="#回归问题的提升树算法" class="headerlink" title="回归问题的提升树算法"></a>回归问题的提升树算法</h4><ul>
-<li><p>输入：训练数据集$T={(x_1,y_1),(x_2,y_2),…,(x_N, y_N)}, x_i \in  X \sube \R^n,y_i \in Y \sube R$</p>
-</li>
-<li><p>输出：提升树$f_M(x)$</p>
-</li>
-<li><p>步骤：</p>
-</li>
+<h4 id="回归问题的提升树算法">回归问题的提升树算法</h4>
+<ul>
+<li><p>输入：训练数据集<span class="math inline">\(T={(x_1,y_1),(x_2,y_2),...,(x_N, y_N)}, x_i \in X \sube \R^n,y_i \in Y \sube R\)</span></p></li>
+<li><p>输出：提升树<span class="math inline">\(f_M(x)\)</span></p></li>
+<li><p>步骤：</p></li>
 </ul>
-<ol>
-<li>初始化$f_0(x)=0$</li>
-<li>对$m=1,2,\dots,M$<ol>
-<li>计算残差<br>$$<br>r_{mi}=y_i-f_{m-1}(x_i), i=1,2,\dots,N<br>$$</li>
-<li><strong>拟合残差</strong>$r_{mi}$学习一个回归树，得到$T(x;\Theta_m)$</li>
-<li>更新$f_m(x)=f_{m-1}(x)+T(x;\Theta_m)$</li>
+<ol type="1">
+<li>初始化<span class="math inline">\(f_0(x)=0\)</span></li>
+<li>对<span class="math inline">\(m=1,2,\dots,M\)</span>
+<ol type="1">
+<li>计算残差 <span class="math display">\[
+r_{mi}=y_i-f_{m-1}(x_i), i=1,2,\dots,N
+\]</span></li>
+<li><strong>拟合残差</strong><span class="math inline">\(r_{mi}\)</span>学习一个回归树，得到<span class="math inline">\(T(x;\Theta_m)\)</span></li>
+<li>更新<span class="math inline">\(f_m(x)=f_{m-1}(x)+T(x;\Theta_m)\)</span></li>
+</ol></li>
+<li>得到回归问题提升树 <span class="math display">\[
+f(x)=f_M(x)=\sum_{m=1}^MT(x;\Theta_m)
+\]</span></li>
 </ol>
-</li>
-<li>得到回归问题提升树<br>$$<br>f(x)=f_M(x)=\sum_{m=1}^MT(x;\Theta_m)<br>$$</li>
+<h3 id="梯度提升gbdt">梯度提升(GBDT)</h3>
+<p>输入： 训练数据集<span class="math inline">\(T={(x_1,y_1),(x_2,y_2),\dots,(x_N,y_N)}, x_i \in x \sube \R^n, y_i \in y \sube \R\)</span>；损失函数<span class="math inline">\(L(y,f(x))\)</span> 输出：回归树<span class="math inline">\(\hat{f}(x)\)</span> 步骤： 1. 初始化 <span class="math display">\[
+   f_0(x)=\arg\min\limits_c\sum_{i=1}^NL(y_i, c)
+   \]</span></p>
+<ol start="2" type="1">
+<li>对<span class="math inline">\(m=1,2,\cdots,M\)</span></li>
 </ol>
-<h3 id="梯度提升-GBDT"><a href="#梯度提升-GBDT" class="headerlink" title="梯度提升(GBDT)"></a>梯度提升(GBDT)</h3><p>输入： 训练数据集$T={(x_1,y_1),(x_2,y_2),\dots,(x_N,y_N)}, x_i \in  x \sube \R^n, y_i \in  y \sube \R$；损失函数$L(y,f(x))$<br>输出：回归树$\hat{f}(x)$<br>步骤：</p>
-<ol>
-<li><p>初始化<br>$$<br>f_0(x)=\arg\min\limits_c\sum_{i=1}^NL(y_i, c)<br>$$</p>
-</li>
-<li><p>对$m=1,2,\cdots,M$</p>
-</li>
+<p>（ a ）对<span class="math inline">\(i=1,2,\cdots,N\)</span>,计算 <span class="math display">\[
+   r_{mi}=-\left[\frac{\partial L(y_i, f(x_i))}{\partial f(x_i)}\right]_{f(x)=f_{m-1}(x)}
+   \]</span> （ b ）对<span class="math inline">\(r_{mi}\)</span>拟合一个回归树，得到第<span class="math inline">\(m\)</span>棵树的叶节点区域<span class="math inline">\(R_{mj}, j=1,2,\dots,J\)</span></p>
+<p>（ c ） 对<span class="math inline">\(j=1,2,\dots,J\)</span>，计算 <span class="math display">\[
+   c_{mj}=\arg\min_c\sum_{xi\in R_{mj}}L(y_i,f_{m-1}(x_i)+c)
+   \]</span></p>
+<ol start="4" type="1">
+<li><p>更新 <span class="math display">\[
+f_m(x)=f_{m-1}(x)+\sum_{j=1}^Jc_{mj}I(x\in R_{mj})
+\]</span></p></li>
+<li><p>得到回归树 <span class="math display">\[
+\hat{f}(x)=f_M(x)=\sum_{m=1}^M\sum_{j=1}^Jc_{mj}I(x\in R_{mj})
+\]</span></p></li>
 </ol>
-<p>（ a ）对$i=1,2,\cdots,N$,计算<br>   $$<br>   r_{mi}=-\left[\frac{\partial L(y_i, f(x_i))}{\partial f(x_i)}\right]<em>{f(x)=f</em>{m-1}(x)}<br>   $$<br>（ b ）对$r_{mi}$拟合一个回归树，得到第$m$棵树的叶节点区域$R_{mj}, j=1,2,\dots,J$</p>
-<p>   （ c  ）   对$j=1,2,\dots,J$，计算<br>   $$<br>   c_{mj}=\arg\min_c\sum_{xi\in R_{mj}}L(y_i,f_{m-1}(x_i)+c)<br>   $$</p>
-<ol start="4">
-<li><p>更新<br>$$<br>f_m(x)=f_{m-1}(x)+\sum_{j=1}^Jc_{mj}I(x\in R_{mj})<br>$$</p>
-</li>
-<li><p>得到回归树<br>$$<br>\hat{f}(x)=f_M(x)=\sum_{m=1}^M\sum_{j=1}^Jc_{mj}I(x\in R_{mj})<br>$$</p>
-</li>
-</ol>
-<h2 id="习题解答"><a href="#习题解答" class="headerlink" title="习题解答"></a>习题解答</h2><ul>
-<li><p>某公司招聘职员考查身体、业务能力、发展潜力这 3 项。身体分为合格1、不合格0两级，业务能力和发展潜力分为上1、中2、下3三级分类为合格1 、不合格-1两类。已知10个人的数据，如下表所示。假设弱分类器为决策树桩。.试用AdaBoost算法学习一个强分类器。<br><img src="https://img-blog.csdnimg.cn/20190719200718138.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2x5YzQ0ODEzNDE4,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br><a target="_blank" rel="noopener" href="https://github.com/librauee/Statistical-Learning">代码传送门</a></p>
-</li>
+<h2 id="习题解答">习题解答</h2>
+<ul>
+<li><p>某公司招聘职员考查身体、业务能力、发展潜力这 3 项。身体分为合格1、不合格0两级，业务能力和发展潜力分为上1、中2、下3三级分类为合格1 、不合格-1两类。已知10个人的数据，如下表所示。假设弱分类器为决策树桩。.试用AdaBoost算法学习一个强分类器。 <img src="https://img-blog.csdnimg.cn/20190719200718138.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2x5YzQ0ODEzNDE4,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述" /> <a target="_blank" rel="noopener" href="https://github.com/librauee/Statistical-Learning">代码传送门</a></p></li>
 <li><p>比较支持向量机、 AdaBoost 、逻辑斯谛回归模型的学习策略与算法。</p>
 <ul>
 <li>支持向量机的学习策略是当训练数据近似线性可分时，通过软间隔最大化，学习一个线性分类器，其学习算法是SMO序列最小最优化算法</li>
 <li>AdaBoost的学习策略是通过极小化加法模型的指数损失，得到一个强分类器，其学习算法是前向分步算法</li>
 <li>逻辑斯谛回归模型的学习策略是在给定的训练数据条件下对模型进行极大似然估计或正则化的极大似然估计，其学习算法可以是改进的迭代尺度算法（IIS），梯度下降法，牛顿法以及拟牛顿法</li>
-</ul>
-</li>
+</ul></li>
 </ul>
 </div><div class="article-licensing box"><div class="licensing-title"><p>提升方法</p><p><a href="https://hunlp.com/posts/55282.html">https://hunlp.com/posts/55282.html</a></p></div><div class="licensing-meta level is-mobile"><div class="level-left"><div class="level-item is-narrow"><div><h6>作者</h6><p>ฅ´ω`ฅ</p></div></div><div class="level-item is-narrow"><div><h6>发布于</h6><p>2021-03-29</p></div></div><div class="level-item is-narrow"><div><h6>更新于</h6><p>2021-05-31</p></div></div><div class="level-item is-narrow"><div><h6>许可协议</h6><p><a class="icons" rel="noopener" target="_blank" title="Creative Commons" href="https://creativecommons.org/"><i class="icon fab fa-creative-commons"></i></a><a class="icons" rel="noopener" target="_blank" title="Attribution" href="https://creativecommons.org/licenses/by/4.0/"><i class="icon fab fa-creative-commons-by"></i></a><a class="icons" rel="noopener" target="_blank" title="Noncommercial" href="https://creativecommons.org/licenses/by-nc/4.0/"><i class="icon fab fa-creative-commons-nc"></i></a></p></div></div></div></div></div><hr style="height:1px;margin:1rem 0"><div class="level is-mobile is-flex"><div class="article-tags is-size-7 is-uppercase"><i class="fas fa-tags has-text-grey"></i> <a class="link-muted" rel="tag" href="/tags/%E7%AC%94%E8%AE%B0/">笔记, </a><a class="link-muted" rel="tag" href="/tags/AdaBoost/">AdaBoost </a></div></div><div class="bdsharebuttonbox"><a class="bds_more" href="#" data-cmd="more"></a><a class="bds_qzone" href="#" data-cmd="qzone" title="分享到QQ空间"></a><a class="bds_tsina" href="#" data-cmd="tsina" title="分享到新浪微博"></a><a class="bds_tqq" href="#" data-cmd="tqq" title="分享到腾讯微博"></a><a class="bds_renren" href="#" data-cmd="renren" title="分享到人人网"></a><a class="bds_weixin" href="#" data-cmd="weixin" title="分享到微信"></a></div><script>window._bd_share_config = { "common": { "bdSnsKey": {}, "bdText": "", "bdMini": "2", "bdPic": "", "bdStyle": "0", "bdSize": "16" }, "share": {} }; with (document) 0[(getElementsByTagName('head')[0] || body).appendChild(createElement('script')).src = 'http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion=' + ~(-new Date() / 36e5)];</script></article></div><div class="card"><div class="card-content"><h3 class="menu-label has-text-centered">喜欢这篇文章？打赏一下作者吧</h3><div class="buttons is-centered"><a class="button donate" data-type="alipay"><span class="icon is-small"><i class="fab fa-alipay"></i></span><span>支付宝</span><span class="qrcode"><img src="/" alt="支付宝"></span></a><a class="button donate" data-type="wechat"><span class="icon is-small"><i class="fab fa-weixin"></i></span><span>微信</span><span class="qrcode"><img src="/" alt="微信"></span></a></div></div></div><nav class="post-navigation mt-4 level is-mobile"><div class="level-start"><a class="article-nav-prev level level-item link-muted" href="/posts/48659.html"><i class="level-item fas fa-chevron-left"></i><span class="level-item">Dynamic Programming</span></a></div><div class="level-end"><a class="article-nav-next level level-item link-muted" href="/posts/49107.html"><span class="level-item">支持向量机</span><i class="level-item fas fa-chevron-right"></i></a></div></nav><div class="card"><div class="card-content"><h3 class="title is-5">评论</h3><div id="comment-container"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1.7.2/dist/gitalk.css"><script src="https://cdn.jsdelivr.net/npm/gitalk@1.7.2/dist/gitalk.min.js"></script><script>var gitalk = new Gitalk({
             id: "7a94969a17327085707102597da61361",
@@ -139,7 +158,7 @@
             enableHotKey: true,
             
         })
-        gitalk.render('comment-container')</script></div></div></div><div class="column column-left is-4-tablet is-4-desktop is-3-widescreen  order-1 is-sticky"><div class="card widget" id="toc" data-type="toc"><div class="card-content"><div class="menu"><h3 class="menu-label">目录</h3><ul class="menu-list"><li><a class="level is-mobile" href="#笔记摘要"><span class="level-left"><span class="level-item">1</span><span class="level-item">笔记摘要</span></span></a><ul class="menu-list"><li><a class="level is-mobile" href="#AdaBoost算法"><span class="level-left"><span class="level-item">1.1</span><span class="level-item">AdaBoost算法</span></span></a></li><li><a class="level is-mobile" href="#AdaBoost算法的训练误差分析"><span class="level-left"><span class="level-item">1.2</span><span class="level-item">AdaBoost算法的训练误差分析</span></span></a></li><li><a class="level is-mobile" href="#AdaBoost算法的解释"><span class="level-left"><span class="level-item">1.3</span><span class="level-item">AdaBoost算法的解释</span></span></a><ul class="menu-list"><li><a class="level is-mobile" href="#前向分步算法"><span class="level-left"><span class="level-item">1.3.1</span><span class="level-item">前向分步算法</span></span></a></li></ul></li><li><a class="level is-mobile" href="#提升树"><span class="level-left"><span class="level-item">1.4</span><span class="level-item">提升树</span></span></a><ul class="menu-list"><li><a class="level is-mobile" href="#提升树模型"><span class="level-left"><span class="level-item">1.4.1</span><span class="level-item">提升树模型</span></span></a></li><li><a class="level is-mobile" href="#提升树算法"><span class="level-left"><span class="level-item">1.4.2</span><span class="level-item">提升树算法</span></span></a></li><li><a class="level is-mobile" href="#回归问题的提升树算法"><span class="level-left"><span class="level-item">1.4.3</span><span class="level-item">回归问题的提升树算法</span></span></a></li></ul></li><li><a class="level is-mobile" href="#梯度提升-GBDT"><span class="level-left"><span class="level-item">1.5</span><span class="level-item">梯度提升(GBDT)</span></span></a></li></ul></li><li><a class="level is-mobile" href="#习题解答"><span class="level-left"><span class="level-item">2</span><span class="level-item">习题解答</span></span></a></li></ul></div></div><style>#toc .menu-list > li > a.is-active + .menu-list { display: block; }#toc .menu-list > li > a + .menu-list { display: none; }</style><script src="/js/toc.js" defer></script></div></div><!--!--></div></div></section><footer class="footer"><div class="container"><div class="level"><div class="level-start"><a class="footer-logo is-block mb-2" href="/"><img src="/img/logo.png" alt="MCFON" height="28"></a><p class="is-size-7"><span>&copy; 2021 ฅ´ω`ฅ</span>  Powered by <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a> &amp; <a href="https://github.com/ppoffice/hexo-theme-icarus" target="_blank" rel="noopener">Icarus</a></p></div><div class="level-end"><div class="field has-addons"><p class="control"><a class="button is-transparent is-large" target="_blank" rel="noopener" title="Creative Commons" href="https://creativecommons.org/"><i class="fab fa-creative-commons"></i></a></p><p class="control"><a class="button is-transparent is-large" target="_blank" rel="noopener" title="Attribution 4.0 International" href="https://creativecommons.org/licenses/by/4.0/"><i class="fab fa-creative-commons-by"></i></a></p><p class="control"><a class="button is-transparent is-large" target="_blank" rel="noopener" title="Download on GitHub" href="https://github.com/ppoffice/hexo-theme-icarus"><i class="fab fa-github"></i></a></p></div></div></div></div></footer><script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script><script src="https://cdn.jsdelivr.net/npm/moment@2.22.2/min/moment-with-locales.min.js"></script><script src="https://cdn.jsdelivr.net/npm/clipboard@2.0.4/dist/clipboard.min.js" defer></script><script>moment.locale("zh-CN");</script><script>var IcarusThemeSettings = {
+        gitalk.render('comment-container')</script></div></div></div><div class="column column-left is-4-tablet is-4-desktop is-3-widescreen  order-1 is-sticky"><div class="card widget" id="toc" data-type="toc"><div class="card-content"><div class="menu"><h3 class="menu-label">目录</h3><ul class="menu-list"><li><a class="level is-mobile" href="#笔记摘要"><span class="level-left"><span class="level-item">1</span><span class="level-item">笔记摘要</span></span></a><ul class="menu-list"><li><a class="level is-mobile" href="#adaboost算法"><span class="level-left"><span class="level-item">1.1</span><span class="level-item">AdaBoost算法</span></span></a></li><li><a class="level is-mobile" href="#adaboost算法的训练误差分析"><span class="level-left"><span class="level-item">1.2</span><span class="level-item">AdaBoost算法的训练误差分析</span></span></a></li><li><a class="level is-mobile" href="#adaboost算法的解释"><span class="level-left"><span class="level-item">1.3</span><span class="level-item">AdaBoost算法的解释</span></span></a><ul class="menu-list"><li><a class="level is-mobile" href="#前向分步算法"><span class="level-left"><span class="level-item">1.3.1</span><span class="level-item">前向分步算法</span></span></a></li></ul></li><li><a class="level is-mobile" href="#提升树"><span class="level-left"><span class="level-item">1.4</span><span class="level-item">提升树</span></span></a><ul class="menu-list"><li><a class="level is-mobile" href="#提升树模型"><span class="level-left"><span class="level-item">1.4.1</span><span class="level-item">提升树模型</span></span></a></li><li><a class="level is-mobile" href="#提升树算法"><span class="level-left"><span class="level-item">1.4.2</span><span class="level-item">提升树算法</span></span></a></li><li><a class="level is-mobile" href="#回归问题的提升树算法"><span class="level-left"><span class="level-item">1.4.3</span><span class="level-item">回归问题的提升树算法</span></span></a></li></ul></li><li><a class="level is-mobile" href="#梯度提升gbdt"><span class="level-left"><span class="level-item">1.5</span><span class="level-item">梯度提升(GBDT)</span></span></a></li></ul></li><li><a class="level is-mobile" href="#习题解答"><span class="level-left"><span class="level-item">2</span><span class="level-item">习题解答</span></span></a></li></ul></div></div><style>#toc .menu-list > li > a.is-active + .menu-list { display: block; }#toc .menu-list > li > a + .menu-list { display: none; }</style><script src="/js/toc.js" defer></script></div></div><!--!--></div></div></section><footer class="footer"><div class="container"><div class="level"><div class="level-start"><a class="footer-logo is-block mb-2" href="/"><img src="/img/logo.png" alt="MCFON" height="28"></a><p class="is-size-7"><span>&copy; 2021 ฅ´ω`ฅ</span>  Powered by <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a> &amp; <a href="https://github.com/ppoffice/hexo-theme-icarus" target="_blank" rel="noopener">Icarus</a></p></div><div class="level-end"><div class="field has-addons"><p class="control"><a class="button is-transparent is-large" target="_blank" rel="noopener" title="Creative Commons" href="https://creativecommons.org/"><i class="fab fa-creative-commons"></i></a></p><p class="control"><a class="button is-transparent is-large" target="_blank" rel="noopener" title="Attribution 4.0 International" href="https://creativecommons.org/licenses/by/4.0/"><i class="fab fa-creative-commons-by"></i></a></p><p class="control"><a class="button is-transparent is-large" target="_blank" rel="noopener" title="Download on GitHub" href="https://github.com/ppoffice/hexo-theme-icarus"><i class="fab fa-github"></i></a></p></div></div></div></div></footer><script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script><script src="https://cdn.jsdelivr.net/npm/moment@2.22.2/min/moment-with-locales.min.js"></script><script src="https://cdn.jsdelivr.net/npm/clipboard@2.0.4/dist/clipboard.min.js" defer></script><script>moment.locale("zh-CN");</script><script>var IcarusThemeSettings = {
             article: {
                 highlight: {
                     clipboard: true,
