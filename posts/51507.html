@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="zh"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"><meta><title>决策树 - MCFON</title><link rel="manifest" href="/manifest.json"><meta name="application-name" content="MCFON"><meta name="msapplication-TileImage" content="/img/favicon.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="MCFON"><meta name="apple-mobile-web-app-status-bar-style" content="default"><meta name="description" content="笔记摘要  决策树可以认为是if-then规则的集合，也可以认为是定义在特征空间上的条件概率分布 根据损失函数最小化的原则建立决策树模型 决策树的路径或其对应的if-then规则集合具有一个重要性质：互斥且完备 决策树的学习算法包含特征选择、决策树的生成与决策树的剪枝 决策树的生成对应于模型的局部选择，决策树的剪枝对应于模型的全局选择"><meta property="og:type" content="blog"><meta property="og:title" content="决策树"><meta property="og:url" content="https://hunlp.com/posts/51507.html"><meta property="og:site_name" content="MCFON"><meta property="og:description" content="笔记摘要  决策树可以认为是if-then规则的集合，也可以认为是定义在特征空间上的条件概率分布 根据损失函数最小化的原则建立决策树模型 决策树的路径或其对应的if-then规则集合具有一个重要性质：互斥且完备 决策树的学习算法包含特征选择、决策树的生成与决策树的剪枝 决策树的生成对应于模型的局部选择，决策树的剪枝对应于模型的全局选择"><meta property="og:locale" content="zh_CN"><meta property="og:image" content="https://img-blog.csdnimg.cn/2019060915344250.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2x5YzQ0ODEzNDE4,size_16,color_FFFFFF,t_70#pic_center"><meta property="og:image" content="https://img-blog.csdnimg.cn/201906091538427.png#pic_center"><meta property="article:published_time" content="2021-05-26T16:33:07.000Z"><meta property="article:modified_time" content="2021-05-29T11:04:00.170Z"><meta property="article:author" content="ฅ´ω`ฅ"><meta property="article:tag" content="笔记"><meta property="article:tag" content="决策树"><meta property="twitter:card" content="summary"><meta property="twitter:image" content="https://img-blog.csdnimg.cn/2019060915344250.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2x5YzQ0ODEzNDE4,size_16,color_FFFFFF,t_70#pic_center"><script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","mainEntityOfPage":{"@type":"WebPage","@id":"https://hunlp.com/posts/51507.html"},"headline":"决策树","image":[],"datePublished":"2021-05-26T16:33:07.000Z","dateModified":"2021-05-29T11:04:00.170Z","author":{"@type":"Person","name":"ฅ´ω`ฅ"},"publisher":{"@type":"Organization","name":"MCFON","logo":{"@type":"ImageObject","url":"https://hunlp.com/img/logo.png"}},"description":"笔记摘要  决策树可以认为是if-then规则的集合，也可以认为是定义在特征空间上的条件概率分布 根据损失函数最小化的原则建立决策树模型 决策树的路径或其对应的if-then规则集合具有一个重要性质：互斥且完备 决策树的学习算法包含特征选择、决策树的生成与决策树的剪枝 决策树的生成对应于模型的局部选择，决策树的剪枝对应于模型的全局选择"}</script><link rel="canonical" href="https://hunlp.com/posts/51507.html"><link rel="icon" href="/img/favicon.png"><link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.2/css/all.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@9.12.0/styles/atom-one-light.css"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@400;600&amp;family=Source+Code+Pro"><link rel="stylesheet" href="/css/default.css"><style>body>.footer,body>.navbar,body>.section{opacity:0}</style><!--!--><script>var _hmt = _hmt || [];
+<html lang="zh"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"><meta><title>决策树 - MCFON</title><link rel="manifest" href="/manifest.json"><meta name="application-name" content="MCFON"><meta name="msapplication-TileImage" content="/img/favicon.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="MCFON"><meta name="apple-mobile-web-app-status-bar-style" content="default"><meta name="description" content="笔记摘要 决策树可以认为是if-then规则的集合，也可以认为是定义在特征空间上的条件概率分布 根据损失函数最小化的原则建立决策树模型 决策树的路径或其对应的if-then规则集合具有一个重要性质：互斥且完备 决策树的学习算法包含特征选择、决策树的生成与决策树的剪枝 决策树的生成对应于模型的局部选择，决策树的剪枝对应于模型的全局选择"><meta property="og:type" content="blog"><meta property="og:title" content="决策树"><meta property="og:url" content="https://hunlp.com/posts/51507.html"><meta property="og:site_name" content="MCFON"><meta property="og:description" content="笔记摘要 决策树可以认为是if-then规则的集合，也可以认为是定义在特征空间上的条件概率分布 根据损失函数最小化的原则建立决策树模型 决策树的路径或其对应的if-then规则集合具有一个重要性质：互斥且完备 决策树的学习算法包含特征选择、决策树的生成与决策树的剪枝 决策树的生成对应于模型的局部选择，决策树的剪枝对应于模型的全局选择"><meta property="og:locale" content="zh_CN"><meta property="og:image" content="https://img-blog.csdnimg.cn/2019060915344250.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2x5YzQ0ODEzNDE4,size_16,color_FFFFFF,t_70#pic_center"><meta property="og:image" content="https://img-blog.csdnimg.cn/201906091538427.png#pic_center"><meta property="article:published_time" content="2021-03-26T16:33:07.000Z"><meta property="article:modified_time" content="2021-05-31T15:33:09.288Z"><meta property="article:author" content="ฅ´ω`ฅ"><meta property="article:tag" content="笔记"><meta property="article:tag" content="决策树"><meta property="twitter:card" content="summary"><meta property="twitter:image" content="https://img-blog.csdnimg.cn/2019060915344250.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2x5YzQ0ODEzNDE4,size_16,color_FFFFFF,t_70#pic_center"><script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","mainEntityOfPage":{"@type":"WebPage","@id":"https://hunlp.com/posts/51507.html"},"headline":"决策树","image":[],"datePublished":"2021-03-26T16:33:07.000Z","dateModified":"2021-05-31T15:33:09.288Z","author":{"@type":"Person","name":"ฅ´ω`ฅ"},"publisher":{"@type":"Organization","name":"MCFON","logo":{"@type":"ImageObject","url":"https://hunlp.com/img/logo.png"}},"description":"笔记摘要 决策树可以认为是if-then规则的集合，也可以认为是定义在特征空间上的条件概率分布 根据损失函数最小化的原则建立决策树模型 决策树的路径或其对应的if-then规则集合具有一个重要性质：互斥且完备 决策树的学习算法包含特征选择、决策树的生成与决策树的剪枝 决策树的生成对应于模型的局部选择，决策树的剪枝对应于模型的全局选择"}</script><link rel="canonical" href="https://hunlp.com/posts/51507.html"><link rel="icon" href="/img/favicon.png"><link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.2/css/all.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@9.12.0/styles/atom-one-light.css"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@400;600&amp;family=Source+Code+Pro"><link rel="stylesheet" href="/css/default.css"><style>body>.footer,body>.navbar,body>.section{opacity:0}</style><!--!--><script>var _hmt = _hmt || [];
         (function() {
             var hm = document.createElement("script");
             hm.src = "//hm.baidu.com/hm.js?b99420d7a06d2b3361a8efeaf6e20764";
@@ -9,141 +9,149 @@
         function gtag(){dataLayer.push(arguments);}
         gtag('js', new Date());
     
-        gtag('config', 'UA-131608076-1');</script><!--!--><!--!--><!--!--><script src="https://cdn.jsdelivr.net/npm/pace-js@1.0.2/pace.min.js"></script><!--!--><!--!--><meta name="generator" content="Hexo 5.4.0"></head><body class="is-3-column"><nav class="navbar navbar-main"><div class="container"><div class="navbar-brand justify-content-center"><a class="navbar-item navbar-logo" href="/"><img src="/img/logo.png" alt="MCFON" height="28"></a></div><div class="navbar-menu"><div class="navbar-start"><a class="navbar-item" href="/">主页</a><a class="navbar-item" href="/archives">归档</a><a class="navbar-item" href="/categories">分类</a><a class="navbar-item" href="/tags">标签</a><a class="navbar-item" href="/about">关于</a></div><div class="navbar-end"><a class="navbar-item" target="_blank" rel="noopener" title="Download on GitHub" href="https://github.com/ppoffice/hexo-theme-icarus"><i class="fab fa-github"></i></a><a class="navbar-item is-hidden-tablet catalogue" title="目录" href="javascript:;"><i class="fas fa-list-ul"></i></a><a class="navbar-item search" title="搜索" href="javascript:;"><i class="fas fa-search"></i></a></div></div></div></nav><section class="section"><div class="container"><div class="columns"><div class="column order-2 column-main is-8-tablet is-8-desktop is-9-widescreen"><div class="card"><article class="card-content article" role="article"><h1 class="title is-size-3 is-size-4-mobile has-text-weight-normal"><i class="fas fa-angle-double-right"></i>决策树</h1><div class="article-meta is-size-7 is-uppercase level is-mobile"><div class="level-left"><span class="level-item"><i class="far fa-calendar-alt"> </i><time dateTime="${date_xml(page.date)}" title="${date_xml(page.date)}">2021-05-27</time></span><span class="level-item is-hidden-mobile"><i class="far fa-calendar-check"> </i><time dateTime="${date_xml(page.updated)}" title="${date_xml(page.updated)}">2021-05-29</time></span><span class="level-item"><a class="link-muted" href="/categories/%E7%BB%9F%E8%AE%A1%E5%AD%A6%E4%B9%A0%E6%96%B9%E6%B3%95/">统计学习方法</a></span><span class="level-item">19 分钟读完 (大约2901个字)</span></div></div><div class="content"><h2 id="笔记摘要">笔记摘要</h2>
-<ul>
+        gtag('config', 'UA-131608076-1');</script><!--!--><!--!--><!--!--><script src="https://cdn.jsdelivr.net/npm/pace-js@1.0.2/pace.min.js"></script><!--!--><!--!--><meta name="generator" content="Hexo 5.4.0"></head><body class="is-3-column"><nav class="navbar navbar-main"><div class="container"><div class="navbar-brand justify-content-center"><a class="navbar-item navbar-logo" href="/"><img src="/img/logo.png" alt="MCFON" height="28"></a></div><div class="navbar-menu"><div class="navbar-start"><a class="navbar-item" href="/">主页</a><a class="navbar-item" href="/archives">归档</a><a class="navbar-item" href="/categories">分类</a><a class="navbar-item" href="/tags">标签</a><a class="navbar-item" href="/about">关于</a></div><div class="navbar-end"><a class="navbar-item" target="_blank" rel="noopener" title="Download on GitHub" href="https://github.com/ppoffice/hexo-theme-icarus"><i class="fab fa-github"></i></a><a class="navbar-item is-hidden-tablet catalogue" title="目录" href="javascript:;"><i class="fas fa-list-ul"></i></a><a class="navbar-item search" title="搜索" href="javascript:;"><i class="fas fa-search"></i></a></div></div></div></nav><section class="section"><div class="container"><div class="columns"><div class="column order-2 column-main is-8-tablet is-8-desktop is-9-widescreen"><div class="card"><article class="card-content article" role="article"><h1 class="title is-size-3 is-size-4-mobile has-text-weight-normal"><i class="fas fa-angle-double-right"></i>决策树</h1><div class="article-meta is-size-7 is-uppercase level is-mobile"><div class="level-left"><span class="level-item"><i class="far fa-calendar-alt"> </i><time dateTime="${date_xml(page.date)}" title="${date_xml(page.date)}">2021-03-27</time></span><span class="level-item is-hidden-mobile"><i class="far fa-calendar-check"> </i><time dateTime="${date_xml(page.updated)}" title="${date_xml(page.updated)}">2021-05-31</time></span><span class="level-item"><a class="link-muted" href="/categories/%E7%BB%9F%E8%AE%A1%E5%AD%A6%E4%B9%A0%E6%96%B9%E6%B3%95/">统计学习方法</a></span><span class="level-item">19 分钟读完 (大约2901个字)</span></div></div><div class="content"><h2 id="笔记摘要"><a href="#笔记摘要" class="headerlink" title="笔记摘要"></a>笔记摘要</h2><ul>
 <li>决策树可以认为是if-then规则的集合，也可以认为是定义在特征空间上的条件概率分布</li>
 <li>根据损失函数最小化的原则建立决策树模型</li>
 <li>决策树的路径或其对应的if-then规则集合具有一个重要性质：互斥且完备</li>
 <li>决策树的学习算法包含特征选择、决策树的生成与决策树的剪枝</li>
-<li>决策树的生成对应于模型的局部选择，决策树的剪枝对应于模型的全局选择 <span id="more"></span></li>
+<li>决策树的生成对应于模型的局部选择，决策树的剪枝对应于模型的全局选择<span id="more"></span></li>
 </ul>
-<h3 id="熵">熵</h3>
-<p><span class="math display">\[
-H(p)=H(X)=-\sum_{i=1}^{n}p_i\log p_i
-\]</span></p>
+<h3 id="熵"><a href="#熵" class="headerlink" title="熵"></a>熵</h3><p>$$<br>H(p)=H(X)=-\sum_{i=1}^{n}p_i\log p_i<br>$$</p>
 <ul>
-<li><p><strong>熵只与<span class="math inline">\(X\)</span>的分布有关，与<span class="math inline">\(X\)</span>取值无关</strong></p></li>
-<li><p>定义<span class="math inline">\(0\log0=0\)</span>，熵是非负的</p></li>
-<li><p>表示随机变量不确定性的度量</p></li>
+<li><p><strong>熵只与$X$的分布有关，与$X$取值无关</strong></p>
+</li>
+<li><p>定义$0\log0=0$，熵是非负的</p>
+</li>
+<li><p>表示随机变量不确定性的度量</p>
+</li>
 </ul>
-<h3 id="条件熵">条件熵</h3>
-<ul>
-<li>随机变量<span class="math inline">\((X,Y)\)</span>的联合概率分布为</li>
+<h3 id="条件熵"><a href="#条件熵" class="headerlink" title="条件熵"></a>条件熵</h3><ul>
+<li>随机变量$(X,Y)$的联合概率分布为</li>
 </ul>
-<p><span class="math display">\[P(X=x_i,Y=y_j)=p_{ij}, i=1,2,\dots ,n;j=1,2,\dots ,m\]</span></p>
+<p>$$P(X=x_i,Y=y_j)=p_{ij}, i=1,2,\dots ,n;j=1,2,\dots ,m$$</p>
 <ul>
-<li>条件熵<span class="math inline">\(H(Y|X)\)</span>表示在已知随机变量<span class="math inline">\(X\)</span>的条件下随机变量<span class="math inline">\(Y\)</span>的不确定性 <span class="math display">\[
-H(Y|X)=\sum_{i=1}^np_iH(Y|X=x_i)
-\]</span> 其中<span class="math inline">\(p_i=P(X=x_i),i=1,2,\dots ,n\)</span></li>
+<li>条件熵$H(Y|X)$表示在已知随机变量$X$的条件下随机变量$Y$的不确定性<br>$$<br>H(Y|X)=\sum_{i=1}^np_iH(Y|X=x_i)<br>$$<br>其中$p_i=P(X=x_i),i=1,2,\dots ,n$</li>
 </ul>
-<h3 id="经验熵-经验条件熵">经验熵， 经验条件熵</h3>
-<ul>
+<h3 id="经验熵，-经验条件熵"><a href="#经验熵，-经验条件熵" class="headerlink" title="经验熵， 经验条件熵"></a>经验熵， 经验条件熵</h3><ul>
 <li>当熵和条件熵中的概率由数据估计(特别是极大似然估计)得到时，所对应的熵与条件熵分别称为经验熵和经验条件熵</li>
 </ul>
-<h3 id="信息增益">信息增益</h3>
-<ul>
-<li><p>特征<span class="math inline">\(A\)</span>对训练数据集<span class="math inline">\(D\)</span>的信息增益<span class="math inline">\(g(D|A)\)</span>，定义为集合<span class="math inline">\(D\)</span>的经验熵<span class="math inline">\(H(D)\)</span>与特征<span class="math inline">\(A\)</span>给定的条件下<span class="math inline">\(D\)</span>的经验条件熵<span class="math inline">\(H(D|A)\)</span>之差 <span class="math display">\[
-g(D,A)=H(D)-H(D|A)
-\]</span></p></li>
-<li><p>熵与条件熵的差称为互信息</p></li>
-<li><p>决策树中的信息增益等价于训练数据集中的类与特征的互信息</p></li>
-<li><p>考虑ID这种特征， 本身是唯一的。按照ID做划分， 得到的经验条件熵为0, 会得到最大的信息增益。所以， 按照信息增益的准则来选择特征， 可能会倾向于取值比较多的特征</p></li>
+<h3 id="信息增益"><a href="#信息增益" class="headerlink" title="信息增益"></a>信息增益</h3><ul>
+<li><p>特征$A$对训练数据集$D$的信息增益$g(D|A)$，定义为集合$D$的经验熵$H(D)$与特征$A$给定的条件下$D$的经验条件熵$H(D|A)$之差<br>$$<br>g(D,A)=H(D)-H(D|A)<br>$$</p>
+</li>
+<li><p>熵与条件熵的差称为互信息</p>
+</li>
+<li><p>决策树中的信息增益等价于训练数据集中的类与特征的互信息</p>
+</li>
+<li><p>考虑ID这种特征， 本身是唯一的。按照ID做划分， 得到的经验条件熵为0, 会得到最大的信息增益。所以， 按照信息增益的准则来选择特征， 可能会倾向于取值比较多的特征</p>
+</li>
 </ul>
-<h3 id="信息增益比">信息增益比</h3>
-<ul>
-<li>使用信息增益比可以对上面倾向取值较多的特征的问题进行校正 <span class="math display">\[
-g_R(D,A)=\frac{g(D,A)}{H_A(D)}\\
-H_A(D)=-\sum_{i=1}^n\frac{D_i}{D}log_2\frac{D_i}{D}
-\]</span></li>
+<h3 id="信息增益比"><a href="#信息增益比" class="headerlink" title="信息增益比"></a>信息增益比</h3><ul>
+<li>使用信息增益比可以对上面倾向取值较多的特征的问题进行校正<br>$$<br>g_R(D,A)=\frac{g(D,A)}{H_A(D)}\<br>H_A(D)=-\sum_{i=1}^n\frac{D_i}{D}log_2\frac{D_i}{D}<br>$$</li>
 </ul>
-<h3 id="id3算法">ID3算法</h3>
-<blockquote>
-<p>输入：训练数据集<span class="math inline">\(D\)</span>, 特征集<span class="math inline">\(A\)</span>，阈值<span class="math inline">\(\epsilon\)</span> 输出：决策树<span class="math inline">\(T\)</span></p>
-<ol type="1">
-<li>如果<span class="math inline">\(D\)</span>中所有实例属于同一类<span class="math inline">\(C_k\)</span>，则<span class="math inline">\(T\)</span>为单节点树，并将类<span class="math inline">\(C_k\)</span>作为该节点的类标记，返回<span class="math inline">\(T\)</span></li>
-<li>如果<span class="math inline">\(A\)</span>是空集，则<span class="math inline">\(T\)</span>为单节点树，并将实例数最多的类作为该节点类标记，返回<span class="math inline">\(T\)</span></li>
-<li>计算<span class="math inline">\(g\)</span>, 选择信息增益最大的特征<span class="math inline">\(A_g\)</span></li>
-<li>如果<span class="math inline">\(A_g\)</span>的信息增益小于<span class="math inline">\(\epsilon\)</span>，则置<span class="math inline">\(T\)</span>为单节点树，<span class="math inline">\(D\)</span>中实例数最大的类<span class="math inline">\(C_k\)</span>作为类标记，返回<span class="math inline">\(T\)</span></li>
-<li>否则，依<span class="math inline">\(A_g=a_i\)</span>将D划分若干非空子集<span class="math inline">\(D_i\)</span>，<span class="math inline">\(D_i\)</span>中实例数最大的类<span class="math inline">\(C_k\)</span>作为类标记，构建子结点，由结点及其子结点 构成树<span class="math inline">\(T\)</span>，返回<span class="math inline">\(T\)</span></li>
-<li><span class="math inline">\(D_i\)</span>训练集，<span class="math inline">\(A-A_g\)</span>为特征集，递归调用前面步骤，得到<span class="math inline">\(T_i\)</span>，返回<span class="math inline">\(T_i\)</span></li>
+<h3 id="ID3算法"><a href="#ID3算法" class="headerlink" title="ID3算法"></a>ID3算法</h3><blockquote>
+<p>输入：训练数据集$D$, 特征集$A$，阈值$\epsilon$<br>输出：决策树$T$</p>
+<ol>
+<li>如果$D$中所有实例属于同一类$C_k$，则$T$为单节点树，并将类$C_k$作为该节点的类标记，返回$T$</li>
+<li>如果$A$是空集，则$T$为单节点树，并将实例数最多的类作为该节点类标记，返回$T$</li>
+<li>计算$g$, 选择信息增益最大的特征$A_g$</li>
+<li>如果$A_g$的信息增益小于$\epsilon$，则置$T$为单节点树，$D$中实例数最大的类$C_k$作为类标记，返回$T$</li>
+<li>否则，依$A_g=a_i$将D划分若干非空子集$D_i$，$D_i$中实例数最大的类$C_k$作为类标记，构建子结点，由结点及其子结点 构成树$T$，返回$T$</li>
+<li>$D_i$训练集，$A-A_g$为特征集，递归调用前面步骤，得到$T_i$，返回$T_i$</li>
 </ol>
 </blockquote>
-<h3 id="c4.5的生成算法">C4.5的生成算法</h3>
-<ul>
-<li><p>改用信息增益比来选择特征 &gt; 输入：训练数据集<span class="math inline">\(D\)</span>, 特征集<span class="math inline">\(A\)</span>，阈值<span class="math inline">\(\epsilon\)</span> &gt; 输出：决策树<span class="math inline">\(T\)</span> &gt; &gt; 1. 如果<span class="math inline">\(D\)</span>属于同一类<span class="math inline">\(C_k\)</span>，<span class="math inline">\(T\)</span>为单节点树，类<span class="math inline">\(C_k\)</span>作为该节点的类标记，返回<span class="math inline">\(T\)</span> &gt; 1. 如果<span class="math inline">\(A\)</span>是空集, 置<span class="math inline">\(T\)</span>为单节点树，实例数最多的作为该节点类标记，返回<span class="math inline">\(T\)</span> &gt; 1. 计算<span class="math inline">\(g\)</span>, 选择<strong>信息增益比</strong>最大的特征<span class="math inline">\(A_g\)</span> &gt; 1. 如果<span class="math inline">\(A_g\)</span>的<strong>信息增益比</strong>小于<span class="math inline">\(\epsilon\)</span>，<span class="math inline">\(T\)</span>为单节点树，<span class="math inline">\(D\)</span>中实例数最大的类<span class="math inline">\(C_k\)</span>作为类标记，返回<span class="math inline">\(T\)</span> &gt; 1. 否则，依<span class="math inline">\(A_g=a_i\)</span>将D划分若干非空子集<span class="math inline">\(D_i\)</span>，<span class="math inline">\(D_i\)</span>中实例数最大的类<span class="math inline">\(C_k\)</span>作为类标记，构建子结点，由结点及其子结点 构成树<span class="math inline">\(T\)</span>，返回<span class="math inline">\(T\)</span> &gt; 1. <span class="math inline">\(D_i\)</span>训练集，<span class="math inline">\(A-A_g\)</span>为特征集，递归调用前面步骤，得到<span class="math inline">\(T_i\)</span>，返回<span class="math inline">\(T_i\)</span></p></li>
-<li><p>ID3和C4.5在生成上，差异只在准则的差异</p></li>
-</ul>
-<h3 id="树的剪枝">树的剪枝</h3>
-<ul>
-<li>决策树的剪枝往往通过极小化决策树整体的损失函数或代价函数来实现的</li>
-<li>树<span class="math inline">\(T\)</span>的叶结点个数为<span class="math inline">\(|T|\)</span>，<span class="math inline">\(t\)</span>是树<span class="math inline">\(T\)</span>的叶结点，该结点有<span class="math inline">\(N_t\)</span>个样本点，其中<span class="math inline">\(k\)</span>类的样本点有<span class="math inline">\(N_{tk}\)</span>个，<span class="math inline">\(H_t(T)\)</span>为叶结点<span class="math inline">\(t\)</span>上的经验熵， <span class="math inline">\(\alpha\geqslant 0\)</span>为参数，决策树学习的损失函数可以定义为 <span class="math display">\[
- C_\alpha(T)=\sum_{i=1}^{|T|}N_tH_t(T)+\alpha|T|
- \]</span> 其中 <span class="math display">\[
- H_t(T)=-\sum_k\frac{N_{tk}}{N_t}\log \frac{N_{tk}}{N_t}
- \]</span> <span class="math display">\[
- C(T)=\sum_{t=1}^{|T|}N_tH_t(T)\color{black}=-\sum_{t=1}^{|T|}\sum_{k=1}^KN_{tk}\log\frac{N_{tk}}{N_t}
- \]</span> 这时有 <span class="math display">\[
- C_\alpha(T)=C(T)+\alpha|T|
- \]</span> 其中<span class="math inline">\(C(T)\)</span>表示模型对训练数据的误差，<span class="math inline">\(|T|\)</span>表示模型复杂度，参数<span class="math inline">\(\alpha \geqslant 0\)</span>控制两者之间的影响</li>
-</ul>
-<h3 id="剪枝算法">剪枝算法</h3>
+<h3 id="C4-5的生成算法"><a href="#C4-5的生成算法" class="headerlink" title="C4.5的生成算法"></a>C4.5的生成算法</h3><ul>
+<li><p>改用信息增益比来选择特征</p>
 <blockquote>
-<p>输入：生成算法生成的整个树<span class="math inline">\(T\)</span>，参数<span class="math inline">\(\alpha\)</span></p>
-<p>输出：修剪后的子树<span class="math inline">\(T_\alpha\)</span></p>
-<ol type="1">
-<li>计算每个结点的经验熵</li>
-<li>递归地从树的叶结点向上回缩 假设一组叶结点回缩到其父结点之前与之后的整体树分别是<span class="math inline">\(T_B\)</span>和<span class="math inline">\(T_A\)</span>，其对应的损失函数分别是<span class="math inline">\(C_\alpha(T_A)\)</span>和<span class="math inline">\(C_\alpha(T_B)\)</span>，如果<span class="math inline">\(C_\alpha(T_A)\leqslant C_\alpha(T_B)\)</span>则进行剪枝，即将父结点变为新的叶结点</li>
-<li>返回2，直至不能继续为止，得到损失函数最小的子树<span class="math inline">\(T_\alpha\)</span></li>
+<p>输入：训练数据集$D$, 特征集$A$，阈值$\epsilon$<br>输出：决策树$T$</p>
+<ol>
+<li>如果$D$属于同一类$C_k$，$T$为单节点树，类$C_k$作为该节点的类标记，返回$T$</li>
+<li>如果$A$是空集, 置$T$为单节点树，实例数最多的作为该节点类标记，返回$T$</li>
+<li>计算$g$, 选择<strong>信息增益比</strong>最大的特征$A_g$</li>
+<li>如果$A_g$的<strong>信息增益比</strong>小于$\epsilon$，$T$为单节点树，$D$中实例数最大的类$C_k$作为类标记，返回$T$</li>
+<li>否则，依$A_g=a_i$将D划分若干非空子集$D_i$，$D_i$中实例数最大的类$C_k$作为类标记，构建子结点，由结点及其子结点 构成树$T$，返回$T$</li>
+<li>$D_i$训练集，$A-A_g$为特征集，递归调用前面步骤，得到$T_i$，返回$T_i$</li>
 </ol>
+</blockquote>
+</li>
+<li><p> ID3和C4.5在生成上，差异只在准则的差异</p>
+</li>
+</ul>
+<h3 id="树的剪枝"><a href="#树的剪枝" class="headerlink" title="树的剪枝"></a>树的剪枝</h3><ul>
+<li>决策树的剪枝往往通过极小化决策树整体的损失函数或代价函数来实现的</li>
+<li>树$T$的叶结点个数为$|T|$，$t$是树$T$的叶结点，该结点有$N_t$个样本点，其中$k$类的样本点有$N_{tk}$个，$H_t(T)$为叶结点$t$上的经验熵， $\alpha\geqslant 0$为参数，决策树学习的损失函数可以定义为<br>$$<br>C_\alpha(T)=\sum_{i=1}^{|T|}N_tH_t(T)+\alpha|T|<br>$$<br>其中<br>$$<br>H_t(T)=-\sum_k\frac{N_{tk}}{N_t}\log \frac{N_{tk}}{N_t}<br>$$<br>$$<br>C(T)=\sum_{t=1}^{|T|}N_tH_t(T)\color{black}=-\sum_{t=1}^{|T|}\sum_{k=1}^KN_{tk}\log\frac{N_{tk}}{N_t}<br>$$<br>这时有<br>$$<br>C_\alpha(T)=C(T)+\alpha|T|<br>$$<br>其中$C(T)$表示模型对训练数据的误差，$|T|$表示模型复杂度，参数$\alpha \geqslant 0$控制两者之间的影响</li>
+</ul>
+<h3 id="剪枝算法"><a href="#剪枝算法" class="headerlink" title="剪枝算法"></a>剪枝算法</h3><blockquote>
+<p>输入：生成算法生成的整个树$T$，参数$\alpha$</p>
+<p>输出：修剪后的子树$T_\alpha$</p>
+<ol>
+<li>计算每个结点的经验熵</li>
+<li>递归地从树的叶结点向上回缩<br>假设一组叶结点回缩到其父结点之前与之后的整体树分别是$T_B$和$T_A$，其对应的损失函数分别是$C_\alpha(T_A)$和$C_\alpha(T_B)$，如果$C_\alpha(T_A)\leqslant C_\alpha(T_B)$则进行剪枝，即将父结点变为新的叶结点</li>
+<li>返回2，直至不能继续为止，得到损失函数最小的子树$T_\alpha$</li>
+</ol>
+</blockquote>
 <ul>
 <li>决策树的剪枝算法可以由一种动态规划的算法实现</li>
 </ul>
-</blockquote>
-<h3 id="cart">CART</h3>
-<ul>
+<h3 id="CART"><a href="#CART" class="headerlink" title="CART"></a>CART</h3><ul>
 <li>决策树的生成就是递归地构建二叉决策树的过程。对回归树用平方误差最小化准则，对分类树用基尼系数最小化准则，并进行特征选择，生成二叉树</li>
 </ul>
-<h4 id="最小二乘回归树生成算法">最小二乘回归树生成算法</h4>
-<ul>
+<h4 id="最小二乘回归树生成算法"><a href="#最小二乘回归树生成算法" class="headerlink" title="最小二乘回归树生成算法"></a>最小二乘回归树生成算法</h4><ul>
 <li>在训练数据集所在的输入空间中，递归地将每个区域划分为两个子区域并决定每个子区域上地输出值，构建二叉决策树</li>
 </ul>
 <blockquote>
-<p>输入：训练数据集<span class="math inline">\(D\)</span> 输出：回归树<span class="math inline">\(f(x)\)</span> 步骤： 1. 遍历变量<span class="math inline">\(j\)</span>，对固定的切分变量<span class="math inline">\(j\)</span>扫描切分点<span class="math inline">\(s\)</span>，得到满足下面式子的<span class="math inline">\((j,s)\)</span> <span class="math display">\[
-\min\limits_{j,s}\left[\min\limits_{c_1}\sum\limits_{x_i\in R_1(j,s)}(y_i-c_1)^2+\min\limits_{c_2}\sum\limits_{x_i\in R_2(j,s)}(y_i-c_2)^2\right]
-\]</span> 1. 用选定的<span class="math inline">\((j,s)\)</span>, 划分区域并决定相应的输出值 <span class="math display">\[
-R_1(j,s)=\{x|x^{(j)}\leq s\}, R_2(j,s)=\{x|x^{(j)}&gt; s\} \\
-\hat{c}_m= \frac{1}{N}\sum\limits_{x_i\in R_m(j,s)} y_j, x\in R_m, m=1,2
-\]</span> 1. 对两个子区域调用(1)(2)步骤， 直至满足停止条件 1. 将输入空间划分为<span class="math inline">\(M\)</span>个区域<span class="math inline">\(R_1, R_2,\dots,R_M\)</span>，生成决策树： <span class="math display">\[
-f(x)=\sum_{m=1}^M\hat{c}_mI(x\in R_m)
-\]</span> * 课后题有详细例子</p>
+<p>输入：训练数据集$D$<br>输出：回归树$f(x)$<br>步骤：</p>
+<ol>
+<li>遍历变量$j$，对固定的切分变量$j$扫描切分点$s$，得到满足下面式子的$(j,s)$<br>$$<br>\min\limits_{j,s}\left[\min\limits_{c_1}\sum\limits_{x_i\in R_1(j,s)}(y_i-c_1)^2+\min\limits_{c_2}\sum\limits_{x_i\in R_2(j,s)}(y_i-c_2)^2\right]<br>$$</li>
+<li>用选定的$(j,s)$, 划分区域并决定相应的输出值<br>$$<br>R_1(j,s)={x|x^{(j)}\leq s}, R_2(j,s)={x|x^{(j)}&gt; s} \<br>\hat{c}<em>m= \frac{1}{N}\sum\limits</em>{x_i\in R_m(j,s)} y_j, x\in R_m, m=1,2<br>$$</li>
+<li>对两个子区域调用(1)(2)步骤， 直至满足停止条件</li>
+<li>将输入空间划分为$M$个区域$R_1, R_2,\dots,R_M$，生成决策树：<br>$$<br>f(x)=\sum_{m=1}^M\hat{c}_mI(x\in R_m)<br>$$</li>
+</ol>
 </blockquote>
-<h4 id="cart分类树的生成">CART分类树的生成</h4>
 <ul>
-<li><p>分类树用基尼指数选择最优特征，同时决定该特征的最优二值切分点</p></li>
-<li><p>概率分布的基尼指数定义</p></li>
+<li>课后题有详细例子</li>
 </ul>
-<p><span class="math display">\[
-Gini(p) = \sum_{k=1}^Kp_k(1-p_k)=1-\sum_{k=1}^Kp_k^2
-\]</span> * 如果样本集合<span class="math inline">\(D\)</span>根据特征<span class="math inline">\(A\)</span>是否取某一可能值<span class="math inline">\(a\)</span>被分割成<span class="math inline">\(D_1\)</span>和<span class="math inline">\(D_2\)</span>两部分，则在特征<span class="math inline">\(A\)</span>的条件下，集合<span class="math inline">\(D\)</span>的基尼指数定义为 <span class="math display">\[Gini(D,A)=\frac{|D_1|}{|D|}Gini(D_1)+\frac{|D_2|}{|D|}Gini(D_2)\]</span> &gt;输入：训练数据集<span class="math inline">\(D\)</span>，停止计算的条件 &gt;输出：CART决策树 &gt;根据训练数据集，从根节点开始，递归地对每个结点进行以下操作，构建二叉决策树： &gt;1. 设结点地训练数据集为<span class="math inline">\(D\)</span>，计算现有特征对该数据集的基尼指数。此时，对每一个特征<span class="math inline">\(A\)</span>，对其可能取得每个值<span class="math inline">\(a\)</span>，根据样本点对<span class="math inline">\(A=a\)</span>的测试为“是”或“否”将<span class="math inline">\(D\)</span>分成<span class="math inline">\(D_1\)</span>和<span class="math inline">\(D_2\)</span>两部分，计算<span class="math inline">\(A=a\)</span>时的基尼指数 &gt;1. 在所有可能的特征<span class="math inline">\(A\)</span>以及它们所有可能的切分点<span class="math inline">\(a\)</span>中，选择基尼指数最小的特征及其对应的切分点作为最优特征与最优切分点。依照最优特征和最优切分点，从现结点生成两个子结点，将训练数据集依特征分配到两个子结点中去。 &gt;1. 对两个子结点递归地调用1、2，直至满足停止条件 &gt;1. 生成CART决策树 * 算法停止计算的条件是结点中的样本个数小于预定阈值，或样本集的基尼指数小于指定阈值，或者没有更多特征</p>
-<h2 id="习题解答">习题解答</h2>
+<h4 id="CART分类树的生成"><a href="#CART分类树的生成" class="headerlink" title="CART分类树的生成"></a>CART分类树的生成</h4><ul>
+<li><p>分类树用基尼指数选择最优特征，同时决定该特征的最优二值切分点</p>
+</li>
+<li><p>概率分布的基尼指数定义</p>
+</li>
+</ul>
+<p>$$<br>Gini(p) = \sum_{k=1}^Kp_k(1-p_k)=1-\sum_{k=1}^Kp_k^2<br>$$</p>
 <ul>
+<li>如果样本集合$D$根据特征$A$是否取某一可能值$a$被分割成$D_1$和$D_2$两部分，则在特征$A$的条件下，集合$D$的基尼指数定义为<br>$$Gini(D,A)=\frac{|D_1|}{|D|}Gini(D_1)+\frac{|D_2|}{|D|}Gini(D_2)$$ <blockquote>
+<p>输入：训练数据集$D$，停止计算的条件<br>输出：CART决策树<br>根据训练数据集，从根节点开始，递归地对每个结点进行以下操作，构建二叉决策树：</p>
+<ol>
+<li>设结点地训练数据集为$D$，计算现有特征对该数据集的基尼指数。此时，对每一个特征$A$，对其可能取得每个值$a$，根据样本点对$A=a$的测试为“是”或“否”将$D$分成$D_1$和$D_2$两部分，计算$A=a$时的基尼指数</li>
+<li>在所有可能的特征$A$以及它们所有可能的切分点$a$中，选择基尼指数最小的特征及其对应的切分点作为最优特征与最优切分点。依照最优特征和最优切分点，从现结点生成两个子结点，将训练数据集依特征分配到两个子结点中去。</li>
+<li>对两个子结点递归地调用1、2，直至满足停止条件</li>
+<li>生成CART决策树</li>
+</ol>
+</blockquote>
+</li>
+<li>算法停止计算的条件是结点中的样本个数小于预定阈值，或样本集的基尼指数小于指定阈值，或者没有更多特征</li>
+</ul>
+<h2 id="习题解答"><a href="#习题解答" class="headerlink" title="习题解答"></a>习题解答</h2><ul>
 <li><p>5.1 根据表 5.1 所给的训练数据集，利用信息增益比（C4.5 算法）生成决策树</p>
 <ul>
-<li>编写程序计算信息增益比，并利用C4.5算法生成决策树，得到结果如下 特征（年龄）的信息增益比为： 0.052 特征（有工作）的信息增益比为： 0.352 特征（有自己的房子）的信息增益比为： 0.433 特征（信贷情况）的信息增益比为： 0.232 特征（年龄）的信息增益比为： 0.164 特征（有工作）的信息增益比为： 1.000 特征（有自己的房子）的信息增益比为： 0.340</li>
-<li>决策树 {'label:': None, 'feature': 2, 'tree': {'否': {'label:': None, 'feature': 1, 'tree': {'否': {'label:': '否', 'feature': None, 'tree': {}}, '是': {'label:': '是', 'feature': None, 'tree': {}}}}, '是': {'label:': '是', 'feature': None, 'tree': {}}}}</li>
-<li>结果与ID3算法完全相同 <img src="https://img-blog.csdnimg.cn/2019060915344250.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2x5YzQ0ODEzNDE4,size_16,color_FFFFFF,t_70#pic_center" alt="在这里插入图片描述" /></li>
-</ul></li>
-<li><p>5.2 已知如表 5.2 所示的训练数据，试用平方误差损失准则生成一个二叉回归树 <img src="https://img-blog.csdnimg.cn/201906091538427.png#pic_center" alt="在这里插入图片描述" /></p></li>
-<li><p>5.3 证明 CART 剪枝算法中，当<span class="math inline">\(α\)</span>确定时，存在唯一的最小子树 <span class="math inline">\(T_α\)</span>使损失函数 <span class="math inline">\(C_α(T)\)</span>最小</p>
+<li>编写程序计算信息增益比，并利用C4.5算法生成决策树，得到结果如下<br>特征（年龄）的信息增益比为： 0.052<br>特征（有工作）的信息增益比为： 0.352<br>特征（有自己的房子）的信息增益比为： 0.433<br>特征（信贷情况）的信息增益比为： 0.232<br>特征（年龄）的信息增益比为： 0.164<br>特征（有工作）的信息增益比为： 1.000<br>特征（有自己的房子）的信息增益比为： 0.340</li>
+<li>决策树<br>{‘label:’: None, ‘feature’: 2, ‘tree’: {‘否’: {‘label:’: None, ‘feature’: 1, ‘tree’: {‘否’: {‘label:’: ‘否’, ‘feature’: None, ‘tree’: {}}, ‘是’: {‘label:’: ‘是’, ‘feature’: None, ‘tree’: {}}}}, ‘是’: {‘label:’: ‘是’, ‘feature’: None, ‘tree’: {}}}}</li>
+<li>结果与ID3算法完全相同<br><img src="https://img-blog.csdnimg.cn/2019060915344250.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2x5YzQ0ODEzNDE4,size_16,color_FFFFFF,t_70#pic_center" alt="在这里插入图片描述">  </li>
+</ul>
+</li>
+<li><p>5.2 已知如表 5.2 所示的训练数据，试用平方误差损失准则生成一个二叉回归树<br><img src="https://img-blog.csdnimg.cn/201906091538427.png#pic_center" alt="在这里插入图片描述"></p>
+</li>
+<li><p>5.3 证明 CART 剪枝算法中，当$α$确定时，存在唯一的最小子树 $T_α$使损失函数 $C_α(T)$最小</p>
 <ul>
-<li>利用反证法，假设存在两个最小子树使损失函数最小 设这两棵最小子树 为<span class="math inline">\(T_1\)</span>​ 和 <span class="math inline">\(T_2\)</span>​ ，其剪枝位置分别是 <span class="math inline">\(t_1\)</span>​ 和 <span class="math inline">\(t_2\)</span>​ ，两者都能使得损失函数最小，即两者拥有相等的 <span class="math inline">\(C_\alpha(T)​\)</span> 又有： <span class="math display">\[C_\alpha(t_1)&lt;C_\alpha(T_{t1})\\ C_\alpha(t_2)&lt;C_\alpha(T_{t2})\]</span> 即剪枝<span class="math inline">\(t_1\)</span>,<span class="math inline">\(t_2\)</span> ，总能使得整体损失函数减小，因此对于子树 <span class="math inline">\(T_1\)</span>, <span class="math inline">\(T_2\)</span> ，总存在进一步的剪枝，使得损失函数进一步减小（在 <span class="math inline">\(T_1\)</span> 中剪枝 <span class="math inline">\(t_2\)</span>,在 <span class="math inline">\(T_2\)</span> 中剪枝 <span class="math inline">\(t_1\)</span> ），因此 <span class="math inline">\(T_1\)</span>, <span class="math inline">\(T_2\)</span> 不是最优的子树。 即不可能存在两棵及以上的最优子树</li>
-</ul></li>
-<li><p>5.4 证明 CART 剪枝算法中求出的子树序列<span class="math inline">\(\{T_0,T_1,⋅⋅⋅,T_n\}\)</span>分别是区间 <span class="math inline">\(α∈[α_i,α_{i+1})\)</span>的最优子树<span class="math inline">\(T_\alpha\)</span> ，这里<span class="math inline">\(i=0,1,⋅⋅⋅,n,0=\alpha_0&lt;\alpha_1&lt;\cdot\cdot\cdot&lt;\alpha_n&lt;+\infty\)</span></p>
+<li>利用反证法，假设存在两个最小子树使损失函数最小<br>设这两棵最小子树 为$T_1$​ 和 $T_2$​ ，其剪枝位置分别是 $t_1$​ 和 $t_2$​ ，两者都能使得损失函数最小，即两者拥有相等的 $C_\alpha(T)​$<br>又有：<br>$$C_\alpha(t_1)&lt;C_\alpha(T_{t1})\ C_\alpha(t_2)&lt;C_\alpha(T_{t2})$$<br>即剪枝$t_1$,$t_2$ ，总能使得整体损失函数减小，因此对于子树 $T_1$, $T_2$ ，总存在进一步的剪枝，使得损失函数进一步减小（在 $T_1$ 中剪枝 $t_2$,在 $T_2$ 中剪枝 $t_1$ ），因此  $T_1$, $T_2$ 不是最优的子树。<br>即不可能存在两棵及以上的最优子树</li>
+</ul>
+</li>
+<li><p>5.4 证明 CART 剪枝算法中求出的子树序列${T_0,T_1,⋅⋅⋅,T_n}$分别是区间 $α∈[α_i,α_{i+1})$的最优子树$T_\alpha$ ，这里$i=0,1,⋅⋅⋅,n,0=\alpha_0&lt;\alpha_1&lt;\cdot\cdot\cdot&lt;\alpha_n&lt;+\infty$</p>
 <ul>
 <li>参见 <a target="_blank" rel="noopener" href="https://www.taylorfrancis.com/books/9781315139470">Breiman的著作</a></li>
-</ul></li>
 </ul>
-</div><div class="article-licensing box"><div class="licensing-title"><p>决策树</p><p><a href="https://hunlp.com/posts/51507.html">https://hunlp.com/posts/51507.html</a></p></div><div class="licensing-meta level is-mobile"><div class="level-left"><div class="level-item is-narrow"><div><h6>作者</h6><p>ฅ´ω`ฅ</p></div></div><div class="level-item is-narrow"><div><h6>发布于</h6><p>2021-05-27</p></div></div><div class="level-item is-narrow"><div><h6>更新于</h6><p>2021-05-29</p></div></div><div class="level-item is-narrow"><div><h6>许可协议</h6><p><a class="icons" rel="noopener" target="_blank" title="Creative Commons" href="https://creativecommons.org/"><i class="icon fab fa-creative-commons"></i></a><a class="icons" rel="noopener" target="_blank" title="Attribution" href="https://creativecommons.org/licenses/by/4.0/"><i class="icon fab fa-creative-commons-by"></i></a><a class="icons" rel="noopener" target="_blank" title="Noncommercial" href="https://creativecommons.org/licenses/by-nc/4.0/"><i class="icon fab fa-creative-commons-nc"></i></a></p></div></div></div></div></div><hr style="height:1px;margin:1rem 0"><div class="level is-mobile is-flex"><div class="article-tags is-size-7 is-uppercase"><i class="fas fa-tags has-text-grey"></i> <a class="link-muted" rel="tag" href="/tags/%E7%AC%94%E8%AE%B0/">笔记, </a><a class="link-muted" rel="tag" href="/tags/%E5%86%B3%E7%AD%96%E6%A0%91/">决策树 </a></div></div><div class="bdsharebuttonbox"><a class="bds_more" href="#" data-cmd="more"></a><a class="bds_qzone" href="#" data-cmd="qzone" title="分享到QQ空间"></a><a class="bds_tsina" href="#" data-cmd="tsina" title="分享到新浪微博"></a><a class="bds_tqq" href="#" data-cmd="tqq" title="分享到腾讯微博"></a><a class="bds_renren" href="#" data-cmd="renren" title="分享到人人网"></a><a class="bds_weixin" href="#" data-cmd="weixin" title="分享到微信"></a></div><script>window._bd_share_config = { "common": { "bdSnsKey": {}, "bdText": "", "bdMini": "2", "bdPic": "", "bdStyle": "0", "bdSize": "16" }, "share": {} }; with (document) 0[(getElementsByTagName('head')[0] || body).appendChild(createElement('script')).src = 'http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion=' + ~(-new Date() / 36e5)];</script></article></div><div class="card"><div class="card-content"><h3 class="menu-label has-text-centered">喜欢这篇文章？打赏一下作者吧</h3><div class="buttons is-centered"><a class="button donate" data-type="alipay"><span class="icon is-small"><i class="fab fa-alipay"></i></span><span>支付宝</span><span class="qrcode"><img src="/" alt="支付宝"></span></a><a class="button donate" data-type="wechat"><span class="icon is-small"><i class="fab fa-weixin"></i></span><span>微信</span><span class="qrcode"><img src="/" alt="微信"></span></a></div></div></div><nav class="post-navigation mt-4 level is-mobile"><div class="level-start"><a class="article-nav-prev level level-item link-muted" href="/posts/12171.html"><i class="level-item fas fa-chevron-left"></i><span class="level-item">逻辑斯谛回归与最大熵模型</span></a></div><div class="level-end"><a class="article-nav-next level level-item link-muted" href="/posts/32633.html"><span class="level-item">Finite Markov DecisionProcesses</span><i class="level-item fas fa-chevron-right"></i></a></div></nav><div class="card"><div class="card-content"><h3 class="title is-5">评论</h3><div id="comment-container"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1.7.2/dist/gitalk.css"><script src="https://cdn.jsdelivr.net/npm/gitalk@1.7.2/dist/gitalk.min.js"></script><script>var gitalk = new Gitalk({
+</li>
+</ul>
+</div><div class="article-licensing box"><div class="licensing-title"><p>决策树</p><p><a href="https://hunlp.com/posts/51507.html">https://hunlp.com/posts/51507.html</a></p></div><div class="licensing-meta level is-mobile"><div class="level-left"><div class="level-item is-narrow"><div><h6>作者</h6><p>ฅ´ω`ฅ</p></div></div><div class="level-item is-narrow"><div><h6>发布于</h6><p>2021-03-27</p></div></div><div class="level-item is-narrow"><div><h6>更新于</h6><p>2021-05-31</p></div></div><div class="level-item is-narrow"><div><h6>许可协议</h6><p><a class="icons" rel="noopener" target="_blank" title="Creative Commons" href="https://creativecommons.org/"><i class="icon fab fa-creative-commons"></i></a><a class="icons" rel="noopener" target="_blank" title="Attribution" href="https://creativecommons.org/licenses/by/4.0/"><i class="icon fab fa-creative-commons-by"></i></a><a class="icons" rel="noopener" target="_blank" title="Noncommercial" href="https://creativecommons.org/licenses/by-nc/4.0/"><i class="icon fab fa-creative-commons-nc"></i></a></p></div></div></div></div></div><hr style="height:1px;margin:1rem 0"><div class="level is-mobile is-flex"><div class="article-tags is-size-7 is-uppercase"><i class="fas fa-tags has-text-grey"></i> <a class="link-muted" rel="tag" href="/tags/%E7%AC%94%E8%AE%B0/">笔记, </a><a class="link-muted" rel="tag" href="/tags/%E5%86%B3%E7%AD%96%E6%A0%91/">决策树 </a></div></div><div class="bdsharebuttonbox"><a class="bds_more" href="#" data-cmd="more"></a><a class="bds_qzone" href="#" data-cmd="qzone" title="分享到QQ空间"></a><a class="bds_tsina" href="#" data-cmd="tsina" title="分享到新浪微博"></a><a class="bds_tqq" href="#" data-cmd="tqq" title="分享到腾讯微博"></a><a class="bds_renren" href="#" data-cmd="renren" title="分享到人人网"></a><a class="bds_weixin" href="#" data-cmd="weixin" title="分享到微信"></a></div><script>window._bd_share_config = { "common": { "bdSnsKey": {}, "bdText": "", "bdMini": "2", "bdPic": "", "bdStyle": "0", "bdSize": "16" }, "share": {} }; with (document) 0[(getElementsByTagName('head')[0] || body).appendChild(createElement('script')).src = 'http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion=' + ~(-new Date() / 36e5)];</script></article></div><div class="card"><div class="card-content"><h3 class="menu-label has-text-centered">喜欢这篇文章？打赏一下作者吧</h3><div class="buttons is-centered"><a class="button donate" data-type="alipay"><span class="icon is-small"><i class="fab fa-alipay"></i></span><span>支付宝</span><span class="qrcode"><img src="/" alt="支付宝"></span></a><a class="button donate" data-type="wechat"><span class="icon is-small"><i class="fab fa-weixin"></i></span><span>微信</span><span class="qrcode"><img src="/" alt="微信"></span></a></div></div></div><nav class="post-navigation mt-4 level is-mobile"><div class="level-start"><a class="article-nav-prev level level-item link-muted" href="/posts/12171.html"><i class="level-item fas fa-chevron-left"></i><span class="level-item">逻辑斯谛回归与最大熵模型</span></a></div><div class="level-end"><a class="article-nav-next level level-item link-muted" href="/posts/32633.html"><span class="level-item">Finite Markov DecisionProcesses</span><i class="level-item fas fa-chevron-right"></i></a></div></nav><div class="card"><div class="card-content"><h3 class="title is-5">评论</h3><div id="comment-container"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1.7.2/dist/gitalk.css"><script src="https://cdn.jsdelivr.net/npm/gitalk@1.7.2/dist/gitalk.min.js"></script><script>var gitalk = new Gitalk({
             id: "0523e2130e0025239d3aebe5fb6e3ca5",
             repo: "Cartride.github.io",
             owner: "Cartride",
@@ -159,7 +167,7 @@ Gini(p) = \sum_{k=1}^Kp_k(1-p_k)=1-\sum_{k=1}^Kp_k^2
             enableHotKey: true,
             
         })
-        gitalk.render('comment-container')</script></div></div></div><div class="column column-left is-4-tablet is-4-desktop is-3-widescreen  order-1 is-sticky"><div class="card widget" id="toc" data-type="toc"><div class="card-content"><div class="menu"><h3 class="menu-label">目录</h3><ul class="menu-list"><li><a class="level is-mobile" href="#笔记摘要"><span class="level-left"><span class="level-item">1</span><span class="level-item">笔记摘要</span></span></a><ul class="menu-list"><li><a class="level is-mobile" href="#熵"><span class="level-left"><span class="level-item">1.1</span><span class="level-item">熵</span></span></a></li><li><a class="level is-mobile" href="#条件熵"><span class="level-left"><span class="level-item">1.2</span><span class="level-item">条件熵</span></span></a></li><li><a class="level is-mobile" href="#经验熵-经验条件熵"><span class="level-left"><span class="level-item">1.3</span><span class="level-item">经验熵， 经验条件熵</span></span></a></li><li><a class="level is-mobile" href="#信息增益"><span class="level-left"><span class="level-item">1.4</span><span class="level-item">信息增益</span></span></a></li><li><a class="level is-mobile" href="#信息增益比"><span class="level-left"><span class="level-item">1.5</span><span class="level-item">信息增益比</span></span></a></li><li><a class="level is-mobile" href="#id3算法"><span class="level-left"><span class="level-item">1.6</span><span class="level-item">ID3算法</span></span></a></li><li><a class="level is-mobile" href="#c4.5的生成算法"><span class="level-left"><span class="level-item">1.7</span><span class="level-item">C4.5的生成算法</span></span></a></li><li><a class="level is-mobile" href="#树的剪枝"><span class="level-left"><span class="level-item">1.8</span><span class="level-item">树的剪枝</span></span></a></li><li><a class="level is-mobile" href="#剪枝算法"><span class="level-left"><span class="level-item">1.9</span><span class="level-item">剪枝算法</span></span></a></li><li><a class="level is-mobile" href="#cart"><span class="level-left"><span class="level-item">1.10</span><span class="level-item">CART</span></span></a><ul class="menu-list"><li><a class="level is-mobile" href="#最小二乘回归树生成算法"><span class="level-left"><span class="level-item">1.10.1</span><span class="level-item">最小二乘回归树生成算法</span></span></a></li><li><a class="level is-mobile" href="#cart分类树的生成"><span class="level-left"><span class="level-item">1.10.2</span><span class="level-item">CART分类树的生成</span></span></a></li></ul></li></ul></li><li><a class="level is-mobile" href="#习题解答"><span class="level-left"><span class="level-item">2</span><span class="level-item">习题解答</span></span></a></li></ul></div></div><style>#toc .menu-list > li > a.is-active + .menu-list { display: block; }#toc .menu-list > li > a + .menu-list { display: none; }</style><script src="/js/toc.js" defer></script></div></div><!--!--></div></div></section><footer class="footer"><div class="container"><div class="level"><div class="level-start"><a class="footer-logo is-block mb-2" href="/"><img src="/img/logo.png" alt="MCFON" height="28"></a><p class="is-size-7"><span>&copy; 2021 ฅ´ω`ฅ</span>  Powered by <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a> &amp; <a href="https://github.com/ppoffice/hexo-theme-icarus" target="_blank" rel="noopener">Icarus</a></p></div><div class="level-end"><div class="field has-addons"><p class="control"><a class="button is-transparent is-large" target="_blank" rel="noopener" title="Creative Commons" href="https://creativecommons.org/"><i class="fab fa-creative-commons"></i></a></p><p class="control"><a class="button is-transparent is-large" target="_blank" rel="noopener" title="Attribution 4.0 International" href="https://creativecommons.org/licenses/by/4.0/"><i class="fab fa-creative-commons-by"></i></a></p><p class="control"><a class="button is-transparent is-large" target="_blank" rel="noopener" title="Download on GitHub" href="https://github.com/ppoffice/hexo-theme-icarus"><i class="fab fa-github"></i></a></p></div></div></div></div></footer><script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script><script src="https://cdn.jsdelivr.net/npm/moment@2.22.2/min/moment-with-locales.min.js"></script><script src="https://cdn.jsdelivr.net/npm/clipboard@2.0.4/dist/clipboard.min.js" defer></script><script>moment.locale("zh-CN");</script><script>var IcarusThemeSettings = {
+        gitalk.render('comment-container')</script></div></div></div><div class="column column-left is-4-tablet is-4-desktop is-3-widescreen  order-1 is-sticky"><div class="card widget" id="toc" data-type="toc"><div class="card-content"><div class="menu"><h3 class="menu-label">目录</h3><ul class="menu-list"><li><a class="level is-mobile" href="#笔记摘要"><span class="level-left"><span class="level-item">1</span><span class="level-item">笔记摘要</span></span></a><ul class="menu-list"><li><a class="level is-mobile" href="#熵"><span class="level-left"><span class="level-item">1.1</span><span class="level-item">熵</span></span></a></li><li><a class="level is-mobile" href="#条件熵"><span class="level-left"><span class="level-item">1.2</span><span class="level-item">条件熵</span></span></a></li><li><a class="level is-mobile" href="#经验熵，-经验条件熵"><span class="level-left"><span class="level-item">1.3</span><span class="level-item">经验熵， 经验条件熵</span></span></a></li><li><a class="level is-mobile" href="#信息增益"><span class="level-left"><span class="level-item">1.4</span><span class="level-item">信息增益</span></span></a></li><li><a class="level is-mobile" href="#信息增益比"><span class="level-left"><span class="level-item">1.5</span><span class="level-item">信息增益比</span></span></a></li><li><a class="level is-mobile" href="#ID3算法"><span class="level-left"><span class="level-item">1.6</span><span class="level-item">ID3算法</span></span></a></li><li><a class="level is-mobile" href="#C4-5的生成算法"><span class="level-left"><span class="level-item">1.7</span><span class="level-item">C4.5的生成算法</span></span></a></li><li><a class="level is-mobile" href="#树的剪枝"><span class="level-left"><span class="level-item">1.8</span><span class="level-item">树的剪枝</span></span></a></li><li><a class="level is-mobile" href="#剪枝算法"><span class="level-left"><span class="level-item">1.9</span><span class="level-item">剪枝算法</span></span></a></li><li><a class="level is-mobile" href="#CART"><span class="level-left"><span class="level-item">1.10</span><span class="level-item">CART</span></span></a><ul class="menu-list"><li><a class="level is-mobile" href="#最小二乘回归树生成算法"><span class="level-left"><span class="level-item">1.10.1</span><span class="level-item">最小二乘回归树生成算法</span></span></a></li><li><a class="level is-mobile" href="#CART分类树的生成"><span class="level-left"><span class="level-item">1.10.2</span><span class="level-item">CART分类树的生成</span></span></a></li></ul></li></ul></li><li><a class="level is-mobile" href="#习题解答"><span class="level-left"><span class="level-item">2</span><span class="level-item">习题解答</span></span></a></li></ul></div></div><style>#toc .menu-list > li > a.is-active + .menu-list { display: block; }#toc .menu-list > li > a + .menu-list { display: none; }</style><script src="/js/toc.js" defer></script></div></div><!--!--></div></div></section><footer class="footer"><div class="container"><div class="level"><div class="level-start"><a class="footer-logo is-block mb-2" href="/"><img src="/img/logo.png" alt="MCFON" height="28"></a><p class="is-size-7"><span>&copy; 2021 ฅ´ω`ฅ</span>  Powered by <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a> &amp; <a href="https://github.com/ppoffice/hexo-theme-icarus" target="_blank" rel="noopener">Icarus</a></p></div><div class="level-end"><div class="field has-addons"><p class="control"><a class="button is-transparent is-large" target="_blank" rel="noopener" title="Creative Commons" href="https://creativecommons.org/"><i class="fab fa-creative-commons"></i></a></p><p class="control"><a class="button is-transparent is-large" target="_blank" rel="noopener" title="Attribution 4.0 International" href="https://creativecommons.org/licenses/by/4.0/"><i class="fab fa-creative-commons-by"></i></a></p><p class="control"><a class="button is-transparent is-large" target="_blank" rel="noopener" title="Download on GitHub" href="https://github.com/ppoffice/hexo-theme-icarus"><i class="fab fa-github"></i></a></p></div></div></div></div></footer><script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script><script src="https://cdn.jsdelivr.net/npm/moment@2.22.2/min/moment-with-locales.min.js"></script><script src="https://cdn.jsdelivr.net/npm/clipboard@2.0.4/dist/clipboard.min.js" defer></script><script>moment.locale("zh-CN");</script><script>var IcarusThemeSettings = {
             article: {
                 highlight: {
                     clipboard: true,
