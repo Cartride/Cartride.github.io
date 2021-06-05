@@ -9,13 +9,6 @@
   </url>
   
   <url>
-    <loc>https://hunlp.com/posts/52951.html</loc>
-    
-    <lastmod>2021-06-05</lastmod>
-    
-  </url>
-  
-  <url>
     <loc>https://hunlp.com/posts/9305.html</loc>
     
     <lastmod>2021-06-01</lastmod>
@@ -1187,6 +1180,13 @@
   </url>
   
   <url>
+    <loc>https://hunlp.com/tags/%E8%AF%AD%E8%A8%80%E6%A8%A1%E5%9E%8B/</loc>
+    <lastmod>2021-06-05</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
     <loc>https://hunlp.com/tags/%E7%AE%97%E6%B3%95/</loc>
     <lastmod>2021-06-05</lastmod>
     <changefreq>daily</changefreq>
@@ -1195,13 +1195,6 @@
   
   <url>
     <loc>https://hunlp.com/tags/%E9%9D%A2%E8%AF%95%E4%B8%93%E5%9C%BA/</loc>
-    <lastmod>2021-06-05</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://hunlp.com/tags/%E8%AF%AD%E8%A8%80%E6%A8%A1%E5%9E%8B/</loc>
     <lastmod>2021-06-05</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -1299,14 +1292,14 @@
   </url>
   
   <url>
-    <loc>https://hunlp.com/tags/Temporal-Difference/</loc>
+    <loc>https://hunlp.com/tags/Tagging/</loc>
     <lastmod>2021-06-05</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
-    <loc>https://hunlp.com/tags/Tagging/</loc>
+    <loc>https://hunlp.com/tags/Temporal-Difference/</loc>
     <lastmod>2021-06-05</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -1439,14 +1432,14 @@
   </url>
   
   <url>
-    <loc>https://hunlp.com/tags/AdaBoost/</loc>
+    <loc>https://hunlp.com/tags/SVM/</loc>
     <lastmod>2021-06-05</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
-    <loc>https://hunlp.com/tags/SVM/</loc>
+    <loc>https://hunlp.com/tags/AdaBoost/</loc>
     <lastmod>2021-06-05</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
