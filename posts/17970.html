@@ -1,0 +1,721 @@
+<!doctype html>
+<html lang="zh"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"><meta><title>BERT基本原理及运用 - MCFON</title><link rel="manifest" href="/manifest.json"><meta name="application-name" content="MCFON"><meta name="msapplication-TileImage" content="/img/favicon.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="MCFON"><meta name="apple-mobile-web-app-status-bar-style" content="default"><meta name="description" content="BERT基本原理 BERT:Bidirectional Encoder Representations from Transformers ## BERT架构 - 自编码语言模型，模型结构为 Transformer 的编码器；由12层或更多的EncoderLayer组成"><meta property="og:type" content="blog"><meta property="og:title" content="BERT基本原理及运用"><meta property="og:url" content="https://hunlp.com/posts/17970.html"><meta property="og:site_name" content="MCFON"><meta property="og:description" content="BERT基本原理 BERT:Bidirectional Encoder Representations from Transformers ## BERT架构 - 自编码语言模型，模型结构为 Transformer 的编码器；由12层或更多的EncoderLayer组成"><meta property="og:locale" content="zh_CN"><meta property="og:image" content="https://tva1.sinaimg.cn/large/008i3skNly1gr7wujgy4mj312a0u077a.jpg"><meta property="og:image" content="https://tva1.sinaimg.cn/large/008i3skNly1gr7wuy4fkcj31cf0l8q89.jpg"><meta property="og:image" content="https://tva1.sinaimg.cn/large/008i3skNly1gr7wxz0ys2j30w60a675o.jpg"><meta property="og:image" content="https://tva1.sinaimg.cn/large/008i3skNly1gr7wycn7eoj30k609kq3u.jpg"><meta property="og:image" content="https://tva1.sinaimg.cn/large/008i3skNly1gr7wytlba7j30kw0bbaav.jpg"><meta property="og:image" content="https://tva1.sinaimg.cn/large/008i3skNly1gr7wytlba7j30kw0bbaav.jpg"><meta property="og:image" content="https://tva1.sinaimg.cn/large/008i3skNly1gr7wztkucqj30q30fogo1.jpg"><meta property="og:image" content="https://tva1.sinaimg.cn/large/008i3skNly1gr7wztkucqj30q30fogo1.jpg"><meta property="og:image" content="https://tva1.sinaimg.cn/large/008i3skNly1gr7x0f1hgxj30pw0fo40x.jpg"><meta property="og:image" content="https://tva1.sinaimg.cn/large/008i3skNly1gr7x0oe575j31dn0dv41w.jpg"><meta property="og:image" content="https://hunlp.com/posts/images/bert-bidirectional.png"><meta property="article:published_time" content="2021-06-05T17:35:34.000Z"><meta property="article:modified_time" content="2021-06-05T17:44:06.315Z"><meta property="article:author" content="ฅ´ω`ฅ"><meta property="article:tag" content="Bert"><meta property="twitter:card" content="summary"><meta property="twitter:image" content="https://tva1.sinaimg.cn/large/008i3skNly1gr7wujgy4mj312a0u077a.jpg"><script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","mainEntityOfPage":{"@type":"WebPage","@id":"https://hunlp.com/posts/17970.html"},"headline":"BERT基本原理及运用","image":["https://tva1.sinaimg.cn/large/008i3skNly1gr7wujgy4mj312a0u077a.jpg","https://tva1.sinaimg.cn/large/008i3skNly1gr7wuy4fkcj31cf0l8q89.jpg","https://tva1.sinaimg.cn/large/008i3skNly1gr7wxz0ys2j30w60a675o.jpg","https://tva1.sinaimg.cn/large/008i3skNly1gr7wycn7eoj30k609kq3u.jpg","https://tva1.sinaimg.cn/large/008i3skNly1gr7wytlba7j30kw0bbaav.jpg","https://tva1.sinaimg.cn/large/008i3skNly1gr7wytlba7j30kw0bbaav.jpg","https://tva1.sinaimg.cn/large/008i3skNly1gr7wztkucqj30q30fogo1.jpg","https://tva1.sinaimg.cn/large/008i3skNly1gr7wztkucqj30q30fogo1.jpg","https://tva1.sinaimg.cn/large/008i3skNly1gr7x0f1hgxj30pw0fo40x.jpg","https://tva1.sinaimg.cn/large/008i3skNly1gr7x0oe575j31dn0dv41w.jpg","https://hunlp.com/posts/images/bert-bidirectional.png"],"datePublished":"2021-06-05T17:35:34.000Z","dateModified":"2021-06-05T17:44:06.315Z","author":{"@type":"Person","name":"ฅ´ω`ฅ"},"publisher":{"@type":"Organization","name":"MCFON","logo":{"@type":"ImageObject","url":"https://hunlp.com/img/logo.png"}},"description":"BERT基本原理 BERT:Bidirectional Encoder Representations from Transformers ## BERT架构 - 自编码语言模型，模型结构为 Transformer 的编码器；由12层或更多的EncoderLayer组成"}</script><link rel="canonical" href="https://hunlp.com/posts/17970.html"><link rel="icon" href="/img/favicon.png"><link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.2/css/all.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@9.12.0/styles/atom-one-light.css"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@400;600&amp;family=Source+Code+Pro"><link rel="stylesheet" href="/css/default.css"><style>body>.footer,body>.navbar,body>.section{opacity:0}</style><!--!--><script>var _hmt = _hmt || [];
+        (function() {
+            var hm = document.createElement("script");
+            hm.src = "//hm.baidu.com/hm.js?b99420d7a06d2b3361a8efeaf6e20764";
+            var s = document.getElementsByTagName("script")[0];
+            s.parentNode.insertBefore(hm, s);
+        })();</script><!--!--><!--!--><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/cookieconsent@3.1.1/build/cookieconsent.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lightgallery@1.6.8/dist/css/lightgallery.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/justifiedGallery@3.7.0/dist/css/justifiedGallery.min.css"><script src="https://www.googletagmanager.com/gtag/js?id=UA-131608076-1" async></script><script>window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+    
+        gtag('config', 'UA-131608076-1');</script><!--!--><!--!--><!--!--><script src="https://cdn.jsdelivr.net/npm/pace-js@1.0.2/pace.min.js"></script><!--!--><!--!--><meta name="generator" content="Hexo 5.4.0"></head><body class="is-3-column"><nav class="navbar navbar-main"><div class="container"><div class="navbar-brand justify-content-center"><a class="navbar-item navbar-logo" href="/"><img src="/img/logo.png" alt="MCFON" height="28"></a></div><div class="navbar-menu"><div class="navbar-start"><a class="navbar-item" href="/">主页</a><a class="navbar-item" href="/archives">归档</a><a class="navbar-item" href="/categories">分类</a><a class="navbar-item" href="/tags">标签</a><a class="navbar-item" href="/about">关于</a></div><div class="navbar-end"><a class="navbar-item" target="_blank" rel="noopener" title="Download on GitHub" href="https://github.com/ppoffice/hexo-theme-icarus"><i class="fab fa-github"></i></a><a class="navbar-item is-hidden-tablet catalogue" title="目录" href="javascript:;"><i class="fas fa-list-ul"></i></a><a class="navbar-item search" title="搜索" href="javascript:;"><i class="fas fa-search"></i></a></div></div></div></nav><section class="section"><div class="container"><div class="columns"><div class="column order-2 column-main is-8-tablet is-8-desktop is-9-widescreen"><div class="card"><article class="card-content article" role="article"><h1 class="title is-size-3 is-size-4-mobile has-text-weight-normal"><i class="fas fa-angle-double-right"></i>BERT基本原理及运用</h1><div class="article-meta is-size-7 is-uppercase level is-mobile"><div class="level-left"><span class="level-item"><i class="far fa-calendar-alt"> </i><time dateTime="${date_xml(page.date)}" title="${date_xml(page.date)}">2021-06-06</time></span><span class="level-item is-hidden-mobile"><i class="far fa-calendar-check"> </i><time dateTime="${date_xml(page.updated)}" title="${date_xml(page.updated)}">2021-06-06</time></span><span class="level-item"><a class="link-muted" href="/categories/%E8%87%AA%E7%84%B6%E8%AF%AD%E8%A8%80%E5%A4%84%E7%90%86/">自然语言处理</a></span><span class="level-item">1 小时读完 (大约6709个字)</span></div></div><div class="content"><h1 id="bert基本原理"><code>BERT</code>基本原理</h1>
+<p><code>BERT:Bidirectional Encoder Representations from Transformers</code> ## BERT架构 - 自编码语言模型，模型结构为 <code>Transformer</code> 的<strong>编码器</strong>；由12层或更多的<code>EncoderLayer</code>组成 <img src="https://tva1.sinaimg.cn/large/008i3skNly1gr7wujgy4mj312a0u077a.jpg" /> <span id="more"></span><br />
+## BERT预训练<br />
+用两个任务来预训练该模型，如下图 (a) 所示 <img src="https://tva1.sinaimg.cn/large/008i3skNly1gr7wuy4fkcj31cf0l8q89.jpg" /> - <code>MaskLM</code>，输入的话中随机选择一些词，用特殊符号 <code>[MASK]</code> 替换，让模型预测这些词 - 训练过程类似“完形填空”。在一句话中随机选择 <code>15%</code> 的单词用于预测，其中 <code>80%</code> 情况下采用特殊符号 <code>[MASK]</code> 替换，<code>10%</code> 情况采用任意词替换，<code>10%</code> 的情况下保持原词汇不变 - 之所以这样做：在后续微调任务中语句中并不会出现 <code>[MASK]</code> 标记 - 预测一个词汇时，模型并不知道输入对应位置的词汇是否为正确的词汇（<code>10%</code>概率），这就迫使模型更多地依赖于上下文信息去预测词汇，并且赋予了模型一定的纠错能力。 - 因此模型可能需要更多的训练步骤来收敛</p>
+<ul>
+<li><code>Next Sentence Prediction</code>，输入的两句话，让模型判断是否是连续的两句话，让模型学习连续的文本片段之间的关系
+<ul>
+<li>类似于“连句任务”，给定一篇文章中的两句话，判断第二句话在文本中是否紧跟在第一句话之后</li>
+<li>文本语料库中随机选择 <code>50%</code> 的正确语句对和 <code>50%</code> 的错误语句对进行训练</li>
+</ul></li>
+<li>两个任务联合训练，使模型输出的每个字 / 词的向量表示都能尽可能全面、准确地刻画输入文本（单句或语句对）的整体信息，为后续的微调任务提供更好的模型参数初始值。</li>
+</ul>
+<h2 id="bert微调">BERT微调</h2>
+<p>如上图 (b) 所示，预训练好的模型，对新的句子进行编码，然后取 <code>[CLS]</code>对应的输出向量，进行分类任务；或最后的几个输出向量，进行其它任务</p>
+<h2 id="bert优缺点">BERT优缺点</h2>
+<ul>
+<li>相较于 <code>RNN、LSTM</code> 可以实现并发训练，同时提取词在句子中的关系特征，在不同的层次提取关系特征，进而更全面反映句子语义。</li>
+<li>相较于 <code>word2vec</code>，其又能根据句子上下文获取词义，从而避免歧义出现。</li>
+<li>模型参数太多，而且模型太大，少量数据训练时，容易过拟合。</li>
+</ul>
+<h1 id="bert用于分类任务">BERT用于分类任务</h1>
+<ul>
+<li>因为bert模型的词汇在预训练时已经固定，所以<span class="burk">必须使用bert模型自带的分词器对文本处理</span></li>
+<li><span class="burk">文本必须处理成满足bert模型输入的格式要求</span>，添加特殊的<code>token:[CLS],[SEP],[PAD]</code></li>
+</ul>
+<h2 id="语料">语料</h2>
+<p><a target="_blank" rel="noopener" href="https://nyu-mll.github.io/CoLA/"><code>COLA(The Corpus of Linguistic Acceptability)</code></a> ,句子在语法上是否可接受<code>(0=unacceptable, 1=acceptable)</code></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> pandas <span class="keyword">as</span> pd</span><br><span class="line">df = pd.read_csv(<span class="string">&quot;../datasets/cola_public/raw/in_domain_train.tsv&quot;</span>,</span><br><span class="line">                 delimiter=<span class="string">&#x27;\t&#x27;</span>,</span><br><span class="line">                 header=<span class="literal">None</span>,</span><br><span class="line">                 names=[<span class="string">&#x27;sentence_source&#x27;</span>, <span class="string">&#x27;label&#x27;</span>, <span class="string">&#x27;label_notes&#x27;</span>, <span class="string">&#x27;sentence&#x27;</span>])</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;number of training sentences: &#123;:,&#125;\n&#x27;</span>.<span class="built_in">format</span>(df.shape[<span class="number">0</span>]))</span><br><span class="line">df.sample(<span class="number">5</span>)</span><br></pre></td></tr></table></figure>
+<pre><code>number of training sentences: 8,551</code></pre>
+<p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gr7wxz0ys2j30w60a675o.jpg" /></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">df.loc[df.label == <span class="number">0</span>].sample(<span class="number">5</span>)[[<span class="string">&#x27;sentence&#x27;</span>, <span class="string">&#x27;label&#x27;</span>]]</span><br></pre></td></tr></table></figure>
+<p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gr7wycn7eoj30k609kq3u.jpg" /><img src="https://tva1.sinaimg.cn/large/008i3skNly1gr7wytlba7j30kw0bbaav.jpg" /></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sentences = df.sentence.values</span><br><span class="line">labels = df.label.values</span><br></pre></td></tr></table></figure>
+<h2 id="分词">分词</h2>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> transformers <span class="keyword">import</span> BertTokenizer</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;Loading BERT tokenizer...&quot;</span>)</span><br><span class="line"><span class="comment"># tokenizer = BertTokenizer.from_pretrained(&#x27;bert-base-uncased&#x27;,  # 按模型名称载入</span></span><br><span class="line"><span class="comment">#                                           do_lower_case=True)</span></span><br><span class="line"><span class="comment"># with open(&#x27;../models/bert/vocabulary.txt&#x27;, &#x27;w&#x27;) as f:</span></span><br><span class="line"><span class="comment">#     for token in tokenizer.vocab.keys():</span></span><br><span class="line"><span class="comment">#         f.write(token + &#x27;\n&#x27;)</span></span><br><span class="line"></span><br><span class="line">tokenizer = BertTokenizer.from_pretrained(</span><br><span class="line">    <span class="string">&#x27;../models/bert/vocabulary.txt&#x27;</span>,  <span class="comment"># 从保存有词汇表的本地文件载入</span></span><br><span class="line">    do_lower_case=<span class="literal">True</span>)</span><br></pre></td></tr></table></figure>
+<pre><code>Calling BertTokenizer.from_pretrained() with the path to a single file or url is deprecated
+
+
+Loading BERT tokenizer...</code></pre>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">print</span>(<span class="string">&quot;Original:  &quot;</span>, sentences[<span class="number">0</span>])</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;Tokenized:  &quot;</span>, tokenizer.tokenize(sentences[<span class="number">0</span>]))</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;Token IDS:  &quot;</span>,</span><br><span class="line">      tokenizer.convert_tokens_to_ids(tokenizer.tokenize(sentences[<span class="number">0</span>])))</span><br></pre></td></tr></table></figure>
+<pre><code>Original:   Our friends won&#39;t buy this analysis, let alone the next one we propose.
+Tokenized:   [&#39;our&#39;, &#39;friends&#39;, &#39;won&#39;, &quot;&#39;&quot;, &#39;t&#39;, &#39;buy&#39;, &#39;this&#39;, &#39;analysis&#39;, &#39;,&#39;, &#39;let&#39;, &#39;alone&#39;, &#39;the&#39;, &#39;next&#39;, &#39;one&#39;, &#39;we&#39;, &#39;propose&#39;, &#39;.&#39;]
+Token IDS:   [2256, 2814, 2180, 1005, 1056, 4965, 2023, 4106, 1010, 2292, 2894, 1996, 2279, 2028, 2057, 16599, 1012]</code></pre>
+<h2 id="满足bert模型的输入格式">满足<code>BERT</code>模型的输入格式</h2>
+<p><strong>特殊标记</strong>: - 每个句子的结尾，添加上<code>[SEP]</code>标记：用于决定两个句子的关系，如是否是连续的两个句子 - 分类任务，在每个句子的开端添加<code>[CLS]</code>标记；模型输入的矩阵，只有第一个向量用于分类</p>
+<p><strong>句子长度和遮档</strong> - 语料不同句子长度相差很大，需要所有句子填充或截断到相同的长度；且<code>BERT</code>模型，最长512个标记 - 填充是添加标记<code>[PAD]</code>，在词汇表中索引为 0 - <code>[CLS] I like to draw [SEP] [PAD] [PAD]</code></p>
+<ul>
+<li>遮挡是 0 和 1 的序列，1 表示单词，0 表示填充；填充的多少对模型的速度和精度会有影响</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 文本向量化</span></span><br><span class="line"></span><br><span class="line">input_ids = []</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> sent <span class="keyword">in</span> sentences:</span><br><span class="line">    encoded_sent = tokenizer.encode(</span><br><span class="line">        sent,</span><br><span class="line">        add_special_tokens=<span class="literal">True</span>,  <span class="comment"># 添加特殊符号</span></span><br><span class="line">    )</span><br><span class="line">    input_ids.append(encoded_sent)</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;Original: &quot;</span>, sentences[<span class="number">0</span>])</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;Tokenized:  &quot;</span>, tokenizer.tokenize(sentences[<span class="number">0</span>]))</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;Token IDs: &quot;</span>, input_ids[<span class="number">0</span>])</span><br></pre></td></tr></table></figure>
+<pre><code>Original:  Our friends won&#39;t buy this analysis, let alone the next one we propose.
+Tokenized:   [&#39;our&#39;, &#39;friends&#39;, &#39;won&#39;, &quot;&#39;&quot;, &#39;t&#39;, &#39;buy&#39;, &#39;this&#39;, &#39;analysis&#39;, &#39;,&#39;, &#39;let&#39;, &#39;alone&#39;, &#39;the&#39;, &#39;next&#39;, &#39;one&#39;, &#39;we&#39;, &#39;propose&#39;, &#39;.&#39;]
+Token IDs:  [101, 2256, 2814, 2180, 1005, 1056, 4965, 2023, 4106, 1010, 2292, 2894, 1996, 2279, 2028, 2057, 16599, 1012, 102]</code></pre>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">MAX_LEN = <span class="built_in">max</span>([<span class="built_in">len</span>(sen) <span class="keyword">for</span> sen <span class="keyword">in</span> input_ids])</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;Max sentence length: &quot;</span>, MAX_LEN)</span><br></pre></td></tr></table></figure>
+<pre><code>Mac sentence length:  47</code></pre>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 填充为相同长度</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> tensorflow.keras.preprocessing.sequence <span class="keyword">import</span> pad_sequences</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;Padding token: &#123;:&#125;, ID: &#123;:&#125;&quot;</span>.<span class="built_in">format</span>(tokenizer.pad_token,</span><br><span class="line">                                           tokenizer.pad_token_id))</span><br><span class="line">input_ids = pad_sequences(input_ids,</span><br><span class="line">                          maxlen=MAX_LEN,</span><br><span class="line">                          dtype=<span class="string">&#x27;long&#x27;</span>,</span><br><span class="line">                          value=<span class="number">0</span>,</span><br><span class="line">                          truncating=<span class="string">&quot;post&quot;</span>,</span><br><span class="line">                          padding=<span class="string">&#x27;post&#x27;</span>)</span><br><span class="line">input_ids.shape</span><br></pre></td></tr></table></figure>
+<pre><code>Padding token: [PAD], ID: 0
+
+
+
+
+
+(8551, 47)</code></pre>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 填充对应的mask</span></span><br><span class="line"></span><br><span class="line">attention_masks = []</span><br><span class="line"><span class="keyword">for</span> sent <span class="keyword">in</span> input_ids:</span><br><span class="line">    att_mask = [<span class="built_in">int</span>(token_id &gt; <span class="number">0</span>) <span class="keyword">for</span> token_id <span class="keyword">in</span> sent]</span><br><span class="line">    attention_masks.append(att_mask)</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 拆分为测试集和训练集</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> sklearn.model_selection <span class="keyword">import</span> train_test_split</span><br><span class="line"></span><br><span class="line">train_inputs, validation_inputs, train_labels, validation_labels = train_test_split(</span><br><span class="line">    input_ids, labels, random_state=<span class="number">2008</span>, test_size=<span class="number">0.1</span>)</span><br><span class="line"></span><br><span class="line">train_masks, validation_masks, _, _ = train_test_split(attention_masks,</span><br><span class="line">                                                        labels,</span><br><span class="line">                                                        random_state=<span class="number">2008</span>,</span><br><span class="line">                                                        test_size=<span class="number">0.1</span>)</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 转化为 PyTorch 数据格式</span></span><br><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"></span><br><span class="line">train_inputs = torch.tensor(train_inputs)</span><br><span class="line">validation_inputs = torch.tensor(validation_inputs)</span><br><span class="line"></span><br><span class="line">train_labels = torch.tensor(train_labels)</span><br><span class="line">validation_labels = torch.tensor(validation_labels)</span><br><span class="line"></span><br><span class="line">train_masks = torch.tensor(train_masks)</span><br><span class="line">validation_masks = torch.tensor(validation_masks)</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 创建数据管道</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> torch.utils.data <span class="keyword">import</span> TensorDataset, DataLoader, RandomSampler, SequentialSampler</span><br><span class="line"></span><br><span class="line">batch_size = <span class="number">32</span></span><br><span class="line">train_data = TensorDataset(train_inputs, train_masks, train_labels)</span><br><span class="line">train_sampler = RandomSampler(train_data)</span><br><span class="line">train_dataloader = DataLoader(train_data,</span><br><span class="line">                          sampler=train_sampler,</span><br><span class="line">                          batch_size=batch_size)</span><br><span class="line"></span><br><span class="line">validation_data = TensorDataset(validation_inputs, validation_masks,</span><br><span class="line">                                validation_labels)</span><br><span class="line">validation_sampler = RandomSampler(validation_data)</span><br><span class="line">validation_dataloader = DataLoader(validation_data,</span><br><span class="line">                                   sampler=validation_sampler,</span><br><span class="line">                                   batch_size=batch_size)</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"></span><br></pre></td></tr></table></figure>
+<h2 id="创建并训练分类模型">创建并训练分类模型</h2>
+<p><code>huggingface</code>提供的接口：</p>
+<ul>
+<li>BertModel</li>
+<li>BertForPreTraining</li>
+<li>BertForMaskedLM</li>
+<li>BertForNextSentencePrediction</li>
+<li><strong>BertForSequenceClassification</strong></li>
+<li>BertForTokenClassification</li>
+<li>BertForQuestionAnswering</li>
+</ul>
+<p>将模型<code>"bert-base-uncased": "https://cdn.huggingface.co/bert-base-uncased-pytorch_model.bin"</code>,<br />
+模型词汇表<code>"bert-base-uncased": "https://s3.amazonaws.com/models.huggingface.co/bert/bert-base-uncased-vocab.txt",</code>,<br />
+模型配置<code>"bert-base-uncased": "https://s3.amazonaws.com/models.huggingface.co/bert/bert-base-uncased-config.json",</code>三个文件下载到本地，文件夹命名为<code>"bert-base-uncased"</code>, 然后更改文件名，删除名字中的前缀<code>"bert-base-uncased"</code></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> transformers <span class="keyword">import</span> BertForSequenceClassification, AdamW, BertConfig</span><br><span class="line"><span class="keyword">import</span> os</span><br><span class="line"></span><br><span class="line"><span class="comment"># 载入 bert 预训练模型</span></span><br><span class="line"></span><br><span class="line">path = os.path.abspath(<span class="string">&quot;../../H/models/huggingface/bert-base-uncased/&quot;</span>)</span><br><span class="line"></span><br><span class="line">model = BertForSequenceClassification.from_pretrained(</span><br><span class="line">    <span class="comment"># &quot;bert-base-uncased&quot;,   # 按名称载入模型</span></span><br><span class="line">    path,  <span class="comment"># 本地文件载入</span></span><br><span class="line">    num_labels=<span class="number">2</span>,</span><br><span class="line">    output_attentions=<span class="literal">False</span>,</span><br><span class="line">    output_hidden_states=<span class="literal">False</span>,</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line">model.cuda()</span><br></pre></td></tr></table></figure>
+<pre><code>BertForSequenceClassification(
+  (bert): BertModel(
+    (embeddings): BertEmbeddings(
+      (word_embeddings): Embedding(30522, 768, padding_idx=0)
+      (position_embeddings): Embedding(512, 768)
+      (token_type_embeddings): Embedding(2, 768)
+      (LayerNorm): LayerNorm((768,), eps=1e-12, elementwise_affine=True)
+      (dropout): Dropout(p=0.1, inplace=False)
+    )
+    (encoder): BertEncoder(
+      (layer): ModuleList(
+        (0): BertLayer(
+          (attention): BertAttention(
+            (self): BertSelfAttention(
+              (query): Linear(in_features=768, out_features=768, bias=True)
+              (key): Linear(in_features=768, out_features=768, bias=True)
+              (value): Linear(in_features=768, out_features=768, bias=True)
+              (dropout): Dropout(p=0.1, inplace=False)
+            )
+            (output): BertSelfOutput(
+              (dense): Linear(in_features=768, out_features=768, bias=True)
+              (LayerNorm): LayerNorm((768,), eps=1e-12, elementwise_affine=True)
+              (dropout): Dropout(p=0.1, inplace=False)
+            )
+          )
+          (intermediate): BertIntermediate(
+            (dense): Linear(in_features=768, out_features=3072, bias=True)
+          )
+          (output): BertOutput(
+            (dense): Linear(in_features=3072, out_features=768, bias=True)
+            (LayerNorm): LayerNorm((768,), eps=1e-12, elementwise_affine=True)
+            (dropout): Dropout(p=0.1, inplace=False)
+          )
+        )
+        (1): BertLayer(
+          (attention): BertAttention(
+            (self): BertSelfAttention(
+              (query): Linear(in_features=768, out_features=768, bias=True)
+              (key): Linear(in_features=768, out_features=768, bias=True)
+              (value): Linear(in_features=768, out_features=768, bias=True)
+              (dropout): Dropout(p=0.1, inplace=False)
+            )
+            (output): BertSelfOutput(
+              (dense): Linear(in_features=768, out_features=768, bias=True)
+              (LayerNorm): LayerNorm((768,), eps=1e-12, elementwise_affine=True)
+              (dropout): Dropout(p=0.1, inplace=False)
+            )
+          )
+          (intermediate): BertIntermediate(
+            (dense): Linear(in_features=768, out_features=3072, bias=True)
+          )
+          (output): BertOutput(
+            (dense): Linear(in_features=3072, out_features=768, bias=True)
+            (LayerNorm): LayerNorm((768,), eps=1e-12, elementwise_affine=True)
+            (dropout): Dropout(p=0.1, inplace=False)
+          )
+        )
+        (2): BertLayer(
+          (attention): BertAttention(
+            (self): BertSelfAttention(
+              (query): Linear(in_features=768, out_features=768, bias=True)
+              (key): Linear(in_features=768, out_features=768, bias=True)
+              (value): Linear(in_features=768, out_features=768, bias=True)
+              (dropout): Dropout(p=0.1, inplace=False)
+            )
+            (output): BertSelfOutput(
+              (dense): Linear(in_features=768, out_features=768, bias=True)
+              (LayerNorm): LayerNorm((768,), eps=1e-12, elementwise_affine=True)
+              (dropout): Dropout(p=0.1, inplace=False)
+            )
+          )
+          (intermediate): BertIntermediate(
+            (dense): Linear(in_features=768, out_features=3072, bias=True)
+          )
+          (output): BertOutput(
+            (dense): Linear(in_features=3072, out_features=768, bias=True)
+            (LayerNorm): LayerNorm((768,), eps=1e-12, elementwise_affine=True)
+            (dropout): Dropout(p=0.1, inplace=False)
+          )
+        )
+        (3): BertLayer(
+          (attention): BertAttention(
+            (self): BertSelfAttention(
+              (query): Linear(in_features=768, out_features=768, bias=True)
+              (key): Linear(in_features=768, out_features=768, bias=True)
+              (value): Linear(in_features=768, out_features=768, bias=True)
+              (dropout): Dropout(p=0.1, inplace=False)
+            )
+            (output): BertSelfOutput(
+              (dense): Linear(in_features=768, out_features=768, bias=True)
+              (LayerNorm): LayerNorm((768,), eps=1e-12, elementwise_affine=True)
+              (dropout): Dropout(p=0.1, inplace=False)
+            )
+          )
+          (intermediate): BertIntermediate(
+            (dense): Linear(in_features=768, out_features=3072, bias=True)
+          )
+          (output): BertOutput(
+            (dense): Linear(in_features=3072, out_features=768, bias=True)
+            (LayerNorm): LayerNorm((768,), eps=1e-12, elementwise_affine=True)
+            (dropout): Dropout(p=0.1, inplace=False)
+          )
+        )
+        (4): BertLayer(
+          (attention): BertAttention(
+            (self): BertSelfAttention(
+              (query): Linear(in_features=768, out_features=768, bias=True)
+              (key): Linear(in_features=768, out_features=768, bias=True)
+              (value): Linear(in_features=768, out_features=768, bias=True)
+              (dropout): Dropout(p=0.1, inplace=False)
+            )
+            (output): BertSelfOutput(
+              (dense): Linear(in_features=768, out_features=768, bias=True)
+              (LayerNorm): LayerNorm((768,), eps=1e-12, elementwise_affine=True)
+              (dropout): Dropout(p=0.1, inplace=False)
+            )
+          )
+          (intermediate): BertIntermediate(
+            (dense): Linear(in_features=768, out_features=3072, bias=True)
+          )
+          (output): BertOutput(
+            (dense): Linear(in_features=3072, out_features=768, bias=True)
+            (LayerNorm): LayerNorm((768,), eps=1e-12, elementwise_affine=True)
+            (dropout): Dropout(p=0.1, inplace=False)
+          )
+        )
+        (5): BertLayer(
+          (attention): BertAttention(
+            (self): BertSelfAttention(
+              (query): Linear(in_features=768, out_features=768, bias=True)
+              (key): Linear(in_features=768, out_features=768, bias=True)
+              (value): Linear(in_features=768, out_features=768, bias=True)
+              (dropout): Dropout(p=0.1, inplace=False)
+            )
+            (output): BertSelfOutput(
+              (dense): Linear(in_features=768, out_features=768, bias=True)
+              (LayerNorm): LayerNorm((768,), eps=1e-12, elementwise_affine=True)
+              (dropout): Dropout(p=0.1, inplace=False)
+            )
+          )
+          (intermediate): BertIntermediate(
+            (dense): Linear(in_features=768, out_features=3072, bias=True)
+          )
+          (output): BertOutput(
+            (dense): Linear(in_features=3072, out_features=768, bias=True)
+            (LayerNorm): LayerNorm((768,), eps=1e-12, elementwise_affine=True)
+            (dropout): Dropout(p=0.1, inplace=False)
+          )
+        )
+        (6): BertLayer(
+          (attention): BertAttention(
+            (self): BertSelfAttention(
+              (query): Linear(in_features=768, out_features=768, bias=True)
+              (key): Linear(in_features=768, out_features=768, bias=True)
+              (value): Linear(in_features=768, out_features=768, bias=True)
+              (dropout): Dropout(p=0.1, inplace=False)
+            )
+            (output): BertSelfOutput(
+              (dense): Linear(in_features=768, out_features=768, bias=True)
+              (LayerNorm): LayerNorm((768,), eps=1e-12, elementwise_affine=True)
+              (dropout): Dropout(p=0.1, inplace=False)
+            )
+          )
+          (intermediate): BertIntermediate(
+            (dense): Linear(in_features=768, out_features=3072, bias=True)
+          )
+          (output): BertOutput(
+            (dense): Linear(in_features=3072, out_features=768, bias=True)
+            (LayerNorm): LayerNorm((768,), eps=1e-12, elementwise_affine=True)
+            (dropout): Dropout(p=0.1, inplace=False)
+          )
+        )
+        (7): BertLayer(
+          (attention): BertAttention(
+            (self): BertSelfAttention(
+              (query): Linear(in_features=768, out_features=768, bias=True)
+              (key): Linear(in_features=768, out_features=768, bias=True)
+              (value): Linear(in_features=768, out_features=768, bias=True)
+              (dropout): Dropout(p=0.1, inplace=False)
+            )
+            (output): BertSelfOutput(
+              (dense): Linear(in_features=768, out_features=768, bias=True)
+              (LayerNorm): LayerNorm((768,), eps=1e-12, elementwise_affine=True)
+              (dropout): Dropout(p=0.1, inplace=False)
+            )
+          )
+          (intermediate): BertIntermediate(
+            (dense): Linear(in_features=768, out_features=3072, bias=True)
+          )
+          (output): BertOutput(
+            (dense): Linear(in_features=3072, out_features=768, bias=True)
+            (LayerNorm): LayerNorm((768,), eps=1e-12, elementwise_affine=True)
+            (dropout): Dropout(p=0.1, inplace=False)
+          )
+        )
+        (8): BertLayer(
+          (attention): BertAttention(
+            (self): BertSelfAttention(
+              (query): Linear(in_features=768, out_features=768, bias=True)
+              (key): Linear(in_features=768, out_features=768, bias=True)
+              (value): Linear(in_features=768, out_features=768, bias=True)
+              (dropout): Dropout(p=0.1, inplace=False)
+            )
+            (output): BertSelfOutput(
+              (dense): Linear(in_features=768, out_features=768, bias=True)
+              (LayerNorm): LayerNorm((768,), eps=1e-12, elementwise_affine=True)
+              (dropout): Dropout(p=0.1, inplace=False)
+            )
+          )
+          (intermediate): BertIntermediate(
+            (dense): Linear(in_features=768, out_features=3072, bias=True)
+          )
+          (output): BertOutput(
+            (dense): Linear(in_features=3072, out_features=768, bias=True)
+            (LayerNorm): LayerNorm((768,), eps=1e-12, elementwise_affine=True)
+            (dropout): Dropout(p=0.1, inplace=False)
+          )
+        )
+        (9): BertLayer(
+          (attention): BertAttention(
+            (self): BertSelfAttention(
+              (query): Linear(in_features=768, out_features=768, bias=True)
+              (key): Linear(in_features=768, out_features=768, bias=True)
+              (value): Linear(in_features=768, out_features=768, bias=True)
+              (dropout): Dropout(p=0.1, inplace=False)
+            )
+            (output): BertSelfOutput(
+              (dense): Linear(in_features=768, out_features=768, bias=True)
+              (LayerNorm): LayerNorm((768,), eps=1e-12, elementwise_affine=True)
+              (dropout): Dropout(p=0.1, inplace=False)
+            )
+          )
+          (intermediate): BertIntermediate(
+            (dense): Linear(in_features=768, out_features=3072, bias=True)
+          )
+          (output): BertOutput(
+            (dense): Linear(in_features=3072, out_features=768, bias=True)
+            (LayerNorm): LayerNorm((768,), eps=1e-12, elementwise_affine=True)
+            (dropout): Dropout(p=0.1, inplace=False)
+          )
+        )
+        (10): BertLayer(
+          (attention): BertAttention(
+            (self): BertSelfAttention(
+              (query): Linear(in_features=768, out_features=768, bias=True)
+              (key): Linear(in_features=768, out_features=768, bias=True)
+              (value): Linear(in_features=768, out_features=768, bias=True)
+              (dropout): Dropout(p=0.1, inplace=False)
+            )
+            (output): BertSelfOutput(
+              (dense): Linear(in_features=768, out_features=768, bias=True)
+              (LayerNorm): LayerNorm((768,), eps=1e-12, elementwise_affine=True)
+              (dropout): Dropout(p=0.1, inplace=False)
+            )
+          )
+          (intermediate): BertIntermediate(
+            (dense): Linear(in_features=768, out_features=3072, bias=True)
+          )
+          (output): BertOutput(
+            (dense): Linear(in_features=3072, out_features=768, bias=True)
+            (LayerNorm): LayerNorm((768,), eps=1e-12, elementwise_affine=True)
+            (dropout): Dropout(p=0.1, inplace=False)
+          )
+        )
+        (11): BertLayer(
+          (attention): BertAttention(
+            (self): BertSelfAttention(
+              (query): Linear(in_features=768, out_features=768, bias=True)
+              (key): Linear(in_features=768, out_features=768, bias=True)
+              (value): Linear(in_features=768, out_features=768, bias=True)
+              (dropout): Dropout(p=0.1, inplace=False)
+            )
+            (output): BertSelfOutput(
+              (dense): Linear(in_features=768, out_features=768, bias=True)
+              (LayerNorm): LayerNorm((768,), eps=1e-12, elementwise_affine=True)
+              (dropout): Dropout(p=0.1, inplace=False)
+            )
+          )
+          (intermediate): BertIntermediate(
+            (dense): Linear(in_features=768, out_features=3072, bias=True)
+          )
+          (output): BertOutput(
+            (dense): Linear(in_features=3072, out_features=768, bias=True)
+            (LayerNorm): LayerNorm((768,), eps=1e-12, elementwise_affine=True)
+            (dropout): Dropout(p=0.1, inplace=False)
+          )
+        )
+      )
+    )
+    (pooler): BertPooler(
+      (dense): Linear(in_features=768, out_features=768, bias=True)
+      (activation): Tanh()
+    )
+  )
+  (dropout): Dropout(p=0.1, inplace=False)
+  (classifier): Linear(in_features=768, out_features=2, bias=True)
+)</code></pre>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 模型参数详情</span></span><br><span class="line"></span><br><span class="line">params = <span class="built_in">list</span>(model.named_parameters())</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;The BERT model has &#123;:&#125; different named parameters.\n&#x27;</span>.<span class="built_in">format</span>(</span><br><span class="line">    <span class="built_in">len</span>(params)))</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;==== Embedding Layer ====\n&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> p <span class="keyword">in</span> params[<span class="number">0</span>:<span class="number">5</span>]:</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;&#123;:&lt;55&#125; &#123;:&gt;12&#125;&quot;</span>.<span class="built_in">format</span>(p[<span class="number">0</span>], <span class="built_in">str</span>(<span class="built_in">tuple</span>(p[<span class="number">1</span>].size()))))</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;\n==== First Transformer ====\n&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> p <span class="keyword">in</span> params[<span class="number">5</span>:<span class="number">21</span>]:</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;&#123;:&lt;55&#125; &#123;:&gt;12&#125;&quot;</span>.<span class="built_in">format</span>(p[<span class="number">0</span>], <span class="built_in">str</span>(<span class="built_in">tuple</span>(p[<span class="number">1</span>].size()))))</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;\n==== Output Layer ====\n&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> p <span class="keyword">in</span> params[-<span class="number">4</span>:]:</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;&#123;:&lt;55&#125; &#123;:&gt;12&#125;&quot;</span>.<span class="built_in">format</span>(p[<span class="number">0</span>], <span class="built_in">str</span>(<span class="built_in">tuple</span>(p[<span class="number">1</span>].size()))))</span><br></pre></td></tr></table></figure>
+<pre><code>The BERT model has 201 different named parameters.
+
+==== Embedding Layer ====
+
+bert.embeddings.word_embeddings.weight                  (30522, 768)
+bert.embeddings.position_embeddings.weight                (512, 768)
+bert.embeddings.token_type_embeddings.weight                (2, 768)
+bert.embeddings.LayerNorm.weight                              (768,)
+bert.embeddings.LayerNorm.bias                                (768,)
+
+==== First Transformer ====
+
+bert.encoder.layer.0.attention.self.query.weight          (768, 768)
+bert.encoder.layer.0.attention.self.query.bias                (768,)
+bert.encoder.layer.0.attention.self.key.weight            (768, 768)
+bert.encoder.layer.0.attention.self.key.bias                  (768,)
+bert.encoder.layer.0.attention.self.value.weight          (768, 768)
+bert.encoder.layer.0.attention.self.value.bias                (768,)
+bert.encoder.layer.0.attention.output.dense.weight        (768, 768)
+bert.encoder.layer.0.attention.output.dense.bias              (768,)
+bert.encoder.layer.0.attention.output.LayerNorm.weight        (768,)
+bert.encoder.layer.0.attention.output.LayerNorm.bias          (768,)
+bert.encoder.layer.0.intermediate.dense.weight           (3072, 768)
+bert.encoder.layer.0.intermediate.dense.bias                 (3072,)
+bert.encoder.layer.0.output.dense.weight                 (768, 3072)
+bert.encoder.layer.0.output.dense.bias                        (768,)
+bert.encoder.layer.0.output.LayerNorm.weight                  (768,)
+bert.encoder.layer.0.output.LayerNorm.bias                    (768,)
+
+==== Output Layer ====
+
+bert.pooler.dense.weight                                  (768, 768)
+bert.pooler.dense.bias                                        (768,)
+classifier.weight                                           (2, 768)
+classifier.bias                                                 (2,)</code></pre>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 优化器</span></span><br><span class="line">optimizer = AdamW(model.parameters(), lr=<span class="number">2e-5</span>, eps=<span class="number">1e-8</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"># 学习率规划</span></span><br><span class="line"><span class="keyword">from</span> transformers <span class="keyword">import</span> get_linear_schedule_with_warmup</span><br><span class="line"></span><br><span class="line">epochs = <span class="number">4</span></span><br><span class="line"></span><br><span class="line">total_steps = <span class="built_in">len</span>(train_dataloader) * epochs</span><br><span class="line"></span><br><span class="line">scheduler = get_linear_schedule_with_warmup(optimizer,</span><br><span class="line">                                            num_warmup_steps=<span class="number">0</span>,</span><br><span class="line">                                            num_training_steps=total_steps)</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="comment"># 预测精度</span></span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">flat_accuracy</span>(<span class="params">preds, labels</span>):</span></span><br><span class="line">    pred_flat = np.argmax(preds, axis=<span class="number">1</span>).flatten()</span><br><span class="line">    labels_flat = labels.flatten()</span><br><span class="line">    <span class="keyword">return</span> np.<span class="built_in">sum</span>(pred_flat == labels_flat) / <span class="built_in">len</span>(labels_flat)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"># 格式化时间显示</span></span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"><span class="keyword">import</span> datetime</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">format_time</span>(<span class="params">elapsed</span>):</span></span><br><span class="line">    elapsed_rounded = <span class="built_in">int</span>(<span class="built_in">round</span>((elapsed)))</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">str</span>(datetime.timedelta(seconds=elapsed_rounded))</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br><span class="line">183</span><br><span class="line">184</span><br><span class="line">185</span><br><span class="line">186</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 训练并验证模型</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> random</span><br><span class="line"></span><br><span class="line"><span class="comment"># https://github.com/huggingface/transformers/blob/5bfcd0485ece086ebcbed2d008813037968a9e58/examples/run_glue.py#L128</span></span><br><span class="line"></span><br><span class="line">device = torch.device(<span class="string">&quot;cuda&quot;</span> <span class="keyword">if</span> torch.cuda.is_available() <span class="keyword">else</span> <span class="string">&quot;cpu&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># Set the seed value all over the place to make this reproducible.</span></span><br><span class="line">seed_val = <span class="number">42</span></span><br><span class="line"></span><br><span class="line">random.seed(seed_val)</span><br><span class="line">np.random.seed(seed_val)</span><br><span class="line">torch.manual_seed(seed_val)</span><br><span class="line">torch.cuda.manual_seed_all(seed_val)</span><br><span class="line"></span><br><span class="line"><span class="comment"># Store the average loss after each epoch so we can plot them.</span></span><br><span class="line">loss_values = []</span><br><span class="line"></span><br><span class="line"><span class="comment"># For each epoch...</span></span><br><span class="line"><span class="keyword">for</span> epoch_i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">0</span>, epochs):</span><br><span class="line"></span><br><span class="line">    <span class="comment"># ========================================</span></span><br><span class="line">    <span class="comment">#               Training</span></span><br><span class="line">    <span class="comment"># ========================================</span></span><br><span class="line"></span><br><span class="line">    <span class="comment"># Perform one full pass over the training set.</span></span><br><span class="line"></span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;&quot;</span>)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&#x27;======== Epoch &#123;:&#125; / &#123;:&#125; ========&#x27;</span>.<span class="built_in">format</span>(epoch_i + <span class="number">1</span>, epochs))</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&#x27;Training...&#x27;</span>)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># Measure how long the training epoch takes.</span></span><br><span class="line">    t0 = time.time()</span><br><span class="line"></span><br><span class="line">    <span class="comment"># Reset the total loss for this epoch.</span></span><br><span class="line">    total_loss = <span class="number">0</span></span><br><span class="line"></span><br><span class="line">    <span class="comment"># Put the model into training mode. Don&#x27;t be mislead--the call to</span></span><br><span class="line">    <span class="comment"># `train` just changes the *mode*, it doesn&#x27;t *perform* the training.</span></span><br><span class="line">    <span class="comment"># `dropout` and `batchnorm` layers behave differently during training</span></span><br><span class="line">    <span class="comment"># vs. test (source: https://stackoverflow.com/questions/51433378/what-does-model-train-do-in-pytorch)</span></span><br><span class="line">    model.train()</span><br><span class="line"></span><br><span class="line">    <span class="comment"># For each batch of training data...</span></span><br><span class="line">    <span class="keyword">for</span> step, batch <span class="keyword">in</span> <span class="built_in">enumerate</span>(train_dataloader):</span><br><span class="line"></span><br><span class="line">        <span class="comment"># Progress update every 40 batches.</span></span><br><span class="line">        <span class="keyword">if</span> step % <span class="number">40</span> == <span class="number">0</span> <span class="keyword">and</span> <span class="keyword">not</span> step == <span class="number">0</span>:</span><br><span class="line">            <span class="comment"># Calculate elapsed time in minutes.</span></span><br><span class="line">            elapsed = format_time(time.time() - t0)</span><br><span class="line"></span><br><span class="line">            <span class="comment"># Report progress.</span></span><br><span class="line">            <span class="built_in">print</span>(<span class="string">&#x27;  Batch &#123;:&gt;5,&#125;  of  &#123;:&gt;5,&#125;.    Elapsed: &#123;:&#125;.&#x27;</span>.<span class="built_in">format</span>(</span><br><span class="line">                step, <span class="built_in">len</span>(train_dataloader), elapsed))</span><br><span class="line"></span><br><span class="line">        <span class="comment"># Unpack this training batch from our dataloader.</span></span><br><span class="line">        <span class="comment">#</span></span><br><span class="line">        <span class="comment"># As we unpack the batch, we&#x27;ll also copy each tensor to the GPU using the</span></span><br><span class="line">        <span class="comment"># `to` method.</span></span><br><span class="line">        <span class="comment">#</span></span><br><span class="line">        <span class="comment"># `batch` contains three pytorch tensors:</span></span><br><span class="line">        <span class="comment">#   [0]: input ids</span></span><br><span class="line">        <span class="comment">#   [1]: attention masks</span></span><br><span class="line">        <span class="comment">#   [2]: labels</span></span><br><span class="line">        b_input_ids = batch[<span class="number">0</span>].to(device)</span><br><span class="line">        b_input_mask = batch[<span class="number">1</span>].to(device)</span><br><span class="line">        b_labels = batch[<span class="number">2</span>].to(device)</span><br><span class="line"></span><br><span class="line">        <span class="comment"># Always clear any previously calculated gradients before performing a</span></span><br><span class="line">        <span class="comment"># backward pass. PyTorch doesn&#x27;t do this automatically because</span></span><br><span class="line">        <span class="comment"># accumulating the gradients is &quot;convenient while training RNNs&quot;.</span></span><br><span class="line">        <span class="comment"># (source: https://stackoverflow.com/questions/48001598/why-do-we-need-to-call-zero-grad-in-pytorch)</span></span><br><span class="line">        model.zero_grad()</span><br><span class="line"></span><br><span class="line">        <span class="comment"># Perform a forward pass (evaluate the model on this training batch).</span></span><br><span class="line">        <span class="comment"># This will return the loss (rather than the model output) because we</span></span><br><span class="line">        <span class="comment"># have provided the `labels`.</span></span><br><span class="line">        <span class="comment"># The documentation for this `model` function is here:</span></span><br><span class="line">        <span class="comment"># https://huggingface.co/transformers/v2.2.0/model_doc/bert.html#transformers.BertForSequenceClassification</span></span><br><span class="line">        outputs = model(b_input_ids,</span><br><span class="line">                        token_type_ids=<span class="literal">None</span>,</span><br><span class="line">                        attention_mask=b_input_mask,</span><br><span class="line">                        labels=b_labels)</span><br><span class="line"></span><br><span class="line">        <span class="comment"># The call to `model` always returns a tuple, so we need to pull the</span></span><br><span class="line">        <span class="comment"># loss value out of the tuple.</span></span><br><span class="line">        loss = outputs[<span class="number">0</span>]</span><br><span class="line"></span><br><span class="line">        <span class="comment"># Accumulate the training loss over all of the batches so that we can</span></span><br><span class="line">        <span class="comment"># calculate the average loss at the end. `loss` is a Tensor containing a</span></span><br><span class="line">        <span class="comment"># single value; the `.item()` function just returns the Python value</span></span><br><span class="line">        <span class="comment"># from the tensor.</span></span><br><span class="line">        total_loss += loss.item()</span><br><span class="line"></span><br><span class="line">        <span class="comment"># Perform a backward pass to calculate the gradients.</span></span><br><span class="line">        loss.backward()</span><br><span class="line"></span><br><span class="line">        <span class="comment"># Clip the norm of the gradients to 1.0.</span></span><br><span class="line">        <span class="comment"># This is to help prevent the &quot;exploding gradients&quot; problem.</span></span><br><span class="line">        torch.nn.utils.clip_grad_norm_(model.parameters(), <span class="number">1.0</span>)</span><br><span class="line"></span><br><span class="line">        <span class="comment"># Update parameters and take a step using the computed gradient.</span></span><br><span class="line">        <span class="comment"># The optimizer dictates the &quot;update rule&quot;--how the parameters are</span></span><br><span class="line">        <span class="comment"># modified based on their gradients, the learning rate, etc.</span></span><br><span class="line">        optimizer.step()</span><br><span class="line"></span><br><span class="line">        <span class="comment"># Update the learning rate.</span></span><br><span class="line">        scheduler.step()</span><br><span class="line"></span><br><span class="line">    <span class="comment"># Calculate the average loss over the training data.</span></span><br><span class="line">    avg_train_loss = total_loss / <span class="built_in">len</span>(train_dataloader)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># Store the loss value for plotting the learning curve.</span></span><br><span class="line">    loss_values.append(avg_train_loss)</span><br><span class="line"></span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;&quot;</span>)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;  Average training loss: &#123;0:.2f&#125;&quot;</span>.<span class="built_in">format</span>(avg_train_loss))</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;  Training epcoh took: &#123;:&#125;&quot;</span>.<span class="built_in">format</span>(format_time(time.time() - t0)))</span><br><span class="line"></span><br><span class="line">    <span class="comment"># ========================================</span></span><br><span class="line">    <span class="comment">#               Validation</span></span><br><span class="line">    <span class="comment"># ========================================</span></span><br><span class="line">    <span class="comment"># After the completion of each training epoch, measure our performance on</span></span><br><span class="line">    <span class="comment"># our validation set.</span></span><br><span class="line"></span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;&quot;</span>)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;Running Validation...&quot;</span>)</span><br><span class="line"></span><br><span class="line">    t0 = time.time()</span><br><span class="line"></span><br><span class="line">    <span class="comment"># Put the model in evaluation mode--the dropout layers behave differently</span></span><br><span class="line">    <span class="comment"># during evaluation.</span></span><br><span class="line">    model.<span class="built_in">eval</span>()</span><br><span class="line"></span><br><span class="line">    <span class="comment"># Tracking variables</span></span><br><span class="line">    eval_loss, eval_accuracy = <span class="number">0</span>, <span class="number">0</span></span><br><span class="line">    nb_eval_steps, nb_eval_examples = <span class="number">0</span>, <span class="number">0</span></span><br><span class="line"></span><br><span class="line">    <span class="comment"># Evaluate data for one epoch</span></span><br><span class="line">    <span class="keyword">for</span> batch <span class="keyword">in</span> validation_dataloader:</span><br><span class="line"></span><br><span class="line">        <span class="comment"># Add batch to GPU</span></span><br><span class="line">        batch = <span class="built_in">tuple</span>(t.to(device) <span class="keyword">for</span> t <span class="keyword">in</span> batch)</span><br><span class="line"></span><br><span class="line">        <span class="comment"># Unpack the inputs from our dataloader</span></span><br><span class="line">        b_input_ids, b_input_mask, b_labels = batch</span><br><span class="line"></span><br><span class="line">        <span class="comment"># Telling the model not to compute or store gradients, saving memory and</span></span><br><span class="line">        <span class="comment"># speeding up validation</span></span><br><span class="line">        <span class="keyword">with</span> torch.no_grad():</span><br><span class="line"></span><br><span class="line">            <span class="comment"># Forward pass, calculate logit predictions.</span></span><br><span class="line">            <span class="comment"># This will return the logits rather than the loss because we have</span></span><br><span class="line">            <span class="comment"># not provided labels.</span></span><br><span class="line">            <span class="comment"># token_type_ids is the same as the &quot;segment ids&quot;, which</span></span><br><span class="line">            <span class="comment"># differentiates sentence 1 and 2 in 2-sentence tasks.</span></span><br><span class="line">            <span class="comment"># The documentation for this `model` function is here:</span></span><br><span class="line">            <span class="comment"># https://huggingface.co/transformers/v2.2.0/model_doc/bert.html#transformers.BertForSequenceClassification</span></span><br><span class="line">            outputs = model(b_input_ids,</span><br><span class="line">                            token_type_ids=<span class="literal">None</span>,</span><br><span class="line">                            attention_mask=b_input_mask)</span><br><span class="line"></span><br><span class="line">        <span class="comment"># Get the &quot;logits&quot; output by the model. The &quot;logits&quot; are the output</span></span><br><span class="line">        <span class="comment"># values prior to applying an activation function like the softmax.</span></span><br><span class="line">        logits = outputs[<span class="number">0</span>]</span><br><span class="line"></span><br><span class="line">        <span class="comment"># Move logits and labels to CPU</span></span><br><span class="line">        logits = logits.detach().cpu().numpy()</span><br><span class="line">        label_ids = b_labels.to(<span class="string">&#x27;cpu&#x27;</span>).numpy()</span><br><span class="line"></span><br><span class="line">        <span class="comment"># Calculate the accuracy for this batch of test sentences.</span></span><br><span class="line">        tmp_eval_accuracy = flat_accuracy(logits, label_ids)</span><br><span class="line"></span><br><span class="line">        <span class="comment"># Accumulate the total accuracy.</span></span><br><span class="line">        eval_accuracy += tmp_eval_accuracy</span><br><span class="line"></span><br><span class="line">        <span class="comment"># Track the number of batches</span></span><br><span class="line">        nb_eval_steps += <span class="number">1</span></span><br><span class="line"></span><br><span class="line">    <span class="comment"># Report the final accuracy for this validation run.</span></span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;  Accuracy: &#123;0:.2f&#125;&quot;</span>.<span class="built_in">format</span>(eval_accuracy / nb_eval_steps))</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;  Validation took: &#123;:&#125;&quot;</span>.<span class="built_in">format</span>(format_time(time.time() - t0)))</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;&quot;</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;Training complete!&quot;</span>)</span><br></pre></td></tr></table></figure>
+<pre><code>======== Epoch 1 / 4 ========
+Training...
+  Batch    40  of    241.    Elapsed: 0:00:05.
+  Batch    80  of    241.    Elapsed: 0:00:09.
+  Batch   120  of    241.    Elapsed: 0:00:14.
+  Batch   160  of    241.    Elapsed: 0:00:19.
+  Batch   200  of    241.    Elapsed: 0:00:23.
+  Batch   240  of    241.    Elapsed: 0:00:28.
+
+  Average training loss: 0.17
+  Training epcoh took: 0:00:28
+
+Running Validation...
+  Accuracy: 0.80
+  Validation took: 0:00:01
+
+======== Epoch 2 / 4 ========
+Training...
+  Batch    40  of    241.    Elapsed: 0:00:05.
+  Batch    80  of    241.    Elapsed: 0:00:09.
+  Batch   120  of    241.    Elapsed: 0:00:14.
+  Batch   160  of    241.    Elapsed: 0:00:19.
+  Batch   200  of    241.    Elapsed: 0:00:23.
+  Batch   240  of    241.    Elapsed: 0:00:28.
+
+  Average training loss: 0.20
+  Training epcoh took: 0:00:28
+
+Running Validation...
+  Accuracy: 0.81
+  Validation took: 0:00:01
+
+======== Epoch 3 / 4 ========
+Training...
+  Batch    40  of    241.    Elapsed: 0:00:05.
+  Batch    80  of    241.    Elapsed: 0:00:09.
+  Batch   120  of    241.    Elapsed: 0:00:14.
+  Batch   160  of    241.    Elapsed: 0:00:19.
+  Batch   200  of    241.    Elapsed: 0:00:23.
+  Batch   240  of    241.    Elapsed: 0:00:28.
+
+  Average training loss: 0.13
+  Training epcoh took: 0:00:28
+
+Running Validation...
+  Accuracy: 0.82
+  Validation took: 0:00:01
+
+======== Epoch 4 / 4 ========
+Training...
+  Batch    40  of    241.    Elapsed: 0:00:05.
+  Batch    80  of    241.    Elapsed: 0:00:09.
+  Batch   120  of    241.    Elapsed: 0:00:14.
+  Batch   160  of    241.    Elapsed: 0:00:19.
+  Batch   200  of    241.    Elapsed: 0:00:23.
+  Batch   240  of    241.    Elapsed: 0:00:28.
+
+  Average training loss: 0.12
+  Training epcoh took: 0:00:28
+
+Running Validation...
+  Accuracy: 0.82
+  Validation took: 0:00:01
+
+Training complete!</code></pre>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 训练过程的损失变化</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt</span><br><span class="line">%matplotlib inline</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> seaborn <span class="keyword">as</span> sns</span><br><span class="line"></span><br><span class="line"><span class="comment"># Use plot styling from seaborn.</span></span><br><span class="line">sns.<span class="built_in">set</span>(style=<span class="string">&#x27;darkgrid&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># Increase the plot size and font size.</span></span><br><span class="line">sns.<span class="built_in">set</span>(font_scale=<span class="number">1.5</span>)</span><br><span class="line">plt.rcParams[<span class="string">&quot;figure.figsize&quot;</span>] = (<span class="number">12</span>,<span class="number">6</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># Plot the learning curve.</span></span><br><span class="line">plt.plot(loss_values, <span class="string">&#x27;b-o&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># Label the plot.</span></span><br><span class="line">plt.title(<span class="string">&quot;Training loss&quot;</span>)</span><br><span class="line">plt.xlabel(<span class="string">&quot;Epoch&quot;</span>)</span><br><span class="line">plt.ylabel(<span class="string">&quot;Loss&quot;</span>)</span><br><span class="line"></span><br><span class="line">plt.show()</span><br></pre></td></tr></table></figure>
+<p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gr7wytlba7j30kw0bbaav.jpg" /><img src="https://tva1.sinaimg.cn/large/008i3skNly1gr7wztkucqj30q30fogo1.jpg" /></p>
+<h2 id="评估模型">评估模型</h2>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 测试集数据处理</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> pandas <span class="keyword">as</span> pd</span><br><span class="line"></span><br><span class="line"><span class="comment"># Load the dataset into a pandas dataframe.</span></span><br><span class="line">df = pd.read_csv(<span class="string">&quot;../datasets/cola_public//raw/out_of_domain_dev.tsv&quot;</span>,</span><br><span class="line">                 delimiter=<span class="string">&#x27;\t&#x27;</span>,</span><br><span class="line">                 header=<span class="literal">None</span>,</span><br><span class="line">                 names=[<span class="string">&#x27;sentence_source&#x27;</span>, <span class="string">&#x27;label&#x27;</span>, <span class="string">&#x27;label_notes&#x27;</span>, <span class="string">&#x27;sentence&#x27;</span>])</span><br><span class="line"></span><br><span class="line"><span class="comment"># Report the number of sentences.</span></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;Number of test sentences: &#123;:,&#125;\n&#x27;</span>.<span class="built_in">format</span>(df.shape[<span class="number">0</span>]))</span><br><span class="line"></span><br><span class="line"><span class="comment"># Create sentence and label lists</span></span><br><span class="line">sentences = df.sentence.values</span><br><span class="line">labels = df.label.values</span><br><span class="line"></span><br><span class="line"><span class="comment"># 文本预处理</span></span><br><span class="line"><span class="comment"># Tokenize all of the sentences and map the tokens to thier word IDs.</span></span><br><span class="line">input_ids = []</span><br><span class="line"></span><br><span class="line"><span class="comment"># For every sentence...</span></span><br><span class="line"><span class="keyword">for</span> sent <span class="keyword">in</span> sentences:</span><br><span class="line">    <span class="comment"># `encode` will:</span></span><br><span class="line">    <span class="comment">#   (1) Tokenize the sentence.</span></span><br><span class="line">    <span class="comment">#   (2) Prepend the `[CLS]` token to the start.</span></span><br><span class="line">    <span class="comment">#   (3) Append the `[SEP]` token to the end.</span></span><br><span class="line">    <span class="comment">#   (4) Map tokens to their IDs.</span></span><br><span class="line">    encoded_sent = tokenizer.encode(</span><br><span class="line">        sent,  <span class="comment"># Sentence to encode.</span></span><br><span class="line">        add_special_tokens=<span class="literal">True</span>,  <span class="comment"># Add &#x27;[CLS]&#x27; and &#x27;[SEP]&#x27;</span></span><br><span class="line">    )</span><br><span class="line"></span><br><span class="line">    input_ids.append(encoded_sent)</span><br><span class="line"></span><br><span class="line"><span class="comment"># Pad our input tokens</span></span><br><span class="line">input_ids = pad_sequences(input_ids,</span><br><span class="line">                          maxlen=MAX_LEN,</span><br><span class="line">                          dtype=<span class="string">&quot;long&quot;</span>,</span><br><span class="line">                          truncating=<span class="string">&quot;post&quot;</span>,</span><br><span class="line">                          padding=<span class="string">&quot;post&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># Create attention masks</span></span><br><span class="line">attention_masks = []</span><br><span class="line"></span><br><span class="line"><span class="comment"># Create a mask of 1s for each token followed by 0s for padding</span></span><br><span class="line"><span class="keyword">for</span> seq <span class="keyword">in</span> input_ids:</span><br><span class="line">    seq_mask = [<span class="built_in">float</span>(i &gt; <span class="number">0</span>) <span class="keyword">for</span> i <span class="keyword">in</span> seq]</span><br><span class="line">    attention_masks.append(seq_mask)</span><br><span class="line"></span><br><span class="line"><span class="comment"># Convert to tensors.</span></span><br><span class="line">prediction_inputs = torch.tensor(input_ids)</span><br><span class="line">prediction_masks = torch.tensor(attention_masks)</span><br><span class="line">prediction_labels = torch.tensor(labels)</span><br><span class="line"></span><br><span class="line"><span class="comment"># Set the batch size.</span></span><br><span class="line">batch_size = <span class="number">32</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Create the DataLoader.</span></span><br><span class="line">prediction_data = TensorDataset(prediction_inputs, prediction_masks,</span><br><span class="line">                                prediction_labels)</span><br><span class="line">prediction_sampler = SequentialSampler(prediction_data)</span><br><span class="line">prediction_dataloader = DataLoader(prediction_data,</span><br><span class="line">                                   sampler=prediction_sampler,</span><br><span class="line">                                   batch_size=batch_size)</span><br></pre></td></tr></table></figure>
+<pre><code>Number of test sentences: 516</code></pre>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 在测试集上进行预测</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;Predicting labels for &#123;:,&#125; test sentences...&#x27;</span>.<span class="built_in">format</span>(</span><br><span class="line">    <span class="built_in">len</span>(prediction_inputs)))</span><br><span class="line"></span><br><span class="line"><span class="comment"># Put model in evaluation mode</span></span><br><span class="line">model.<span class="built_in">eval</span>()</span><br><span class="line"></span><br><span class="line"><span class="comment"># Tracking variables</span></span><br><span class="line">predictions, true_labels = [], []</span><br><span class="line"></span><br><span class="line"><span class="comment"># Predict</span></span><br><span class="line"><span class="keyword">for</span> batch <span class="keyword">in</span> prediction_dataloader:</span><br><span class="line">    <span class="comment"># Add batch to GPU</span></span><br><span class="line">    batch = <span class="built_in">tuple</span>(t.to(device) <span class="keyword">for</span> t <span class="keyword">in</span> batch)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># Unpack the inputs from our dataloader</span></span><br><span class="line">    b_input_ids, b_input_mask, b_labels = batch</span><br><span class="line"></span><br><span class="line">    <span class="comment"># Telling the model not to compute or store gradients, saving memory and</span></span><br><span class="line">    <span class="comment"># speeding up prediction</span></span><br><span class="line">    <span class="keyword">with</span> torch.no_grad():</span><br><span class="line">        <span class="comment"># Forward pass, calculate logit predictions</span></span><br><span class="line">        outputs = model(b_input_ids,</span><br><span class="line">                        token_type_ids=<span class="literal">None</span>,</span><br><span class="line">                        attention_mask=b_input_mask)</span><br><span class="line"></span><br><span class="line">    logits = outputs[<span class="number">0</span>]</span><br><span class="line"></span><br><span class="line">    <span class="comment"># Move logits and labels to CPU</span></span><br><span class="line">    logits = logits.detach().cpu().numpy()</span><br><span class="line">    label_ids = b_labels.to(<span class="string">&#x27;cpu&#x27;</span>).numpy()</span><br><span class="line"></span><br><span class="line">    <span class="comment"># Store predictions and true labels</span></span><br><span class="line">    predictions.append(logits)</span><br><span class="line">    true_labels.append(label_ids)</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;    DONE.&#x27;</span>)</span><br></pre></td></tr></table></figure>
+<pre><code>Predicting labels for 516 test sentences...
+    DONE.</code></pre>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;Positive samples: %d of %d (%.2f%%)&#x27;</span> %</span><br><span class="line">      (df.label.<span class="built_in">sum</span>(), <span class="built_in">len</span>(df.label),</span><br><span class="line">       (df.label.<span class="built_in">sum</span>() / <span class="built_in">len</span>(df.label) * <span class="number">100.0</span>)))</span><br></pre></td></tr></table></figure>
+<pre><code>Positive samples: 354 of 516 (68.60%)</code></pre>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> sklearn.metrics <span class="keyword">import</span> matthews_corrcoef</span><br><span class="line"></span><br><span class="line">matthews_set = []</span><br><span class="line"></span><br><span class="line"><span class="comment"># Evaluate each test batch using Matthew&#x27;s correlation coefficient</span></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;Calculating Matthews Corr. Coef. for each batch...&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># For each input batch...</span></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="built_in">len</span>(true_labels)):</span><br><span class="line"></span><br><span class="line">    <span class="comment"># The predictions for this batch are a 2-column ndarray (one column for &quot;0&quot;</span></span><br><span class="line">    <span class="comment"># and one column for &quot;1&quot;). Pick the label with the highest value and turn this</span></span><br><span class="line">    <span class="comment"># in to a list of 0s and 1s.</span></span><br><span class="line">    pred_labels_i = np.argmax(predictions[i], axis=<span class="number">1</span>).flatten()</span><br><span class="line"></span><br><span class="line">    <span class="comment"># Calculate and store the coef for this batch.</span></span><br><span class="line">    matthews = matthews_corrcoef(true_labels[i], pred_labels_i)</span><br><span class="line">    matthews_set.append(matthews)</span><br><span class="line"></span><br><span class="line"><span class="comment"># Combine the predictions for each batch into a single list of 0s and 1s.</span></span><br><span class="line">flat_predictions = [item <span class="keyword">for</span> sublist <span class="keyword">in</span> predictions <span class="keyword">for</span> item <span class="keyword">in</span> sublist]</span><br><span class="line">flat_predictions = np.argmax(flat_predictions, axis=<span class="number">1</span>).flatten()</span><br><span class="line"></span><br><span class="line"><span class="comment"># Combine the correct labels for each batch into a single list.</span></span><br><span class="line">flat_true_labels = [item <span class="keyword">for</span> sublist <span class="keyword">in</span> true_labels <span class="keyword">for</span> item <span class="keyword">in</span> sublist]</span><br><span class="line"></span><br><span class="line"><span class="comment"># Calculate the MCC</span></span><br><span class="line">mcc = matthews_corrcoef(flat_true_labels, flat_predictions)</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;MCC: %.3f&#x27;</span> % mcc)</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<pre><code>MCC: 0.524</code></pre>
+<blockquote>
+<p>Matthews相关系数，用于度量二分类的质量。它会考虑TP/FP/TN/FP的情况，通常被认为是一个balanced的度量 ，可以用于那些有着不同size的分类中。MCC本质上是一个介于［－1，+1］之间的相关系数值。相关系数为+1，表示是一个完美的预测，0表示是一个平均随机预测（average random prediction），而-1表示是一个逆预测（inverse prediction）。这种统计方法也被称为：phi coefficient。</p>
+</blockquote>
+<p><span class="math display">\[MCC = \frac{tp \times tn - fp \times fn}{\sqrt{(tp + fp)(tp + fn)(tn + fp)(tn + fn)}}.\]</span></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"></span><br></pre></td></tr></table></figure>
+<h1 id="bert用于问答">BERT用于问答</h1>
+<p>给定<code>question</code>文本和包含该问题答案的对应的<code>answer_text</code>文本，从中找出<code>question</code>的答案</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> transformers <span class="keyword">import</span> BertForQuestionAnswering, BertTokenizer</span><br><span class="line"></span><br><span class="line">model_path = <span class="string">&quot;../../H/models/huggingface/bert-large-uncased-whole-word-masking-\</span></span><br><span class="line"><span class="string">finetuned-squad/&quot;</span></span><br><span class="line">tokenizer = BertTokenizer.from_pretrained(model_path + <span class="string">&quot;vocab.txt&quot;</span>)</span><br><span class="line">model = BertForQuestionAnswering.from_pretrained(model_path)</span><br></pre></td></tr></table></figure>
+<pre><code>Calling BertTokenizer.from_pretrained() with the path to a single file or url is deprecated</code></pre>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">question = <span class="string">&quot;How many parameters does BERT-large have?&quot;</span></span><br><span class="line">answer_text = <span class="string">&quot;BERT-large is really big...it has 24-layers and an embedding size \</span></span><br><span class="line"><span class="string">of 1024, for a total of 340M parameters!&quot;</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">input_ids = tokenizer.encode(question, answer_text)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;The input has a total of &#123;:&#125; tokens.&quot;</span>.<span class="built_in">format</span>(<span class="built_in">len</span>(input_ids)))</span><br></pre></td></tr></table></figure>
+<pre><code>The input has a total of 44 tokens.</code></pre>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">tokens = tokenizer.convert_ids_to_tokens(input_ids)</span><br><span class="line"><span class="keyword">for</span> token, <span class="built_in">id</span> <span class="keyword">in</span> <span class="built_in">zip</span>(tokens, input_ids):</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;&#123;:&lt;12&#125; &#123;:&gt;6,&#125;&quot;</span>.<span class="built_in">format</span>(token, <span class="built_in">id</span>))</span><br></pre></td></tr></table></figure>
+<pre><code>[CLS]           101
+how           2,129
+many          2,116
+parameters   11,709
+does          2,515
+bert         14,324
+-             1,011
+large         2,312
+have          2,031
+?             1,029
+[SEP]           102
+bert         14,324
+-             1,011
+large         2,312
+is            2,003
+really        2,428
+big           2,502
+.             1,012
+.             1,012
+.             1,012
+it            2,009
+has           2,038
+24            2,484
+-             1,011
+layers        9,014
+and           1,998
+an            2,019
+em            7,861
+##bed         8,270
+##ding        4,667
+size          2,946
+of            1,997
+102           9,402
+##4           2,549
+,             1,010
+for           2,005
+a             1,037
+total         2,561
+of            1,997
+340          16,029
+##m           2,213
+parameters   11,709
+!               999
+[SEP]           102</code></pre>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># segment mask</span></span><br><span class="line"></span><br><span class="line">sep_index = input_ids.index(tokenizer.sep_token_id)</span><br><span class="line"></span><br><span class="line">num_seg_a = sep_index + <span class="number">1</span></span><br><span class="line">num_seg_b = <span class="built_in">len</span>(input_ids) - num_seg_a</span><br><span class="line"></span><br><span class="line">segment_ids = [<span class="number">0</span>] * num_seg_a + [<span class="number">1</span>] * num_seg_b</span><br><span class="line"></span><br><span class="line"><span class="keyword">assert</span> <span class="built_in">len</span>(segment_ids) == <span class="built_in">len</span>(input_ids)</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 输入为一维，即无批数据维度时，不需要 pad </span></span><br><span class="line"></span><br><span class="line">start_scores, end_scores = model(torch.tensor([input_ids]),</span><br><span class="line">                                 token_type_ids=torch.tensor([segment_ids]))</span><br><span class="line">start_scores.shape, end_scores.shape</span><br></pre></td></tr></table></figure>
+<pre><code>(torch.Size([1, 44]), torch.Size([1, 44]))</code></pre>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 选择策略，不仅仅：是单个向量中最大的</span></span><br><span class="line">answer_start = torch.argmax(start_scores)</span><br><span class="line">answer_end = torch.argmax(end_scores)</span><br><span class="line">answer = <span class="string">&quot; &quot;</span>.join(tokens[answer_start:answer_end + <span class="number">1</span>])</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;Answer: &quot;</span> + answer)</span><br></pre></td></tr></table></figure>
+<pre><code>Answer: 340 ##m</code></pre>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 将 子词 重新组合成 单词</span></span><br><span class="line">answer = tokens[answer_start]</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(answer_start + <span class="number">1</span>, answer_end + <span class="number">1</span>):</span><br><span class="line">    <span class="keyword">if</span> tokens[i][<span class="number">0</span>:<span class="number">2</span>] == <span class="string">&#x27;##&#x27;</span>:</span><br><span class="line">        answer += tokens[i][<span class="number">2</span>:]</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        anser += <span class="string">&quot; &quot;</span> + tokens[i]</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;Answer: &quot;</span> + answer)    </span><br></pre></td></tr></table></figure>
+<pre><code>Answer: 340m</code></pre>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 可视化</span></span><br><span class="line"><span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt</span><br><span class="line"><span class="keyword">import</span> seaborn <span class="keyword">as</span> sns</span><br><span class="line"></span><br><span class="line">sns.<span class="built_in">set</span>(style=<span class="string">&#x27;darkgrid&#x27;</span>)</span><br><span class="line">plt.rcParams[<span class="string">&#x27;figure.figsize&#x27;</span>] = (<span class="number">16</span>, <span class="number">8</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 权重分布</span></span><br><span class="line">s_scores = start_scores.detach().numpy().flatten()</span><br><span class="line">e_scores = end_scores.detach().numpy().flatten()</span><br><span class="line"></span><br><span class="line"><span class="comment"># 对应的标签</span></span><br><span class="line">token_labels = []</span><br><span class="line"><span class="keyword">for</span> (i, token) <span class="keyword">in</span> <span class="built_in">enumerate</span>(tokens):</span><br><span class="line">    token_labels.append(<span class="string">&quot;&#123;:&#125; - &#123;:&#125;&quot;</span>.<span class="built_in">format</span>(token, i))</span><br><span class="line"></span><br><span class="line"><span class="comment"># 可视化权重分布</span></span><br><span class="line">ax = sns.barplot(x=token_labels, y=s_scores, ci=<span class="literal">None</span>)</span><br><span class="line">ax.set_xticklabels(ax.get_xticklabels(), rotation=<span class="number">90</span>, ha=<span class="string">&#x27;center&#x27;</span>)</span><br><span class="line">ax.grid(<span class="literal">True</span>)</span><br><span class="line">plt.title(<span class="string">&quot;Start Word Scores&quot;</span>)</span><br><span class="line">plt.show</span><br></pre></td></tr></table></figure>
+<pre><code>&lt;function matplotlib.pyplot.show(*args, **kw)&gt;</code></pre>
+<p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gr7wztkucqj30q30fogo1.jpg" /></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">ax = sns.barplot(x=token_labels, y=e_scores, ci=<span class="literal">None</span>)</span><br><span class="line">ax.set_xticklabels(ax.get_xticklabels(), rotation=<span class="number">90</span>, ha=<span class="string">&#x27;center&#x27;</span>)</span><br><span class="line">ax.grid(<span class="literal">True</span>)</span><br><span class="line">plt.title(<span class="string">&quot;Start Word Scores&quot;</span>)</span><br><span class="line">plt.show</span><br></pre></td></tr></table></figure>
+<pre><code>&lt;function matplotlib.pyplot.show(*args, **kw)&gt;</code></pre>
+<p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gr7x0f1hgxj30pw0fo40x.jpg" /></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> pandas <span class="keyword">as</span> pd</span><br><span class="line"></span><br><span class="line">scores = []</span><br><span class="line"><span class="keyword">for</span> (i, token_label) <span class="keyword">in</span> <span class="built_in">enumerate</span>(token_labels):</span><br><span class="line">    scores.append(&#123;</span><br><span class="line">        <span class="string">&quot;token_label&quot;</span>: token_label,</span><br><span class="line">        <span class="string">&quot;score&quot;</span>: s_scores[i],</span><br><span class="line">        <span class="string">&quot;marker&quot;</span>: <span class="string">&#x27;start&#x27;</span></span><br><span class="line">    &#125;)</span><br><span class="line">    scores.append(&#123;</span><br><span class="line">        <span class="string">&quot;token_label&quot;</span>: token_label,</span><br><span class="line">        <span class="string">&quot;score&quot;</span>: e_scores[i],</span><br><span class="line">        <span class="string">&quot;marker&quot;</span>: <span class="string">&#x27;end&#x27;</span></span><br><span class="line">    &#125;)</span><br><span class="line">df = pd.DataFrame(scores)</span><br><span class="line"></span><br><span class="line">g = sns.catplot(x=<span class="string">&#x27;token_label&#x27;</span>,</span><br><span class="line">                y=<span class="string">&#x27;score&#x27;</span>,</span><br><span class="line">                hue=<span class="string">&#x27;marker&#x27;</span>,</span><br><span class="line">                data=df,</span><br><span class="line">                kind=<span class="string">&#x27;bar&#x27;</span>,</span><br><span class="line">                height=<span class="number">6</span>,</span><br><span class="line">                aspect=<span class="number">4</span>)</span><br><span class="line"></span><br><span class="line">g.set_xticklabels(g.ax.get_xticklabels(), rotation=<span class="number">90</span>, ha=<span class="string">&#x27;center&#x27;</span>)</span><br><span class="line"></span><br><span class="line">g.ax.grid(<span class="literal">True</span>)</span><br></pre></td></tr></table></figure>
+<p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gr7x0oe575j31dn0dv41w.jpg" /></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"></span><br></pre></td></tr></table></figure>
+<h1 id="总结">总结</h1>
+<h2 id="bert-是怎么用-transformer-的"><code>BERT</code> 是怎么用 <code>Transformer</code> 的？</h2>
+<ul>
+<li><code>BERT_BASE:L=12,H=768,A=12</code>:层的数量为 <code>L</code>，隐藏层的维度为 <code>H</code>，自注意头的个数为 <code>A</code>，前馈过滤器的维度为 <code>4H</code><br />
+</li>
+<li><code>BERT</code> 的输入向量表示，比 <code>Transformer</code> 多了 <code>Segment Embeddings</code></li>
+</ul>
+<h3 id="elmo-和-bert"><code>ELMo</code> 和 <code>BERT</code></h3>
+<ul>
+<li>从网络结构以及最后的实验效果来看，<code>BERT</code> 比 <code>ELMo</code> 效果好主要集中在以下几点原因：
+<ul>
+<li><code>LSTM</code> 抽取特征的能力远弱于 <code>Transformer</code></li>
+<li><code>BERT</code> 的训练数据以及模型参数均多余 <code>ELMo</code>，这也是比较重要的一点</li>
+</ul></li>
+<li><code>ELMo</code> 和 <code>BERT</code> 的区别是什么？
+<ul>
+<li><code>ELMo</code> 模型是通过语言模型任务得到句子中单词的 <code>embedding</code> 表示，以此作为补充的新特征给下游任务使用。这一类预训练的方法被称为 <code>Feature-based Pre-Training</code>。</li>
+<li><code>BERT</code> 模型是“基于 <code>Fine-tuning</code> 的模式”，这种做法和图像领域基于 <code>Fine-tuning</code> 的方式基本一致，下游任务需要将模型改造成 <code>BERT</code> 模型，才可利用 <code>BERT</code> 模型预训练好的参数。</li>
+</ul></li>
+</ul>
+<h3 id="bert-的输入和输出">BERT 的输入和输出</h3>
+<ul>
+<li><p>最底层输入是文本中各个字/词(<code>token</code>)的原始词向量，该向量既可以随机初始化，也可以利用 <code>Word2Vector</code> 等算法进行预训练以作为初始值</p>
+<ul>
+<li>英文词汇被进一步切割，划分为更细粒度的 WordPiece，而不是常见的单词</li>
+<li>中文语料是直接划分成单字</li>
+</ul></li>
+<li><p>除此之外还包含文本向量(<code>Segment Embeddings</code>)，该向量的取值在模型训练过程中自动学习，用于刻画文本的全局语义信息，并与单字/词的语义信息相融合</p></li>
+<li><p>位置向量(<code>Position Embeddings</code>)：由于出现在文本不同位置的字/词所携带的语义信息存在差异（比如：“我爱你”和“你爱我”），因此，BERT 模型对不同位置的字/词分别附加一个不同的向量以作区分</p></li>
+<li><p>三者加和作为模型输入</p></li>
+<li><p>输出是文本中各个字/词融合了全文语义信息后的向量表示</p></li>
+<li><p>在做 <code>Next Sentence Prediction</code> 任务时，在第一个句子的首部会加上一个<code>[CLS] token</code>，在两个句子中间以及最后一个句子的尾部会加上一个<code>[SEP] token</code></p></li>
+</ul>
+<h2 id="如何用-bert-结构怎么做-fine-tuning">如何用 <code>BERT</code> 结构怎么做 <code>fine-tuning</code></h2>
+<h3 id="多标签分类不同于多类别">多标签分类（不同于多类别）</h3>
+<ul>
+<li>输入通过得到 <code>embedding</code> 表示之后，再并行连接 <code>n</code> 个全连接层，再分别接上 <code>softmax</code> 分类；每个全连接层对一个标签分类</li>
+</ul>
+<p>TODO</p>
+<h1 id="transformers模块中bert的简单运用"><code>Transformers</code>模块中<code>BERT</code>的简单运用</h1>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"><span class="keyword">from</span> transformers <span class="keyword">import</span> BertModel, BertTokenizer</span><br><span class="line"></span><br><span class="line">model_name = <span class="string">&#x27;bert-base-uncased&#x27;</span></span><br><span class="line">tokenizer = BertTokenizer.from_pretrained(model_name)</span><br><span class="line">model = BertModel.from_pretrained(model_name)</span><br><span class="line"></span><br><span class="line">input_text = <span class="string">&quot;Here is some text to encode&quot;</span></span><br><span class="line">input_ids = tokenizer.encode(input_text)</span><br><span class="line">input_ids = torch.tensor([input_ids])</span><br><span class="line"></span><br><span class="line"><span class="keyword">with</span> torch.no_grad():</span><br><span class="line">    last_hidden_states = model(input_ids)[<span class="number">0</span>]</span><br></pre></td></tr></table></figure>
+<h1 id="bert模型"><code>BERT</code>模型</h1>
+<ul>
+<li><code>BERT</code>代表<code>Bidirectional Encoder Representations from Transformers</code>，BERT模型的主要结构是<code>Transformer</code>的编码器</li>
+<li><code>BERT</code>是基于大量无标签文本(<code>Wikipedia-2500M单词+书籍-800M单词</code>)进行预训练的
+<ul>
+<li>预训练步骤是<code>BERT</code>成功的主要原因，在大量语料上进行训练后，模型开始“理解”语言</li>
+</ul></li>
+<li>BERT是“深度双向”模型，训练时从一个token的左右两边学习信息 <img src="images/bert-bidirectional.png" />
+<ul>
+<li>如上图中的单词<code>bank</code>，基于其左边和右边不同的信息，有不同的涵义</li>
+</ul></li>
+<li>通过在<code>BERT</code>的预训练模型上添加上一些额外的输出层进行优调，可以很好的用于一些列<code>NLP</code>任务</li>
+</ul>
+<h3 id="bert输入"><code>BERT</code>输入</h3>
+<ol type="1">
+<li><code>Position Embeddings</code>：两个句子，“武汉到广州的车票”与“广州到武汉的车票”，<code>self-attention</code>是不考虑<code>token</code>在句子中的位置，因此无法区别这两句话；因此引入位置编码，句子中的每个位置都有一个独特的位置编码</li>
+<li><code>Segment Embeddings</code>：预训练任务<code>NSP</code>，输入文本是句子对，需要预测两句话是否是连续的两句话，因此添加句子编码</li>
+<li><code>Token Embeddings</code>：每个<code>token</code>的词表征</li>
+</ol>
+</div><div class="article-licensing box"><div class="licensing-title"><p>BERT基本原理及运用</p><p><a href="https://hunlp.com/posts/17970.html">https://hunlp.com/posts/17970.html</a></p></div><div class="licensing-meta level is-mobile"><div class="level-left"><div class="level-item is-narrow"><div><h6>作者</h6><p>ฅ´ω`ฅ</p></div></div><div class="level-item is-narrow"><div><h6>发布于</h6><p>2021-06-06</p></div></div><div class="level-item is-narrow"><div><h6>更新于</h6><p>2021-06-06</p></div></div><div class="level-item is-narrow"><div><h6>许可协议</h6><p><a class="icons" rel="noopener" target="_blank" title="Creative Commons" href="https://creativecommons.org/"><i class="icon fab fa-creative-commons"></i></a><a class="icons" rel="noopener" target="_blank" title="Attribution" href="https://creativecommons.org/licenses/by/4.0/"><i class="icon fab fa-creative-commons-by"></i></a><a class="icons" rel="noopener" target="_blank" title="Noncommercial" href="https://creativecommons.org/licenses/by-nc/4.0/"><i class="icon fab fa-creative-commons-nc"></i></a></p></div></div></div></div></div><hr style="height:1px;margin:1rem 0"><div class="level is-mobile is-flex"><div class="article-tags is-size-7 is-uppercase"><i class="fas fa-tags has-text-grey"></i> <a class="link-muted" rel="tag" href="/tags/Bert/">Bert </a></div></div><div class="bdsharebuttonbox"><a class="bds_more" href="#" data-cmd="more"></a><a class="bds_qzone" href="#" data-cmd="qzone" title="分享到QQ空间"></a><a class="bds_tsina" href="#" data-cmd="tsina" title="分享到新浪微博"></a><a class="bds_tqq" href="#" data-cmd="tqq" title="分享到腾讯微博"></a><a class="bds_renren" href="#" data-cmd="renren" title="分享到人人网"></a><a class="bds_weixin" href="#" data-cmd="weixin" title="分享到微信"></a></div><script>window._bd_share_config = { "common": { "bdSnsKey": {}, "bdText": "", "bdMini": "2", "bdPic": "", "bdStyle": "0", "bdSize": "16" }, "share": {} }; with (document) 0[(getElementsByTagName('head')[0] || body).appendChild(createElement('script')).src = 'http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion=' + ~(-new Date() / 36e5)];</script></article></div><div class="card"><div class="card-content"><h3 class="menu-label has-text-centered">喜欢这篇文章？打赏一下作者吧</h3><div class="buttons is-centered"><a class="button donate" data-type="alipay"><span class="icon is-small"><i class="fab fa-alipay"></i></span><span>支付宝</span><span class="qrcode"><img src="/" alt="支付宝"></span></a><a class="button donate" data-type="wechat"><span class="icon is-small"><i class="fab fa-weixin"></i></span><span>微信</span><span class="qrcode"><img src="/" alt="微信"></span></a></div></div></div><nav class="post-navigation mt-4 level is-mobile"><div class="level-end"><a class="article-nav-next level level-item link-muted" href="/posts/553.html"><span class="level-item">基于HMM和Viterbi算法的序列标注</span><i class="level-item fas fa-chevron-right"></i></a></div></nav><div class="card"><div class="card-content"><h3 class="title is-5">评论</h3><div id="comment-container"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1.7.2/dist/gitalk.css"><script src="https://cdn.jsdelivr.net/npm/gitalk@1.7.2/dist/gitalk.min.js"></script><script>var gitalk = new Gitalk({
+            id: "954941c31734aec3f982610df10b6179",
+            repo: "Cartride.github.io",
+            owner: "Cartride",
+            clientID: "8f4a2426c347380a6ee4",
+            clientSecret: "8dc8cd44b071426b35d0bd60634941371170b798",
+            admin: ["Cartride"],
+            createIssueManually: false,
+            distractionFreeMode: false,
+            perPage: 10,
+            pagerDirection: "last",
+            
+            
+            enableHotKey: true,
+            
+        })
+        gitalk.render('comment-container')</script></div></div></div><div class="column column-left is-4-tablet is-4-desktop is-3-widescreen  order-1 is-sticky"><div class="card widget" id="toc" data-type="toc"><div class="card-content"><div class="menu"><h3 class="menu-label">目录</h3><ul class="menu-list"><li><a class="level is-mobile" href="#bert基本原理"><span class="level-left"><span class="level-item">1</span><span class="level-item">BERT基本原理</span></span></a><ul class="menu-list"><li><a class="level is-mobile" href="#bert微调"><span class="level-left"><span class="level-item">1.1</span><span class="level-item">BERT微调</span></span></a></li><li><a class="level is-mobile" href="#bert优缺点"><span class="level-left"><span class="level-item">1.2</span><span class="level-item">BERT优缺点</span></span></a></li></ul></li><li><a class="level is-mobile" href="#bert用于分类任务"><span class="level-left"><span class="level-item">2</span><span class="level-item">BERT用于分类任务</span></span></a><ul class="menu-list"><li><a class="level is-mobile" href="#语料"><span class="level-left"><span class="level-item">2.1</span><span class="level-item">语料</span></span></a></li><li><a class="level is-mobile" href="#分词"><span class="level-left"><span class="level-item">2.2</span><span class="level-item">分词</span></span></a></li><li><a class="level is-mobile" href="#满足bert模型的输入格式"><span class="level-left"><span class="level-item">2.3</span><span class="level-item">满足BERT模型的输入格式</span></span></a></li><li><a class="level is-mobile" href="#创建并训练分类模型"><span class="level-left"><span class="level-item">2.4</span><span class="level-item">创建并训练分类模型</span></span></a></li><li><a class="level is-mobile" href="#评估模型"><span class="level-left"><span class="level-item">2.5</span><span class="level-item">评估模型</span></span></a></li></ul></li><li><a class="level is-mobile" href="#bert用于问答"><span class="level-left"><span class="level-item">3</span><span class="level-item">BERT用于问答</span></span></a></li><li><a class="level is-mobile" href="#总结"><span class="level-left"><span class="level-item">4</span><span class="level-item">总结</span></span></a><ul class="menu-list"><li><a class="level is-mobile" href="#bert-是怎么用-transformer-的"><span class="level-left"><span class="level-item">4.1</span><span class="level-item">BERT 是怎么用 Transformer 的？</span></span></a><ul class="menu-list"><li><a class="level is-mobile" href="#elmo-和-bert"><span class="level-left"><span class="level-item">4.1.1</span><span class="level-item">ELMo 和 BERT</span></span></a></li><li><a class="level is-mobile" href="#bert-的输入和输出"><span class="level-left"><span class="level-item">4.1.2</span><span class="level-item">BERT 的输入和输出</span></span></a></li></ul></li><li><a class="level is-mobile" href="#如何用-bert-结构怎么做-fine-tuning"><span class="level-left"><span class="level-item">4.2</span><span class="level-item">如何用 BERT 结构怎么做 fine-tuning</span></span></a><ul class="menu-list"><li><a class="level is-mobile" href="#多标签分类不同于多类别"><span class="level-left"><span class="level-item">4.2.1</span><span class="level-item">多标签分类（不同于多类别）</span></span></a></li></ul></li></ul></li><li><a class="level is-mobile" href="#transformers模块中bert的简单运用"><span class="level-left"><span class="level-item">5</span><span class="level-item">Transformers模块中BERT的简单运用</span></span></a></li><li><a class="level is-mobile" href="#bert模型"><span class="level-left"><span class="level-item">6</span><span class="level-item">BERT模型</span></span></a><ul class="menu-list"><ul class="menu-list"><li><a class="level is-mobile" href="#bert输入"><span class="level-left"><span class="level-item">6.1.1</span><span class="level-item">BERT输入</span></span></a></li></ul></ul></li></ul></div></div><style>#toc .menu-list > li > a.is-active + .menu-list { display: block; }#toc .menu-list > li > a + .menu-list { display: none; }</style><script src="/js/toc.js" defer></script></div></div><!--!--></div></div></section><footer class="footer"><div class="container"><div class="level"><div class="level-start"><a class="footer-logo is-block mb-2" href="/"><img src="/img/logo.png" alt="MCFON" height="28"></a><p class="is-size-7"><span>&copy; 2021 ฅ´ω`ฅ</span>  Powered by <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a> &amp; <a href="https://github.com/ppoffice/hexo-theme-icarus" target="_blank" rel="noopener">Icarus</a></p></div><div class="level-end"><div class="field has-addons"><p class="control"><a class="button is-transparent is-large" target="_blank" rel="noopener" title="Creative Commons" href="https://creativecommons.org/"><i class="fab fa-creative-commons"></i></a></p><p class="control"><a class="button is-transparent is-large" target="_blank" rel="noopener" title="Attribution 4.0 International" href="https://creativecommons.org/licenses/by/4.0/"><i class="fab fa-creative-commons-by"></i></a></p><p class="control"><a class="button is-transparent is-large" target="_blank" rel="noopener" title="Download on GitHub" href="https://github.com/ppoffice/hexo-theme-icarus"><i class="fab fa-github"></i></a></p></div></div></div></div></footer><script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script><script src="https://cdn.jsdelivr.net/npm/moment@2.22.2/min/moment-with-locales.min.js"></script><script src="https://cdn.jsdelivr.net/npm/clipboard@2.0.4/dist/clipboard.min.js" defer></script><script>moment.locale("zh-CN");</script><script>var IcarusThemeSettings = {
+            article: {
+                highlight: {
+                    clipboard: true,
+                    fold: 'unfolded'
+                }
+            }
+        };</script><script src="/js/column.js"></script><script src="/js/animation.js"></script><a id="back-to-top" title="回到顶端" href="javascript:;"><i class="fas fa-chevron-up"></i></a><script src="/js/back_to_top.js" defer></script><!--!--><!--!--><!--!--><script src="https://cdn.jsdelivr.net/npm/cookieconsent@3.1.1/build/cookieconsent.min.js" defer></script><script>window.addEventListener("load", () => {
+      window.cookieconsent.initialise({
+        type: "info",
+        theme: "edgeless",
+        static: false,
+        position: "bottom-left",
+        content: {
+          message: "此网站使用Cookie来改善您的体验。",
+          dismiss: "知道了！",
+          allow: "允许使用Cookie",
+          deny: "拒绝",
+          link: "了解更多",
+          policy: "Cookie政策",
+          href: "https://www.cookiesandyou.com/",
+        },
+        palette: {
+          popup: {
+            background: "#edeff5",
+            text: "#838391"
+          },
+          button: {
+            background: "#4b81e8"
+          },
+        },
+      });
+    });</script><script src="https://cdn.jsdelivr.net/npm/lightgallery@1.6.8/dist/js/lightgallery.min.js" defer></script><script src="https://cdn.jsdelivr.net/npm/justifiedGallery@3.7.0/dist/js/jquery.justifiedGallery.min.js" defer></script><script>window.addEventListener("load", () => {
+            if (typeof $.fn.lightGallery === 'function') {
+                $('.article').lightGallery({ selector: '.gallery-item' });
+            }
+            if (typeof $.fn.justifiedGallery === 'function') {
+                if ($('.justified-gallery > p > .gallery-item').length) {
+                    $('.justified-gallery > p > .gallery-item').unwrap();
+                }
+                $('.justified-gallery').justifiedGallery();
+            }
+        });</script><!--!--><!--!--><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.css"><script src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.js" defer></script><script src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/contrib/auto-render.min.js" defer></script><script src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/contrib/mhchem.js" defer></script><script>window.addEventListener("load", function() {
+            document.querySelectorAll('[role="article"] > .content').forEach(function(element) {
+                renderMathInElement(element);
+            });
+        });</script><script type="text/x-mathjax-config">MathJax.Hub.Config({
+            'HTML-CSS': {
+                matchFontHeight: false
+            },
+            SVG: {
+                matchFontHeight: false
+            },
+            CommonHTML: {
+                matchFontHeight: false
+            },
+            tex2jax: {
+                inlineMath: [
+                    ['$','$'],
+                    ['\\(','\\)']
+                ]
+            }
+        });</script><script src="https://cdn.jsdelivr.net/npm/mathjax@2.7.5/unpacked/MathJax.js?config=TeX-MML-AM_CHTML" defer></script><!--!--><!--!--><!--!--><script src="/js/main.js" defer></script><div class="searchbox"><div class="searchbox-container"><div class="searchbox-header"><div class="searchbox-input-container"><input class="searchbox-input" type="text" placeholder="想要查找什么..."></div><a class="searchbox-close" href="javascript:;">×</a></div><div class="searchbox-body"></div></div></div><script src="/js/insight.js" defer></script><script>document.addEventListener('DOMContentLoaded', function () {
+            loadInsight({"contentUrl":"/content.json"}, {"hint":"想要查找什么...","untitled":"(无标题)","posts":"文章","pages":"页面","categories":"分类","tags":"标签"});
+        });</script></body></html>
