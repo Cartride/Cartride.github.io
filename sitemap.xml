@@ -2,6 +2,13 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>https://hunlp.com/posts/61928.html</loc>
+    
+    <lastmod>2021-06-05</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>https://hunlp.com/posts/51094.html</loc>
     
     <lastmod>2021-06-05</lastmod>
@@ -1026,6 +1033,13 @@
   </url>
   
   <url>
+    <loc>https://hunlp.com/tags/turtle/</loc>
+    <lastmod>2021-06-05</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
     <loc>https://hunlp.com/tags/Attention/</loc>
     <lastmod>2021-06-05</lastmod>
     <changefreq>daily</changefreq>
@@ -1040,14 +1054,14 @@
   </url>
   
   <url>
-    <loc>https://hunlp.com/tags/turtle/</loc>
+    <loc>https://hunlp.com/tags/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/</loc>
     <lastmod>2021-06-05</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
-    <loc>https://hunlp.com/tags/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/</loc>
+    <loc>https://hunlp.com/tags/%E4%BA%8C%E5%88%86%E6%A0%91/</loc>
     <lastmod>2021-06-05</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -1062,13 +1076,6 @@
   
   <url>
     <loc>https://hunlp.com/tags/python/</loc>
-    <lastmod>2021-06-05</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://hunlp.com/tags/%E4%BA%8C%E5%88%86%E6%A0%91/</loc>
     <lastmod>2021-06-05</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -1096,14 +1103,14 @@
   </url>
   
   <url>
-    <loc>https://hunlp.com/tags/%E4%BA%8C%E5%88%86%E6%90%9C%E7%B4%A2/</loc>
+    <loc>https://hunlp.com/tags/MDP/</loc>
     <lastmod>2021-06-05</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
-    <loc>https://hunlp.com/tags/MDP/</loc>
+    <loc>https://hunlp.com/tags/%E4%BA%8C%E5%88%86%E6%90%9C%E7%B4%A2/</loc>
     <lastmod>2021-06-05</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -1229,14 +1236,14 @@
   </url>
   
   <url>
-    <loc>https://hunlp.com/tags/numpy/</loc>
+    <loc>https://hunlp.com/tags/K%E8%87%82%E8%80%81%E8%99%8E%E6%9C%BA/</loc>
     <lastmod>2021-06-05</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
-    <loc>https://hunlp.com/tags/K%E8%87%82%E8%80%81%E8%99%8E%E6%9C%BA/</loc>
+    <loc>https://hunlp.com/tags/numpy/</loc>
     <lastmod>2021-06-05</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -1572,6 +1579,20 @@
   </url>
   
   <url>
+    <loc>https://hunlp.com/tags/%E8%AF%8D%E8%A1%A8%E5%BE%81/</loc>
+    <lastmod>2021-06-05</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://hunlp.com/tags/%E8%AF%8D%E5%90%91%E9%87%8F/</loc>
+    <lastmod>2021-06-05</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
     <loc>https://hunlp.com/tags/C/</loc>
     <lastmod>2021-06-05</lastmod>
     <changefreq>daily</changefreq>
@@ -1691,14 +1712,14 @@
   </url>
   
   <url>
-    <loc>https://hunlp.com/tags/word2vec/</loc>
+    <loc>https://hunlp.com/tags/Go/</loc>
     <lastmod>2021-06-05</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
-    <loc>https://hunlp.com/tags/Go/</loc>
+    <loc>https://hunlp.com/tags/word2vec/</loc>
     <lastmod>2021-06-05</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -1735,14 +1756,14 @@
   </url>
   
   <url>
-    <loc>https://hunlp.com/categories/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/</loc>
+    <loc>https://hunlp.com/categories/Python/</loc>
     <lastmod>2021-06-05</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
-    <loc>https://hunlp.com/categories/Python/</loc>
+    <loc>https://hunlp.com/categories/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/</loc>
     <lastmod>2021-06-05</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
