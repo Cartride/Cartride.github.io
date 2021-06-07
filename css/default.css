@@ -11697,3 +11697,6 @@ figure.highlight .section {
 .has-link-black-ter {
   color: #242424 !important;
 }
+.donate .qrcode img {
+  max-width: 180px;
+}
