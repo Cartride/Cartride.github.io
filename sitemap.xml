@@ -65,14 +65,14 @@
   </url>
   
   <url>
-    <loc>https://hunlp.com/posts/38807.html</loc>
+    <loc>https://hunlp.com/posts/35486.html</loc>
     
     <lastmod>2021-06-08</lastmod>
     
   </url>
   
   <url>
-    <loc>https://hunlp.com/posts/35486.html</loc>
+    <loc>https://hunlp.com/posts/38807.html</loc>
     
     <lastmod>2021-06-08</lastmod>
     
@@ -1173,6 +1173,13 @@
   </url>
   
   <url>
+    <loc>https://hunlp.com/tags/turtle/</loc>
+    <lastmod>2021-06-09</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
     <loc>https://hunlp.com/tags/LeetCode/</loc>
     <lastmod>2021-06-09</lastmod>
     <changefreq>daily</changefreq>
@@ -1181,13 +1188,6 @@
   
   <url>
     <loc>https://hunlp.com/tags/Binary-Tree/</loc>
-    <lastmod>2021-06-09</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://hunlp.com/tags/turtle/</loc>
     <lastmod>2021-06-09</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -1593,14 +1593,14 @@
   </url>
   
   <url>
-    <loc>https://hunlp.com/tags/AdaBoost/</loc>
+    <loc>https://hunlp.com/tags/SVM/</loc>
     <lastmod>2021-06-09</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
-    <loc>https://hunlp.com/tags/SVM/</loc>
+    <loc>https://hunlp.com/tags/AdaBoost/</loc>
     <lastmod>2021-06-09</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -1852,6 +1852,13 @@
   </url>
   
   <url>
+    <loc>https://hunlp.com/tags/Go/</loc>
+    <lastmod>2021-06-09</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
     <loc>https://hunlp.com/tags/Go%E8%AF%AD%E8%A8%80/</loc>
     <lastmod>2021-06-09</lastmod>
     <changefreq>daily</changefreq>
@@ -1860,13 +1867,6 @@
   
   <url>
     <loc>https://hunlp.com/tags/%E8%AF%AD%E6%B3%95/</loc>
-    <lastmod>2021-06-09</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://hunlp.com/tags/Go/</loc>
     <lastmod>2021-06-09</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
