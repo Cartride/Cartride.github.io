@@ -2,6 +2,13 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>https://hunlp.com/posts/2771.html</loc>
+    
+    <lastmod>2021-08-21</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>https://hunlp.com/posts/5632.html</loc>
     
     <lastmod>2021-08-15</lastmod>
@@ -1355,6 +1362,13 @@
   </url>
   
   <url>
+    <loc>https://hunlp.com/tags/%E5%A5%87%E5%BC%82%E5%80%BC%E5%88%86%E8%A7%A3/</loc>
+    <lastmod>2021-08-21</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
     <loc>https://hunlp.com/tags/turtle/</loc>
     <lastmod>2021-08-21</lastmod>
     <changefreq>daily</changefreq>
@@ -1411,14 +1425,14 @@
   </url>
   
   <url>
-    <loc>https://hunlp.com/tags/Google-apac/</loc>
+    <loc>https://hunlp.com/tags/Dynamic-Programming/</loc>
     <lastmod>2021-08-21</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
-    <loc>https://hunlp.com/tags/Dynamic-Programming/</loc>
+    <loc>https://hunlp.com/tags/Google-apac/</loc>
     <lastmod>2021-08-21</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -1572,6 +1586,13 @@
   </url>
   
   <url>
+    <loc>https://hunlp.com/tags/Python/</loc>
+    <lastmod>2021-08-21</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
     <loc>https://hunlp.com/tags/CFG/</loc>
     <lastmod>2021-08-21</lastmod>
     <changefreq>daily</changefreq>
@@ -1587,13 +1608,6 @@
   
   <url>
     <loc>https://hunlp.com/tags/Lexized-PCFG/</loc>
-    <lastmod>2021-08-21</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://hunlp.com/tags/Python/</loc>
     <lastmod>2021-08-21</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -1768,14 +1782,14 @@
   </url>
   
   <url>
-    <loc>https://hunlp.com/tags/SVM/</loc>
+    <loc>https://hunlp.com/tags/AdaBoost/</loc>
     <lastmod>2021-08-21</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
-    <loc>https://hunlp.com/tags/AdaBoost/</loc>
+    <loc>https://hunlp.com/tags/SVM/</loc>
     <lastmod>2021-08-21</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>

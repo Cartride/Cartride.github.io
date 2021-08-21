@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="zh"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"><meta><title>奇异值分解 - MCFON</title><link rel="manifest" href="/manifest.json"><meta name="application-name" content="MCFON"><meta name="msapplication-TileImage" content="/img/favicon.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="MCFON"><meta name="apple-mobile-web-app-status-bar-style" content="default"><meta name="description" content="1.矩阵的奇异值分解是指将\(m \times n\)实矩阵\(A\)表示为以下三个实矩阵乘积形式的运算 \[A &amp;#x3D; U \Sigma V ^ { T }\]"><meta property="og:type" content="blog"><meta property="og:title" content="奇异值分解"><meta property="og:url" content="https://hunlp.com/posts/2771.html"><meta property="og:site_name" content="MCFON"><meta property="og:description" content="1.矩阵的奇异值分解是指将\(m \times n\)实矩阵\(A\)表示为以下三个实矩阵乘积形式的运算 \[A &amp;#x3D; U \Sigma V ^ { T }\]"><meta property="og:locale" content="zh_CN"><meta property="og:image" content="https://tva1.sinaimg.cn/large/008i3skNly1gto864b5cej608g08gq2t02.jpg"><meta property="article:published_time" content="2021-07-23T13:45:40.000Z"><meta property="article:modified_time" content="2021-08-21T03:00:01.759Z"><meta property="article:author" content="ฅ´ω`ฅ"><meta property="article:tag" content="笔记"><meta property="article:tag" content="奇异值分解"><meta property="twitter:card" content="summary"><meta property="twitter:image" content="https://tva1.sinaimg.cn/large/008i3skNly1gto864b5cej608g08gq2t02.jpg"><script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","mainEntityOfPage":{"@type":"WebPage","@id":"https://hunlp.com/posts/2771.html"},"headline":"奇异值分解","image":["https://tva1.sinaimg.cn/large/008i3skNly1gto864b5cej608g08gq2t02.jpg"],"datePublished":"2021-07-23T13:45:40.000Z","dateModified":"2021-08-21T03:00:01.759Z","author":{"@type":"Person","name":"ฅ´ω`ฅ"},"publisher":{"@type":"Organization","name":"MCFON","logo":{"@type":"ImageObject","url":"https://hunlp.com/img/logo.png"}},"description":"1.矩阵的奇异值分解是指将\\(m \\times n\\)实矩阵\\(A\\)表示为以下三个实矩阵乘积形式的运算 \\[A &#x3D; U \\Sigma V ^ { T }\\]"}</script><link rel="canonical" href="https://hunlp.com/posts/2771.html"><link rel="icon" href="/img/favicon.png"><link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.2/css/all.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@9.12.0/styles/atom-one-light.css"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@400;600&amp;family=Source+Code+Pro"><link rel="stylesheet" href="/css/default.css"><style>body>.footer,body>.navbar,body>.section{opacity:0}</style><!--!--><script>var _hmt = _hmt || [];
+        (function() {
+            var hm = document.createElement("script");
+            hm.src = "//hm.baidu.com/hm.js?b99420d7a06d2b3361a8efeaf6e20764";
+            var s = document.getElementsByTagName("script")[0];
+            s.parentNode.insertBefore(hm, s);
+        })();</script><!--!--><!--!--><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/cookieconsent@3.1.1/build/cookieconsent.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lightgallery@1.6.8/dist/css/lightgallery.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/justifiedGallery@3.7.0/dist/css/justifiedGallery.min.css"><script src="https://www.googletagmanager.com/gtag/js?id=UA-131608076-1" async></script><script>window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+    
+        gtag('config', 'UA-131608076-1');</script><!--!--><!--!--><!--!--><script src="https://cdn.jsdelivr.net/npm/pace-js@1.0.2/pace.min.js"></script><!--!--><!--!--><meta name="generator" content="Hexo 5.4.0"></head><body class="is-3-column"><nav class="navbar navbar-main"><div class="container"><div class="navbar-brand justify-content-center"><a class="navbar-item navbar-logo" href="/"><img src="/img/logo.png" alt="MCFON" height="28"></a></div><div class="navbar-menu"><div class="navbar-start"><a class="navbar-item" href="/">主页</a><a class="navbar-item" href="/archives">归档</a><a class="navbar-item" href="/categories">分类</a><a class="navbar-item" href="/tags">标签</a><a class="navbar-item" href="/about">关于</a></div><div class="navbar-end"><a class="navbar-item" target="_blank" rel="noopener" title="Download on GitHub" href="https://github.com/ppoffice/hexo-theme-icarus"><i class="fab fa-github"></i></a><a class="navbar-item is-hidden-tablet catalogue" title="目录" href="javascript:;"><i class="fas fa-list-ul"></i></a><a class="navbar-item search" title="搜索" href="javascript:;"><i class="fas fa-search"></i></a></div></div></div></nav><section class="section"><div class="container"><div class="columns"><div class="column order-2 column-main is-8-tablet is-8-desktop is-9-widescreen"><div class="card"><article class="card-content article" role="article"><h1 class="title is-size-3 is-size-4-mobile has-text-weight-normal"><i class="fas fa-angle-double-right"></i>奇异值分解</h1><div class="article-meta is-size-7 is-uppercase level is-mobile"><div class="level-left"><span class="level-item"><i class="far fa-calendar-alt"> </i><time dateTime="${date_xml(page.date)}" title="${date_xml(page.date)}">2021-07-23</time></span><span class="level-item is-hidden-mobile"><i class="far fa-calendar-check"> </i><time dateTime="${date_xml(page.updated)}" title="${date_xml(page.updated)}">2021-08-21</time></span><span class="level-item"><a class="link-muted" href="/categories/%E7%BB%9F%E8%AE%A1%E5%AD%A6%E4%B9%A0%E6%96%B9%E6%B3%95/">统计学习方法</a></span><span class="level-item">11 分钟读完 (大约1661个字)</span></div></div><div class="content"><p>1.矩阵的奇异值分解是指将<span class="math inline">\(m \times n\)</span>实矩阵<span class="math inline">\(A\)</span>表示为以下三个实矩阵乘积形式的运算 <span class="math display">\[A = U \Sigma V ^ { T }\]</span> <span id="more"></span> 其中<span class="math inline">\(U\)</span>是<span class="math inline">\(m\)</span>阶正交矩阵，<span class="math inline">\(V\)</span>是<span class="math inline">\(n\)</span>阶正交矩阵，<span class="math inline">\(\Sigma\)</span>是<span class="math inline">\(m \times n\)</span>矩形对角矩阵 <span class="math display">\[\Sigma = \operatorname { diag } ( \sigma _ { 1 } , \sigma _ { 2 } , \cdots , \sigma _ { p } ) , \quad p = \operatorname { min } \{ m , n \}\]</span> 其对角线元素非负，且满足<span class="math inline">\(\sigma _ { 1 } \geq \sigma _ { 2 } \geq \cdots \geq \sigma _ { p } \geq 0\)</span></p>
+<p>2.任意给定一个实矩阵，其奇异值分解一定存在，但并不唯一。</p>
+<p>3.奇异值分解包括紧奇异值分解和截断奇异值分解。紧奇异值分解是与原始矩阵等秩的奇异值分解，截断奇异值分解是比原始矩阵低秩的奇异值分解。</p>
+<p>4.奇异值分解有明确的几何解释。奇异值分解对应三个连续的线性变换：一个旋转变换，一个缩放变换和另一个旋转变换第一个和第三个旋转变换分别基于空间的标准正交基进行。</p>
+<p>5.设矩阵<span class="math inline">\(A\)</span>的奇异值分解为<span class="math inline">\(A = U \Sigma V ^ { T }\)</span>，则有<span class="math display">\[\left. \begin{array} { l } { A ^ { T } A = V ( \Sigma ^ { T } \Sigma ) V ^ { T } } \\ { A A ^ { T } = U ( \Sigma \Sigma ^ { T } ) U ^ { T } } \end{array} \right.\]</span></p>
+<p>即对称矩阵<span class="math inline">\(A^TA\)</span>和<span class="math inline">\(AA^T\)</span>的特征分解可以由矩阵<span class="math inline">\(A\)</span>的奇异值分解矩阵表示。</p>
+<p>6.矩阵<span class="math inline">\(A\)</span>的奇异值分解可以通过求矩阵<span class="math inline">\(A^TA\)</span>的特征值和特征向量得到：<span class="math inline">\(A^TA\)</span>的特征向量构成正交矩阵<span class="math inline">\(V\)</span>的列；从<span class="math inline">\(A^TA\)</span>的特征值<span class="math inline">\(\lambda _ { j }\)</span>的平方根得到奇异值$_ { i } <span class="math inline">\(,即\)</span><span class="math inline">\(\sigma _ { j } = \sqrt { \lambda _ { j } } , \quad j = 1,2 , \cdots , n\)</span>$</p>
+<p>对其由大到小排列，作为对角线元素，构成对角矩阵<span class="math inline">\(\Sigma\)</span>;求正奇异值对应的左奇异向量，再求扩充的<span class="math inline">\(A^T\)</span>的标准正交基，构成正交矩阵<span class="math inline">\(U\)</span>的列。</p>
+<p>7.矩阵<span class="math inline">\(A = [ a _ { i j } ] _ { m \times n }\)</span>的弗罗贝尼乌斯范数定义为<span class="math display">\[\| A \| _ { F } = ( \sum _ { i = 1 } ^ { m } \sum _ { j = 1 } ^ { n } ( a _ { i j } ) ^ { 2 } ) ^ { \frac { 1 } { 2 } }\]</span>在秩不超过<span class="math inline">\(k\)</span>的<span class="math inline">\(m \times n\)</span>矩阵的集合中，存在矩阵<span class="math inline">\(A\)</span>的弗罗贝尼乌斯范数意义下的最优近似矩阵<span class="math inline">\(X\)</span>。秩为<span class="math inline">\(k\)</span>的截断奇异值分解得到的矩阵<span class="math inline">\(A_k\)</span>能够达到这个最优值。奇异值分解是弗罗贝尼乌斯范数意义下，也就是平方损失意义下的矩阵最优近似。</p>
+<p>8.任意一个实矩阵<span class="math inline">\(A\)</span>可以由其外积展开式表示<span class="math display">\[A = \sigma _ { 1 } u _ { 1 } v _ { 1 } ^ { T } + \sigma _ { 2 } u _ { 2 } v _ { 2 } ^ { T } + \cdots + \sigma _ { n } u _ { n } v _ { n } ^ { T }\]</span> 其中<span class="math inline">\(u _ { k } v _ { k } ^ { T }\)</span>为<span class="math inline">\(m \times n\)</span>矩阵，是列向量<span class="math inline">\(u _ { k }\)</span>和行向量<span class="math inline">\(v _ { k } ^ { T }\)</span>的外积，<span class="math inline">\(\sigma _ { k }\)</span>为奇异值，<span class="math inline">\(u _ { k } , v _ { k } ^ { T } , \sigma _ { k }\)</span>通过矩阵<span class="math inline">\(A\)</span>的奇异值分解得到。</p>
+<table style="width:6%;">
+<colgroup>
+<col style="width: 5%" />
+</colgroup>
+<tbody>
+<tr class="odd">
+<td>任意一个<span class="math inline">\(m\)</span> x <span class="math inline">\(n\)</span> 矩阵，都可以表示为三个矩阵的乘积（因子分解）形式，分别是<span class="math inline">\(m\)</span>阶<strong>正交矩阵</strong>，由<strong>降序</strong>排列的<strong>非负</strong>的对角线元素组成的<span class="math inline">\(m\)</span> x <span class="math inline">\(n\)</span> 矩形对角矩阵，和<span class="math inline">\(n\)</span>阶<strong>正交矩阵</strong>，称为该矩阵的奇异值分解。矩阵的奇异值分解一定存在，但不唯一。</td>
+</tr>
+<tr class="even">
+<td>奇异值分解可以看作是矩阵数据压缩的一种方法，即用因子分解的方式近似地表示原始矩阵，这种近似是在平方损失意义下的最优近似。</td>
+</tr>
+<tr class="odd">
+<td>矩阵的奇异值分解是指，将一个非零的<span class="math inline">\(m\)</span> x <span class="math inline">\(n\)</span> <strong>实矩阵</strong><span class="math inline">\(A, A\in R^{m\times n}\)</span>表示为一下三个实矩阵乘积形式的运算： <span class="math inline">\(A = U\Sigma V^{T}\)</span>, 其中 <span class="math inline">\(U\)</span> 是 <span class="math inline">\(m\)</span> 阶正交矩阵， <span class="math inline">\(V\)</span> 是 <span class="math inline">\(n\)</span> 阶正交矩阵，<span class="math inline">\(\Sigma\)</span> 是由降序排列的非负的对角线元素组成的<span class="math inline">\(m\)</span> x <span class="math inline">\(n\)</span>矩形对角矩阵。称为<span class="math inline">\(A\)</span> 的奇异值分解。 <span class="math inline">\(U\)</span>的列向量称为左奇异向量， <span class="math inline">\(V\)</span>的列向量称为右奇异向量。</td>
+</tr>
+<tr class="even">
+<td>奇异值分解不要求矩阵<span class="math inline">\(A\)</span> 是方阵，事实上矩阵的奇异值分解可以看作方阵的对角化的推广。</td>
+</tr>
+<tr class="odd">
+<td><strong>紧奇奇异值分解</strong>是与原始矩阵等秩的奇异值分解， <strong>截断奇异值分解</strong>是比原始矩阵低秩的奇异值分解。</td>
+</tr>
+</tbody>
+</table>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 实现奇异值分解， 输入一个numpy矩阵，输出 U, sigma, V</span></span><br><span class="line"><span class="comment"># https://zhuanlan.zhihu.com/p/54693391</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">#基于矩阵分解的结果，复原矩阵</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">rebuildMatrix</span>(<span class="params">U, sigma, V</span>):</span></span><br><span class="line">    a = np.dot(U, sigma)</span><br><span class="line">    a = np.dot(a, np.transpose(V))</span><br><span class="line">    <span class="keyword">return</span> a</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">#基于特征值的大小，对特征值以及特征向量进行排序。倒序排列</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">sortByEigenValue</span>(<span class="params">Eigenvalues, EigenVectors</span>):</span></span><br><span class="line">    index = np.argsort(-<span class="number">1</span> * Eigenvalues)</span><br><span class="line">    Eigenvalues = Eigenvalues[index]</span><br><span class="line">    EigenVectors = EigenVectors[:, index]</span><br><span class="line">    <span class="keyword">return</span> Eigenvalues, EigenVectors</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">#对一个矩阵进行奇异值分解</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">SVD</span>(<span class="params">matrixA, NumOfLeft=<span class="literal">None</span></span>):</span></span><br><span class="line">    <span class="comment">#NumOfLeft是要保留的奇异值的个数，也就是中间那个方阵的宽度</span></span><br><span class="line">    <span class="comment">#首先求transpose(A)*A</span></span><br><span class="line">    matrixAT_matrixA = np.dot(np.transpose(matrixA), matrixA)</span><br><span class="line">    <span class="comment">#然后求右奇异向量</span></span><br><span class="line">    lambda_V, X_V = np.linalg.eig(matrixAT_matrixA)</span><br><span class="line">    lambda_V, X_V = sortByEigenValue(lambda_V, X_V)</span><br><span class="line">    <span class="comment">#求奇异值</span></span><br><span class="line">    sigmas = lambda_V</span><br><span class="line">    sigmas = <span class="built_in">list</span>(<span class="built_in">map</span>(<span class="keyword">lambda</span> x: np.sqrt(x)</span><br><span class="line">                      <span class="keyword">if</span> x &gt; <span class="number">0</span> <span class="keyword">else</span> <span class="number">0</span>, sigmas))  <span class="comment">#python里很小的数有时候是负数</span></span><br><span class="line">    sigmas = np.array(sigmas)</span><br><span class="line">    sigmasMatrix = np.diag(sigmas)</span><br><span class="line">    <span class="keyword">if</span> NumOfLeft == <span class="literal">None</span>:</span><br><span class="line">        rankOfSigmasMatrix = <span class="built_in">len</span>(<span class="built_in">list</span>(<span class="built_in">filter</span>(<span class="keyword">lambda</span> x: x &gt; <span class="number">0</span>,</span><br><span class="line">                                             sigmas)))  <span class="comment">#大于0的特征值的个数</span></span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        rankOfSigmasMatrix = NumOfLeft</span><br><span class="line">    sigmasMatrix = sigmasMatrix[<span class="number">0</span>:rankOfSigmasMatrix, :]  <span class="comment">#特征值为0的奇异值就不要了</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">#计算右奇异向量</span></span><br><span class="line">    X_U = np.zeros(</span><br><span class="line">        (matrixA.shape[<span class="number">0</span>], rankOfSigmasMatrix))  <span class="comment">#初始化一个右奇异向量矩阵，这里直接进行裁剪</span></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(rankOfSigmasMatrix):</span><br><span class="line">        X_U[:, i] = np.transpose(np.dot(matrixA, X_V[:, i]) / sigmas[i])</span><br><span class="line"></span><br><span class="line">    <span class="comment">#对右奇异向量和奇异值矩阵进行裁剪</span></span><br><span class="line">    X_V = X_V[:, <span class="number">0</span>:NumOfLeft]</span><br><span class="line">    sigmasMatrix = sigmasMatrix[<span class="number">0</span>:rankOfSigmasMatrix, <span class="number">0</span>:rankOfSigmasMatrix]</span><br><span class="line">    <span class="comment">#print(rebuildMatrix(X_U, sigmasMatrix, X_V))</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> X_U, sigmasMatrix, X_V</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">A = np.array([[<span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">2</span>, <span class="number">2</span>], [<span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">3</span>, <span class="number">3</span>], [<span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">1</span>, <span class="number">1</span>], [<span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">0</span>, <span class="number">0</span>],</span><br><span class="line">              [<span class="number">2</span>, <span class="number">2</span>, <span class="number">2</span>, <span class="number">0</span>, <span class="number">0</span>], [<span class="number">5</span>, <span class="number">5</span>, <span class="number">5</span>, <span class="number">0</span>, <span class="number">0</span>], [<span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">0</span>, <span class="number">0</span>]])</span><br><span class="line"></span><br><span class="line">A</span><br></pre></td></tr></table></figure>
+<pre><code>array([[1, 1, 1, 2, 2],
+       [0, 0, 0, 3, 3],
+       [0, 0, 0, 1, 1],
+       [1, 1, 1, 0, 0],
+       [2, 2, 2, 0, 0],
+       [5, 5, 5, 0, 0],
+       [1, 1, 1, 0, 0]])</code></pre>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">X_U, sigmasMatrix, X_V = SVD(A, NumOfLeft=<span class="number">3</span>)</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">X_U</span><br></pre></td></tr></table></figure>
+<pre><code>array([[ 1.96602638e-01, -5.12980706e-01, -6.20066911e-09],
+       [ 3.08997616e-02, -8.04794293e-01,  1.69140901e-09],
+       [ 1.02999205e-02, -2.68264764e-01,  5.63803005e-10],
+       [ 1.76002797e-01,  2.35488225e-02, -7.63159275e-09],
+       [ 3.52005594e-01,  4.70976451e-02, -1.52631855e-08],
+       [ 8.80013984e-01,  1.17744113e-01, -3.81579637e-08],
+       [ 1.76002797e-01,  2.35488225e-02, -7.63159275e-09]])</code></pre>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sigmasMatrix</span><br></pre></td></tr></table></figure>
+<pre><code>array([[9.81586105e+00, 0.00000000e+00, 0.00000000e+00],
+       [0.00000000e+00, 5.25821946e+00, 0.00000000e+00],
+       [0.00000000e+00, 0.00000000e+00, 1.16381789e-07]])</code></pre>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">X_V</span><br></pre></td></tr></table></figure>
+<pre><code>array([[ 5.75872999e-01,  4.12749590e-02,  8.16496581e-01],
+       [ 5.75872999e-01,  4.12749590e-02, -4.08248290e-01],
+       [ 5.75872999e-01,  4.12749590e-02, -4.08248290e-01],
+       [ 5.05512944e-02, -7.05297502e-01,  3.28082013e-17],
+       [ 5.05512944e-02, -7.05297502e-01,  3.28082013e-17]])</code></pre>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># rebuild from U, sigma, V</span></span><br><span class="line"></span><br><span class="line">rebuildMatrix(X_U, sigmasMatrix, X_V)</span><br></pre></td></tr></table></figure>
+<pre><code>array([[ 1.00000000e+00,  1.00000000e+00,  1.00000000e+00,
+         2.00000000e+00,  2.00000000e+00],
+       [ 5.39915464e-17,  7.72260438e-16, -7.54662738e-16,
+         3.00000000e+00,  3.00000000e+00],
+       [ 9.57429619e-18,  2.48997260e-16, -2.59977132e-16,
+         1.00000000e+00,  1.00000000e+00],
+       [ 1.00000000e+00,  1.00000000e+00,  1.00000000e+00,
+         1.25546281e-17,  1.25546281e-17],
+       [ 2.00000000e+00,  2.00000000e+00,  2.00000000e+00,
+         2.51092563e-17,  2.51092563e-17],
+       [ 5.00000000e+00,  5.00000000e+00,  5.00000000e+00,
+         9.74347659e-18,  9.74347659e-18],
+       [ 1.00000000e+00,  1.00000000e+00,  1.00000000e+00,
+         1.38777878e-17,  1.38777878e-17]])</code></pre>
+<p>same as A.</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> PIL <span class="keyword">import</span> Image</span><br><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"><span class="keyword">from</span> io <span class="keyword">import</span> BytesIO</span><br><span class="line"></span><br><span class="line">url = <span class="string">&#x27;https://images.mulberry.com/i/mulberrygroup/RL5792_000N651_L/small-hampstead-deep-amber-small-classic-grain-ayers/small-hampstead-deep-amber-small-classic-grain-ayers?v=3&amp;w=304&#x27;</span></span><br><span class="line">response = requests.get(url)</span><br><span class="line">img = Image.<span class="built_in">open</span>(BytesIO(response.content))</span><br><span class="line">img</span><br></pre></td></tr></table></figure>
+<p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gto864b5cej608g08gq2t02.jpg" /></p>
+</div><div class="article-licensing box"><div class="licensing-title"><p>奇异值分解</p><p><a href="https://hunlp.com/posts/2771.html">https://hunlp.com/posts/2771.html</a></p></div><div class="licensing-meta level is-mobile"><div class="level-left"><div class="level-item is-narrow"><div><h6>作者</h6><p>ฅ´ω`ฅ</p></div></div><div class="level-item is-narrow"><div><h6>发布于</h6><p>2021-07-23</p></div></div><div class="level-item is-narrow"><div><h6>更新于</h6><p>2021-08-21</p></div></div><div class="level-item is-narrow"><div><h6>许可协议</h6><p><a class="icons" rel="noopener" target="_blank" title="Creative Commons" href="https://creativecommons.org/"><i class="icon fab fa-creative-commons"></i></a><a class="icons" rel="noopener" target="_blank" title="Attribution" href="https://creativecommons.org/licenses/by/4.0/"><i class="icon fab fa-creative-commons-by"></i></a><a class="icons" rel="noopener" target="_blank" title="Noncommercial" href="https://creativecommons.org/licenses/by-nc/4.0/"><i class="icon fab fa-creative-commons-nc"></i></a></p></div></div></div></div></div><hr style="height:1px;margin:1rem 0"><div class="level is-mobile is-flex"><div class="article-tags is-size-7 is-uppercase"><i class="fas fa-tags has-text-grey"></i> <a class="link-muted" rel="tag" href="/tags/%E7%AC%94%E8%AE%B0/">笔记, </a><a class="link-muted" rel="tag" href="/tags/%E5%A5%87%E5%BC%82%E5%80%BC%E5%88%86%E8%A7%A3/">奇异值分解 </a></div></div><div class="bdsharebuttonbox"><a class="bds_more" href="#" data-cmd="more"></a><a class="bds_qzone" href="#" data-cmd="qzone" title="分享到QQ空间"></a><a class="bds_tsina" href="#" data-cmd="tsina" title="分享到新浪微博"></a><a class="bds_tqq" href="#" data-cmd="tqq" title="分享到腾讯微博"></a><a class="bds_renren" href="#" data-cmd="renren" title="分享到人人网"></a><a class="bds_weixin" href="#" data-cmd="weixin" title="分享到微信"></a></div><script>window._bd_share_config = { "common": { "bdSnsKey": {}, "bdText": "", "bdMini": "2", "bdPic": "", "bdStyle": "0", "bdSize": "16" }, "share": {} }; with (document) 0[(getElementsByTagName('head')[0] || body).appendChild(createElement('script')).src = 'http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion=' + ~(-new Date() / 36e5)];</script></article></div><div class="card"><div class="card-content"><h3 class="menu-label has-text-centered">喜欢这篇文章？打赏一下作者吧</h3><div class="buttons is-centered"><a class="button donate" data-type="alipay"><span class="icon is-small"><i class="fab fa-alipay"></i></span><span>支付宝</span><span class="qrcode"><img src="/img/zfb.jpg" alt="支付宝"></span></a><a class="button donate" data-type="wechat"><span class="icon is-small"><i class="fab fa-weixin"></i></span><span>微信</span><span class="qrcode"><img src="/img/wx.jpg" alt="微信"></span></a></div></div></div><nav class="post-navigation mt-4 level is-mobile"><div class="level-end"><a class="article-nav-next level level-item link-muted" href="/posts/5632.html"><span class="level-item">隐马尔可夫模型</span><i class="level-item fas fa-chevron-right"></i></a></div></nav><div class="card"><div class="card-content"><h3 class="title is-5">评论</h3><div id="comment-container"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1.7.2/dist/gitalk.css"><script src="https://cdn.jsdelivr.net/npm/gitalk@1.7.2/dist/gitalk.min.js"></script><script>var gitalk = new Gitalk({
+            id: "e10d3be56ff3e7fd8f5b381252f53d9e",
+            repo: "Cartride.github.io",
+            owner: "Cartride",
+            clientID: "8f4a2426c347380a6ee4",
+            clientSecret: "8dc8cd44b071426b35d0bd60634941371170b798",
+            admin: ["Cartride"],
+            createIssueManually: false,
+            distractionFreeMode: false,
+            perPage: 10,
+            pagerDirection: "last",
+            
+            
+            enableHotKey: true,
+            
+        })
+        gitalk.render('comment-container')</script></div></div></div><div class="column column-left is-4-tablet is-4-desktop is-3-widescreen  order-1 is-sticky"><!--!--></div><!--!--></div></div></section><footer class="footer"><div class="container"><div class="level"><div class="level-start"><a class="footer-logo is-block mb-2" href="/"><img src="/img/logo.png" alt="MCFON" height="28"></a><p class="is-size-7"><span>&copy; 2021 ฅ´ω`ฅ</span>  Powered by <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a> &amp; <a href="https://github.com/ppoffice/hexo-theme-icarus" target="_blank" rel="noopener">Icarus</a></p></div><div class="level-end"><div class="field has-addons"><p class="control"><a class="button is-transparent is-large" target="_blank" rel="noopener" title="Creative Commons" href="https://creativecommons.org/"><i class="fab fa-creative-commons"></i></a></p><p class="control"><a class="button is-transparent is-large" target="_blank" rel="noopener" title="Attribution 4.0 International" href="https://creativecommons.org/licenses/by/4.0/"><i class="fab fa-creative-commons-by"></i></a></p><p class="control"><a class="button is-transparent is-large" target="_blank" rel="noopener" title="Download on GitHub" href="https://github.com/ppoffice/hexo-theme-icarus"><i class="fab fa-github"></i></a></p></div></div></div></div></footer><script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script><script src="https://cdn.jsdelivr.net/npm/moment@2.22.2/min/moment-with-locales.min.js"></script><script src="https://cdn.jsdelivr.net/npm/clipboard@2.0.4/dist/clipboard.min.js" defer></script><script>moment.locale("zh-CN");</script><script>var IcarusThemeSettings = {
+            article: {
+                highlight: {
+                    clipboard: true,
+                    fold: 'unfolded'
+                }
+            }
+        };</script><script src="/js/column.js"></script><script src="/js/animation.js"></script><a id="back-to-top" title="回到顶端" href="javascript:;"><i class="fas fa-chevron-up"></i></a><script src="/js/back_to_top.js" defer></script><!--!--><!--!--><!--!--><script src="https://cdn.jsdelivr.net/npm/cookieconsent@3.1.1/build/cookieconsent.min.js" defer></script><script>window.addEventListener("load", () => {
+      window.cookieconsent.initialise({
+        type: "info",
+        theme: "edgeless",
+        static: false,
+        position: "bottom-left",
+        content: {
+          message: "此网站使用Cookie来改善您的体验。",
+          dismiss: "知道了！",
+          allow: "允许使用Cookie",
+          deny: "拒绝",
+          link: "了解更多",
+          policy: "Cookie政策",
+          href: "https://www.cookiesandyou.com/",
+        },
+        palette: {
+          popup: {
+            background: "#edeff5",
+            text: "#838391"
+          },
+          button: {
+            background: "#4b81e8"
+          },
+        },
+      });
+    });</script><script src="https://cdn.jsdelivr.net/npm/lightgallery@1.6.8/dist/js/lightgallery.min.js" defer></script><script src="https://cdn.jsdelivr.net/npm/justifiedGallery@3.7.0/dist/js/jquery.justifiedGallery.min.js" defer></script><script>window.addEventListener("load", () => {
+            if (typeof $.fn.lightGallery === 'function') {
+                $('.article').lightGallery({ selector: '.gallery-item' });
+            }
+            if (typeof $.fn.justifiedGallery === 'function') {
+                if ($('.justified-gallery > p > .gallery-item').length) {
+                    $('.justified-gallery > p > .gallery-item').unwrap();
+                }
+                $('.justified-gallery').justifiedGallery();
+            }
+        });</script><!--!--><!--!--><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.css"><script src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.js" defer></script><script src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/contrib/auto-render.min.js" defer></script><script src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/contrib/mhchem.js" defer></script><script>window.addEventListener("load", function() {
+            document.querySelectorAll('[role="article"] > .content').forEach(function(element) {
+                renderMathInElement(element);
+            });
+        });</script><script type="text/x-mathjax-config">MathJax.Hub.Config({
+            'HTML-CSS': {
+                matchFontHeight: false
+            },
+            SVG: {
+                matchFontHeight: false
+            },
+            CommonHTML: {
+                matchFontHeight: false
+            },
+            tex2jax: {
+                inlineMath: [
+                    ['$','$'],
+                    ['\\(','\\)']
+                ]
+            }
+        });</script><script src="https://cdn.jsdelivr.net/npm/mathjax@2.7.5/unpacked/MathJax.js?config=TeX-MML-AM_CHTML" defer></script><!--!--><!--!--><!--!--><script src="/js/main.js" defer></script><div class="searchbox"><div class="searchbox-container"><div class="searchbox-header"><div class="searchbox-input-container"><input class="searchbox-input" type="text" placeholder="想要查找什么..."></div><a class="searchbox-close" href="javascript:;">×</a></div><div class="searchbox-body"></div></div></div><script src="/js/insight.js" defer></script><script>document.addEventListener('DOMContentLoaded', function () {
+            loadInsight({"contentUrl":"/content.json"}, {"hint":"想要查找什么...","untitled":"(无标题)","posts":"文章","pages":"页面","categories":"分类","tags":"标签"});
+        });</script></body></html>
