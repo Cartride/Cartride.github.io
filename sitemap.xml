@@ -2,6 +2,13 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>https://hunlp.com/posts/22721.html</loc>
+    
+    <lastmod>2021-08-21</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>https://hunlp.com/posts/25529.html</loc>
     
     <lastmod>2021-08-21</lastmod>
@@ -107,14 +114,14 @@
   </url>
   
   <url>
-    <loc>https://hunlp.com/posts/41544.html</loc>
+    <loc>https://hunlp.com/posts/29902.html</loc>
     
     <lastmod>2021-06-10</lastmod>
     
   </url>
   
   <url>
-    <loc>https://hunlp.com/posts/29902.html</loc>
+    <loc>https://hunlp.com/posts/41544.html</loc>
     
     <lastmod>2021-06-10</lastmod>
     
@@ -1383,14 +1390,14 @@
   </url>
   
   <url>
-    <loc>https://hunlp.com/tags/turtle/</loc>
+    <loc>https://hunlp.com/tags/EM%E7%AE%97%E6%B3%95/</loc>
     <lastmod>2021-08-21</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
-    <loc>https://hunlp.com/tags/EM%E7%AE%97%E6%B3%95/</loc>
+    <loc>https://hunlp.com/tags/turtle/</loc>
     <lastmod>2021-08-21</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -1439,14 +1446,14 @@
   </url>
   
   <url>
-    <loc>https://hunlp.com/tags/Google-apac/</loc>
+    <loc>https://hunlp.com/tags/Dynamic-Programming/</loc>
     <lastmod>2021-08-21</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
-    <loc>https://hunlp.com/tags/Dynamic-Programming/</loc>
+    <loc>https://hunlp.com/tags/Google-apac/</loc>
     <lastmod>2021-08-21</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -1495,13 +1502,6 @@
   </url>
   
   <url>
-    <loc>https://hunlp.com/tags/%E9%93%BE%E8%A1%A8/</loc>
-    <lastmod>2021-08-21</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
     <loc>https://hunlp.com/tags/spark/</loc>
     <lastmod>2021-08-21</lastmod>
     <changefreq>daily</changefreq>
@@ -1510,6 +1510,13 @@
   
   <url>
     <loc>https://hunlp.com/tags/%E4%BC%98%E5%8C%96%E7%AE%97%E6%B3%95/</loc>
+    <lastmod>2021-08-21</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://hunlp.com/tags/%E9%93%BE%E8%A1%A8/</loc>
     <lastmod>2021-08-21</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -1656,14 +1663,14 @@
   </url>
   
   <url>
-    <loc>https://hunlp.com/tags/Temporal-Difference/</loc>
+    <loc>https://hunlp.com/tags/Tagging/</loc>
     <lastmod>2021-08-21</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
-    <loc>https://hunlp.com/tags/Tagging/</loc>
+    <loc>https://hunlp.com/tags/Temporal-Difference/</loc>
     <lastmod>2021-08-21</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -1888,6 +1895,13 @@
   
   <url>
     <loc>https://hunlp.com/tags/HMM%E7%AE%97%E6%B3%95/</loc>
+    <lastmod>2021-08-21</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://hunlp.com/tags/LSA/</loc>
     <lastmod>2021-08-21</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
