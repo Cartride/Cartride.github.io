@@ -2,6 +2,13 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>https://hunlp.com/posts/49096.html</loc>
+    
+    <lastmod>2021-08-21</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>https://hunlp.com/posts/29662.html</loc>
     
     <lastmod>2021-08-21</lastmod>
@@ -1397,7 +1404,7 @@
   </url>
   
   <url>
-    <loc>https://hunlp.com/tags/PLSA/</loc>
+    <loc>https://hunlp.com/tags/MCMC/</loc>
     <lastmod>2021-08-21</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -1405,6 +1412,13 @@
   
   <url>
     <loc>https://hunlp.com/tags/turtle/</loc>
+    <lastmod>2021-08-21</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://hunlp.com/tags/PLSA/</loc>
     <lastmod>2021-08-21</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -1719,14 +1733,14 @@
   </url>
   
   <url>
-    <loc>https://hunlp.com/tags/%E5%9B%BE%E8%AE%BA/</loc>
+    <loc>https://hunlp.com/tags/%E8%81%9A%E7%B1%BB/</loc>
     <lastmod>2021-08-21</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
-    <loc>https://hunlp.com/tags/%E8%81%9A%E7%B1%BB/</loc>
+    <loc>https://hunlp.com/tags/%E5%9B%BE%E8%AE%BA/</loc>
     <lastmod>2021-08-21</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
