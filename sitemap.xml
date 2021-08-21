@@ -2,6 +2,13 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>https://hunlp.com/posts/29662.html</loc>
+    
+    <lastmod>2021-08-21</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>https://hunlp.com/posts/22721.html</loc>
     
     <lastmod>2021-08-21</lastmod>
@@ -1390,7 +1397,7 @@
   </url>
   
   <url>
-    <loc>https://hunlp.com/tags/EM%E7%AE%97%E6%B3%95/</loc>
+    <loc>https://hunlp.com/tags/PLSA/</loc>
     <lastmod>2021-08-21</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -1398,6 +1405,13 @@
   
   <url>
     <loc>https://hunlp.com/tags/turtle/</loc>
+    <lastmod>2021-08-21</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://hunlp.com/tags/EM%E7%AE%97%E6%B3%95/</loc>
     <lastmod>2021-08-21</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -1446,14 +1460,14 @@
   </url>
   
   <url>
-    <loc>https://hunlp.com/tags/Dynamic-Programming/</loc>
+    <loc>https://hunlp.com/tags/Google-apac/</loc>
     <lastmod>2021-08-21</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
-    <loc>https://hunlp.com/tags/Google-apac/</loc>
+    <loc>https://hunlp.com/tags/Dynamic-Programming/</loc>
     <lastmod>2021-08-21</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
