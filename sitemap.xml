@@ -16,6 +16,13 @@
   </url>
   
   <url>
+    <loc>https://hunlp.com/posts/47418.html</loc>
+    
+    <lastmod>2021-08-25</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>https://hunlp.com/posts/49108.html</loc>
     
     <lastmod>2021-08-21</lastmod>
@@ -1432,13 +1439,6 @@
   </url>
   
   <url>
-    <loc>https://hunlp.com/tags/MCMC/</loc>
-    <lastmod>2021-08-25</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
     <loc>https://hunlp.com/tags/PCA/</loc>
     <lastmod>2021-08-25</lastmod>
     <changefreq>daily</changefreq>
@@ -1447,6 +1447,13 @@
   
   <url>
     <loc>https://hunlp.com/tags/PLSA/</loc>
+    <lastmod>2021-08-25</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://hunlp.com/tags/MCMC/</loc>
     <lastmod>2021-08-25</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -1474,20 +1481,6 @@
   </url>
   
   <url>
-    <loc>https://hunlp.com/tags/EM%E7%AE%97%E6%B3%95/</loc>
-    <lastmod>2021-08-25</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://hunlp.com/tags/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/</loc>
-    <lastmod>2021-08-25</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
     <loc>https://hunlp.com/tags/Attention/</loc>
     <lastmod>2021-08-25</lastmod>
     <changefreq>daily</changefreq>
@@ -1502,6 +1495,27 @@
   </url>
   
   <url>
+    <loc>https://hunlp.com/tags/EM%E7%AE%97%E6%B3%95/</loc>
+    <lastmod>2021-08-25</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://hunlp.com/tags/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/</loc>
+    <lastmod>2021-08-25</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://hunlp.com/tags/%E4%BA%8C%E5%88%86%E6%A0%91/</loc>
+    <lastmod>2021-08-25</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
     <loc>https://hunlp.com/tags/CYK/</loc>
     <lastmod>2021-08-25</lastmod>
     <changefreq>daily</changefreq>
@@ -1510,13 +1524,6 @@
   
   <url>
     <loc>https://hunlp.com/tags/python/</loc>
-    <lastmod>2021-08-25</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://hunlp.com/tags/%E4%BA%8C%E5%88%86%E6%A0%91/</loc>
     <lastmod>2021-08-25</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -1663,14 +1670,14 @@
   </url>
   
   <url>
-    <loc>https://hunlp.com/tags/K%E8%87%82%E8%80%81%E8%99%8E%E6%9C%BA/</loc>
+    <loc>https://hunlp.com/tags/Monte-Carlo/</loc>
     <lastmod>2021-08-25</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
-    <loc>https://hunlp.com/tags/Monte-Carlo/</loc>
+    <loc>https://hunlp.com/tags/K%E8%87%82%E8%80%81%E8%99%8E%E6%9C%BA/</loc>
     <lastmod>2021-08-25</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -1713,6 +1720,20 @@
   
   <url>
     <loc>https://hunlp.com/tags/Python/</loc>
+    <lastmod>2021-08-25</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://hunlp.com/tags/SSD/</loc>
+    <lastmod>2021-08-25</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://hunlp.com/tags/CV/</loc>
     <lastmod>2021-08-25</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -1782,14 +1803,14 @@
   </url>
   
   <url>
-    <loc>https://hunlp.com/tags/%E4%BA%8C%E8%BF%9B%E5%88%B6/</loc>
+    <loc>https://hunlp.com/tags/YOLO/</loc>
     <lastmod>2021-08-25</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
-    <loc>https://hunlp.com/tags/YOLO/</loc>
+    <loc>https://hunlp.com/tags/%E4%BA%8C%E8%BF%9B%E5%88%B6/</loc>
     <lastmod>2021-08-25</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -2282,6 +2303,13 @@
   
   <url>
     <loc>https://hunlp.com/categories/%E8%8B%B1%E8%AF%AD%E5%AD%A6%E4%B9%A0/</loc>
+    <lastmod>2021-08-25</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://hunlp.com/categories/%E8%AE%BA%E6%96%87%E7%AC%94%E8%AE%B0/</loc>
     <lastmod>2021-08-25</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
