@@ -501,7 +501,7 @@ b_{x,y}^i = a_{x,y}^i / (k + \alpha \sum_{j=max(0, i-n/2)}^{min(N-1, i+n/2)}(a_{
 <ol start="2" type="1">
 <li><p>$ a_{x,y}^i $ 表示在这个输出结构中的一个位置 $ [a,b,c,d] $，可以理解成在某一张图中的某一个通道下的某个高度和某个宽度位置的点，即第 $ a $ 张图的第 $ d $ 个通道下的高度为b宽度为c的点。</p></li>
 <li><p>$ N $：论文公式中的 $ N $ 表示通道数 (channel)。</p></li>
-<li><p>$ a <span class="math inline">\(，\)</span> n/2 $， $ k $ 分别表示函数中的 input,depth_radius,bias。参数 $ k, n, , $ 都是超参数，一般设置 $ k=2, n=5, *e-4,  $</p></li>
+<li><p>$ a <span class="math inline">\(，\)</span> n/2 $， $ k $ 分别表示函数中的 input,depth_radius,bias。参数 $ k, n, , $ 都是超参数，一般设置 $ k=2, n=5, =1*e-4, =0.75 $</p></li>
 <li><p>$ <span class="math inline">\(：\)</span> $ 叠加的方向是沿着通道方向的，即每个点值的平方和是沿着 $ a $ 中的第 3 维 channel 方向的，也就是一个点同方向的前面 $ n/2 $ 个通道（最小为第 $ 0 $ 个通道）和后 $ n/2 $ 个通道（最大为第 $ d-1 $ 个通道）的点的平方和(共 $ n+1 $ 个点)。而函数的英文注解中也说明了把 input 当成是 $ d $ 个 3 维的矩阵，说白了就是把 input 的通道数当作 3 维矩阵的个数，叠加的方向也是在通道方向。</p></li>
 </ol>
 <p>简单的示意图如下：</p>

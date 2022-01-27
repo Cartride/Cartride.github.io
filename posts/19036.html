@@ -135,12 +135,12 @@
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">In [<span class="number">99</span>]: dic = &#123;<span class="string">&#x27;Name&#x27;</span>:[<span class="string">&#x27;LiuShunxiang&#x27;</span>,<span class="string">&#x27;Zhangshan&#x27;</span>],</span><br><span class="line">    ...:        <span class="string">&#x27;Sex&#x27;</span>:[<span class="string">&#x27;M&#x27;</span>,<span class="string">&#x27;F&#x27;</span>],<span class="string">&#x27;Age&#x27;</span>:[<span class="number">27</span>,<span class="number">23</span>],</span><br><span class="line">    ...:        <span class="string">&#x27;Height&#x27;</span>:[<span class="number">165.7</span>,<span class="number">167.2</span>],<span class="string">&#x27;Weight&#x27;</span>:[<span class="number">61</span>,<span class="number">63</span>]&#125;</span><br><span class="line"></span><br><span class="line">In [<span class="number">100</span>]: student2 = pd.DataFrame(dic)</span><br><span class="line"></span><br><span class="line">In [<span class="number">101</span>]: student2</span><br><span class="line">Out[<span class="number">101</span>]:</span><br><span class="line">   Age  Height          Name Sex  Weight</span><br><span class="line"><span class="number">0</span>   <span class="number">27</span>   <span class="number">165.7</span>  LiuShunxiang   M      <span class="number">61</span></span><br><span class="line"><span class="number">1</span>   <span class="number">23</span>   <span class="number">167.2</span>     Zhangshan   F      <span class="number">63</span></span><br></pre></td></tr></table></figure>
 <p>现在将student2中的数据新增到student中，可以通过<strong>concat函数</strong>实现：</p>
 <figure>
-<img src="http://mmbiz.qpic.cn/mmbiz_png/yjFUicxiaClgWibpwROULeFdlOuXM57CpQwTIu4ibolcJbCGXJnwicUOgsLwS0zpiazsDrZ6mRLJHCRbiawQAaFxtg2MQ/640?wx_fmt=png&amp;tp=webp&amp;wxfrom=5&amp;wx_lazy=1" alt="g1" /><figcaption aria-hidden="true">g1</figcaption>
+<img src="http://mmbiz.qpic.cn/mmbiz_png/yjFUicxiaClgWibpwROULeFdlOuXM57CpQwTIu4ibolcJbCGXJnwicUOgsLwS0zpiazsDrZ6mRLJHCRbiawQAaFxtg2MQ/640?wx_fmt=png&amp;tp=webp&amp;wxfrom=5&amp;wx_lazy=1" alt="" /><figcaption>g1</figcaption>
 </figure>
 <p>注意到了吗？在数据库中union必须要求两张表的列顺序一致，而这里<strong>concat函数可以自动对齐两个数据框的变量</strong>（前面student数据框列的顺序是'Name Sex Age Height Weight'，和student2定义的列顺序不同，但是合并时按列名进行了对齐）！</p>
 <p>新增列的话，其实在pandas中就更简单了，例如在student2中新增一列学生成绩：</p>
 <figure>
-<img src="http://mmbiz.qpic.cn/mmbiz_png/yjFUicxiaClgWibpwROULeFdlOuXM57CpQwQGicPicpQqU30D8XPtT5qibFB5OnxcYQ6K31yCrbrz8icpSSGYlbGKV6Kg/640?wx_fmt=png&amp;tp=webp&amp;wxfrom=5&amp;wx_lazy=1" alt="g2" /><figcaption aria-hidden="true">g2</figcaption>
+<img src="http://mmbiz.qpic.cn/mmbiz_png/yjFUicxiaClgWibpwROULeFdlOuXM57CpQwQGicPicpQqU30D8XPtT5qibFB5OnxcYQ6K31yCrbrz8icpSSGYlbGKV6Kg/640?wx_fmt=png&amp;tp=webp&amp;wxfrom=5&amp;wx_lazy=1" alt="" /><figcaption>g2</figcaption>
 </figure>
 <p>对于新增的列没有赋值，就会出现空NaN的形式。</p>
 <p>补充一下，也可以这样初始化并新增一列：</p>
@@ -148,27 +148,27 @@
 <h3 id="删删除表观测行或变量列">删：删除表、观测行或变量列</h3>
 <p>删除数据框student2,通过del命令实现，该命令可以删除Python的所有对象。</p>
 <figure>
-<img src="http://mmbiz.qpic.cn/mmbiz_png/yjFUicxiaClgWibpwROULeFdlOuXM57CpQwPgAX4xN3piaeM5KIotujfYSfogWYLuvKVRdqvUpr11oBNttYlScHoJQ/640?wx_fmt=png&amp;tp=webp&amp;wxfrom=5&amp;wx_lazy=1" alt="g3" /><figcaption aria-hidden="true">g3</figcaption>
+<img src="http://mmbiz.qpic.cn/mmbiz_png/yjFUicxiaClgWibpwROULeFdlOuXM57CpQwPgAX4xN3piaeM5KIotujfYSfogWYLuvKVRdqvUpr11oBNttYlScHoJQ/640?wx_fmt=png&amp;tp=webp&amp;wxfrom=5&amp;wx_lazy=1" alt="" /><figcaption>g3</figcaption>
 </figure>
 <h4 id="删除指定的行">删除指定的行</h4>
 <figure>
-<img src="http://mmbiz.qpic.cn/mmbiz_png/yjFUicxiaClgWibpwROULeFdlOuXM57CpQwbA70IZKNtKrEBkbvlFr4Xcz8U48HticgSCR7VB0jSRJ8ribQyQs7L17A/640?wx_fmt=png&amp;tp=webp&amp;wxfrom=5&amp;wx_lazy=1" alt="g4" /><figcaption aria-hidden="true">g4</figcaption>
+<img src="http://mmbiz.qpic.cn/mmbiz_png/yjFUicxiaClgWibpwROULeFdlOuXM57CpQwbA70IZKNtKrEBkbvlFr4Xcz8U48HticgSCR7VB0jSRJ8ribQyQs7L17A/640?wx_fmt=png&amp;tp=webp&amp;wxfrom=5&amp;wx_lazy=1" alt="" /><figcaption>g4</figcaption>
 </figure>
 <p>原数据中的第1,2,4,7行的数据已经被删除了。</p>
 <p>根据<strong>布尔索引</strong>删除行数据，其实这个删除就是保留删除条件的反面数据，例如删除所有14岁以下的学生：</p>
 <figure>
-<img src="http://mmbiz.qpic.cn/mmbiz_png/yjFUicxiaClgWibpwROULeFdlOuXM57CpQwnvpevZlxcWUf9234l9e3ia5t4utIibKbOUXqw2ibG2maV9uqlF7ziaAkjw/640?wx_fmt=png&amp;tp=webp&amp;wxfrom=5&amp;wx_lazy=1" alt="g5" /><figcaption aria-hidden="true">g5</figcaption>
+<img src="http://mmbiz.qpic.cn/mmbiz_png/yjFUicxiaClgWibpwROULeFdlOuXM57CpQwnvpevZlxcWUf9234l9e3ia5t4utIibKbOUXqw2ibG2maV9uqlF7ziaAkjw/640?wx_fmt=png&amp;tp=webp&amp;wxfrom=5&amp;wx_lazy=1" alt="" /><figcaption>g5</figcaption>
 </figure>
 <h4 id="删除指定的列">删除指定的列</h4>
 <figure>
-<img src="http://mmbiz.qpic.cn/mmbiz_png/yjFUicxiaClgWibpwROULeFdlOuXM57CpQwECAW5ibeKFaicFZ9NdKdS8tExC0jSz92Wib6Lad5OVdbofnMIByUCUP3g/640?wx_fmt=png&amp;tp=webp&amp;wxfrom=5&amp;wx_lazy=1" alt="g6" /><figcaption aria-hidden="true">g6</figcaption>
+<img src="http://mmbiz.qpic.cn/mmbiz_png/yjFUicxiaClgWibpwROULeFdlOuXM57CpQwECAW5ibeKFaicFZ9NdKdS8tExC0jSz92Wib6Lad5OVdbofnMIByUCUP3g/640?wx_fmt=png&amp;tp=webp&amp;wxfrom=5&amp;wx_lazy=1" alt="" /><figcaption>g6</figcaption>
 </figure>
 <p>我们发现，不论是删除行还是删除列，都可以通过drop方法实现，只需要设定好删除的轴即可，即<strong>调整drop方法中的axis参数。默认该参数为0，表示删除行观测，如果需要删除列变量，则需设置为1</strong>。</p>
 <h3 id="改修改原始记录的值">改：修改原始记录的值</h3>
 <p>如果发现表中的某些数据错误了，如何更改原来的值呢？我们试试<strong>结合布尔索引和赋值</strong>的方法：</p>
 <p>例如发现student3中姓名为Liushunxiang的学生身高错了，应该是173，如何改呢？</p>
 <figure>
-<img src="http://mmbiz.qpic.cn/mmbiz_png/yjFUicxiaClgWibpwROULeFdlOuXM57CpQwRRGbEkt2xNIs4BVMrhVgzqiaDwQqxlOJKR1PW3aYTc1p7zDibvkbUICg/640?wx_fmt=png&amp;tp=webp&amp;wxfrom=5&amp;wx_lazy=1" alt="g7" /><figcaption aria-hidden="true">g7</figcaption>
+<img src="http://mmbiz.qpic.cn/mmbiz_png/yjFUicxiaClgWibpwROULeFdlOuXM57CpQwRRGbEkt2xNIs4BVMrhVgzqiaDwQqxlOJKR1PW3aYTc1p7zDibvkbUICg/640?wx_fmt=png&amp;tp=webp&amp;wxfrom=5&amp;wx_lazy=1" alt="" /><figcaption>g7</figcaption>
 </figure>
 <p>这样就可以把原来的身高修改为现在的170了。</p>
 <p>看，关于索引的操作非常灵活、方便吧，就这样轻松搞定数据的更改。</p>
@@ -178,48 +178,48 @@
 <p>pandas模块中可以通过groupby()函数实现数据的聚合操作</p>
 <p>根据性别分组，计算各组别中学生身高和体重的平均值：</p>
 <figure>
-<img src="http://mmbiz.qpic.cn/mmbiz_png/yjFUicxiaClgWibpwROULeFdlOuXM57CpQwWAliaoe6sXiboLVSbicpe2LPvAkzcWQDqmiaB3Srbz9QwagLyTtHNNzNHg/640?wx_fmt=png&amp;tp=webp&amp;wxfrom=5&amp;wx_lazy=1" alt="g8" /><figcaption aria-hidden="true">g8</figcaption>
+<img src="http://mmbiz.qpic.cn/mmbiz_png/yjFUicxiaClgWibpwROULeFdlOuXM57CpQwWAliaoe6sXiboLVSbicpe2LPvAkzcWQDqmiaB3Srbz9QwagLyTtHNNzNHg/640?wx_fmt=png&amp;tp=webp&amp;wxfrom=5&amp;wx_lazy=1" alt="" /><figcaption>g8</figcaption>
 </figure>
 <p>如果不对原始数据作限制的话，聚合函数会<strong>自动选择数值型数据进行聚合计算</strong>。如果不想对年龄计算平均值的话，就需要剔除改变量：</p>
 <figure>
-<img src="http://mmbiz.qpic.cn/mmbiz_png/yjFUicxiaClgWibpwROULeFdlOuXM57CpQwLXkwoicFG8oEeHbzbkaVibDWeBDUOLVutnFM7SgRtlq3jYGSKT7G00pw/640?wx_fmt=png&amp;tp=webp&amp;wxfrom=5&amp;wx_lazy=1" alt="g9" /><figcaption aria-hidden="true">g9</figcaption>
+<img src="http://mmbiz.qpic.cn/mmbiz_png/yjFUicxiaClgWibpwROULeFdlOuXM57CpQwLXkwoicFG8oEeHbzbkaVibDWeBDUOLVutnFM7SgRtlq3jYGSKT7G00pw/640?wx_fmt=png&amp;tp=webp&amp;wxfrom=5&amp;wx_lazy=1" alt="" /><figcaption>g9</figcaption>
 </figure>
 <p>groupby还可以使用多个分组变量，例如根本年龄和性别分组，计算身高与体重的平均值：</p>
 <figure>
-<img src="http://mmbiz.qpic.cn/mmbiz_png/yjFUicxiaClgWibpwROULeFdlOuXM57CpQwmicaE9Hm0eTIFIqkvNeRvhElSRRsl4FSPP3ibeDDU4y6Bm6WGkLSvvrg/640?wx_fmt=png&amp;tp=webp&amp;wxfrom=5&amp;wx_lazy=1" alt="g10" /><figcaption aria-hidden="true">g10</figcaption>
+<img src="http://mmbiz.qpic.cn/mmbiz_png/yjFUicxiaClgWibpwROULeFdlOuXM57CpQwmicaE9Hm0eTIFIqkvNeRvhElSRRsl4FSPP3ibeDDU4y6Bm6WGkLSvvrg/640?wx_fmt=png&amp;tp=webp&amp;wxfrom=5&amp;wx_lazy=1" alt="" /><figcaption>g10</figcaption>
 </figure>
 <p>当然，还可以<strong>对每个分组计算多个统计量</strong>：</p>
 <figure>
-<img src="http://mmbiz.qpic.cn/mmbiz_png/yjFUicxiaClgWibpwROULeFdlOuXM57CpQwcgcz9bicCWxRnfu7BibNvUsKamVWOntdrkBKPOrC6rdMyMR2nfKeHRAw/640?wx_fmt=png&amp;tp=webp&amp;wxfrom=5&amp;wx_lazy=1" alt="g11" /><figcaption aria-hidden="true">g11</figcaption>
+<img src="http://mmbiz.qpic.cn/mmbiz_png/yjFUicxiaClgWibpwROULeFdlOuXM57CpQwcgcz9bicCWxRnfu7BibNvUsKamVWOntdrkBKPOrC6rdMyMR2nfKeHRAw/640?wx_fmt=png&amp;tp=webp&amp;wxfrom=5&amp;wx_lazy=1" alt="" /><figcaption>g11</figcaption>
 </figure>
 <p>是不是很简单，只需一句就能完成SQL中的SELECT...FROM...GROUP BY...功能，何乐而不为呢？</p>
 <h3 id="排序">排序</h3>
 <p>排序在日常的统计分析中还是比较常见的操作，我们可以使用order、sort_index和sort_values实现序列和数据框的排序工作：</p>
 <figure>
-<img src="http://mmbiz.qpic.cn/mmbiz_png/yjFUicxiaClgWibpwROULeFdlOuXM57CpQw6YeuvzQqt7FamAryWEprAltcysLCjPBUgh3epdJRicK2c2tmTBaFOFw/640?wx_fmt=png&amp;tp=webp&amp;wxfrom=5&amp;wx_lazy=1" alt="g12" /><figcaption aria-hidden="true">g12</figcaption>
+<img src="http://mmbiz.qpic.cn/mmbiz_png/yjFUicxiaClgWibpwROULeFdlOuXM57CpQw6YeuvzQqt7FamAryWEprAltcysLCjPBUgh3epdJRicK2c2tmTBaFOFw/640?wx_fmt=png&amp;tp=webp&amp;wxfrom=5&amp;wx_lazy=1" alt="" /><figcaption>g12</figcaption>
 </figure>
 <p>我们再试试降序排序的设置：</p>
 <figure>
-<img src="http://mmbiz.qpic.cn/mmbiz_png/yjFUicxiaClgWibpwROULeFdlOuXM57CpQwOnc7KsnraR3qAMs2dicuFBZRnhqIZRRyia48AjiaKXMs2TUCK4ZZibeLbQ/640?wx_fmt=png&amp;tp=webp&amp;wxfrom=5&amp;wx_lazy=1" alt="g13" /><figcaption aria-hidden="true">g13</figcaption>
+<img src="http://mmbiz.qpic.cn/mmbiz_png/yjFUicxiaClgWibpwROULeFdlOuXM57CpQwOnc7KsnraR3qAMs2dicuFBZRnhqIZRRyia48AjiaKXMs2TUCK4ZZibeLbQ/640?wx_fmt=png&amp;tp=webp&amp;wxfrom=5&amp;wx_lazy=1" alt="" /><figcaption>g13</figcaption>
 </figure>
 <p>上面两个结果其实都是按值排序，并且结果中都给出了警告信息，即<strong>建议使用sort_values()函数进行按值排序</strong>。</p>
 <p>在数据框中一般都是按值排序，例如：</p>
 <figure>
-<img src="http://mmbiz.qpic.cn/mmbiz_png/yjFUicxiaClgWibpwROULeFdlOuXM57CpQwSOfubia7UEGGPWt1lerH1NzicrAibnrCEHoK8xAicz914AlytFAL7kOOibA/640?wx_fmt=png&amp;tp=webp&amp;wxfrom=5&amp;wx_lazy=1" alt="g14" /><figcaption aria-hidden="true">g14</figcaption>
+<img src="http://mmbiz.qpic.cn/mmbiz_png/yjFUicxiaClgWibpwROULeFdlOuXM57CpQwSOfubia7UEGGPWt1lerH1NzicrAibnrCEHoK8xAicz914AlytFAL7kOOibA/640?wx_fmt=png&amp;tp=webp&amp;wxfrom=5&amp;wx_lazy=1" alt="" /><figcaption>g14</figcaption>
 </figure>
 <h3 id="多表连接">多表连接</h3>
 <p>多表之间的连接也是非常常见的数据库操作，连接分<strong>内连接</strong>和<strong>外连接</strong>，在数据库语言中通过join关键字实现，pandas我比较建议使用merge函数实现数据的各种连接操作。</p>
 <p>如下是构造一张学生的成绩表：</p>
 <figure>
-<img src="http://mmbiz.qpic.cn/mmbiz_png/yjFUicxiaClgWibpwROULeFdlOuXM57CpQwehjHYusfagiaZu5CVMcj1rmXOWrGPiaqGJWkase0OnqyKiaypicQjbEFIQ/640?wx_fmt=png&amp;tp=webp&amp;wxfrom=5&amp;wx_lazy=1" alt="g15" /><figcaption aria-hidden="true">g15</figcaption>
+<img src="http://mmbiz.qpic.cn/mmbiz_png/yjFUicxiaClgWibpwROULeFdlOuXM57CpQwehjHYusfagiaZu5CVMcj1rmXOWrGPiaqGJWkase0OnqyKiaypicQjbEFIQ/640?wx_fmt=png&amp;tp=webp&amp;wxfrom=5&amp;wx_lazy=1" alt="" /><figcaption>g15</figcaption>
 </figure>
 <p>现在想把学生表student与学生成绩表score做一个关联，该如何操作呢？</p>
 <figure>
-<img src="http://mmbiz.qpic.cn/mmbiz_png/yjFUicxiaClgWibpwROULeFdlOuXM57CpQw8qCMoiaMtBYUBbPjscNTGeu9BxgyTdBGeQ0ic9kFKnKp88YEelWulTtw/640?wx_fmt=png&amp;tp=webp&amp;wxfrom=5&amp;wx_lazy=1" alt="g16" /><figcaption aria-hidden="true">g16</figcaption>
+<img src="http://mmbiz.qpic.cn/mmbiz_png/yjFUicxiaClgWibpwROULeFdlOuXM57CpQw8qCMoiaMtBYUBbPjscNTGeu9BxgyTdBGeQ0ic9kFKnKp88YEelWulTtw/640?wx_fmt=png&amp;tp=webp&amp;wxfrom=5&amp;wx_lazy=1" alt="" /><figcaption>g16</figcaption>
 </figure>
 <p>注意，<strong>默认情况下，merge函数实现的是两个表之间的内连接，即返回两张表中共同部分的数据</strong>。可以通过how参数设置连接的方式，left为左连接；right为右连接；outer为外连接。</p>
 <figure>
-<img src="http://mmbiz.qpic.cn/mmbiz_png/yjFUicxiaClgWibpwROULeFdlOuXM57CpQwq8S6j6UfSmtd4nmiclU04UFF06ic2oD2Jjicw40loyLAdk6U9nGdF4yvw/640?wx_fmt=png&amp;tp=webp&amp;wxfrom=5&amp;wx_lazy=1" alt="g17" /><figcaption aria-hidden="true">g17</figcaption>
+<img src="http://mmbiz.qpic.cn/mmbiz_png/yjFUicxiaClgWibpwROULeFdlOuXM57CpQwq8S6j6UfSmtd4nmiclU04UFF06ic2oD2Jjicw40loyLAdk6U9nGdF4yvw/640?wx_fmt=png&amp;tp=webp&amp;wxfrom=5&amp;wx_lazy=1" alt="" /><figcaption>g17</figcaption>
 </figure>
 <p>左连接实现的是保留student表中的所有信息，同时将score表的信息与之配对，能配多少配多少，对于<strong>没有配对上的Name，将会显示成绩为NaN</strong>。</p>
 <h2 id="缺失值处理">缺失值处理</h2>
@@ -233,18 +233,18 @@
 <p><br></p>
 <p>我们这里就介绍简单的删除法和替补法：</p>
 <figure>
-<img src="http://mmbiz.qpic.cn/mmbiz_png/yjFUicxiaClgWibpwROULeFdlOuXM57CpQws6vuy44QJh1bxibn1chNZ7yFp5biaSH66ibpejKEf12pZ4lySs03ZCoGQ/640?wx_fmt=png&amp;tp=webp&amp;wxfrom=5&amp;wx_lazy=1" alt="g18" /><figcaption aria-hidden="true">g18</figcaption>
+<img src="http://mmbiz.qpic.cn/mmbiz_png/yjFUicxiaClgWibpwROULeFdlOuXM57CpQws6vuy44QJh1bxibn1chNZ7yFp5biaSH66ibpejKEf12pZ4lySs03ZCoGQ/640?wx_fmt=png&amp;tp=webp&amp;wxfrom=5&amp;wx_lazy=1" alt="" /><figcaption>g18</figcaption>
 </figure>
 <p>这是一组含有缺失值的序列，我们可以<strong>结合sum函数和isnull函数来检测数据中含有多少缺失值</strong>：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">In [<span class="number">130</span>]: <span class="built_in">sum</span>(pd.isnull(s))</span><br><span class="line">Out[<span class="number">130</span>]: <span class="number">9</span></span><br></pre></td></tr></table></figure>
 <h4 id="直接删除缺失值">直接删除缺失值</h4>
 <figure>
-<img src="http://mmbiz.qpic.cn/mmbiz_png/yjFUicxiaClgWibpwROULeFdlOuXM57CpQwML3bmaZfeibcqxoq1ib8IZ9l3jPTjrWtvhgs6ib1mmM09qp9KDib6etrSg/640?wx_fmt=png&amp;tp=webp&amp;wxfrom=5&amp;wx_lazy=1" alt="g19" /><figcaption aria-hidden="true">g19</figcaption>
+<img src="http://mmbiz.qpic.cn/mmbiz_png/yjFUicxiaClgWibpwROULeFdlOuXM57CpQwML3bmaZfeibcqxoq1ib8IZ9l3jPTjrWtvhgs6ib1mmM09qp9KDib6etrSg/640?wx_fmt=png&amp;tp=webp&amp;wxfrom=5&amp;wx_lazy=1" alt="" /><figcaption>g19</figcaption>
 </figure>
 <p>默认情况下，dropna会删除任何含有缺失值的行，我们再构造一个数据框试试：</p>
 <p>返回结果表明，数据中只要含有缺失值NaN,该数据行就会被删除，如果使用参数 <code>how='all'</code>，则表明只删除所有行为缺失值的观测。</p>
 <figure>
-<img src="http://mmbiz.qpic.cn/mmbiz_png/yjFUicxiaClgWibpwROULeFdlOuXM57CpQwsibqIfEqKKRkLBdUjmKw79aem8wSEq7p1ZVk7l0oHxtIgWNhCksssWg/640?wx_fmt=png&amp;tp=webp&amp;wxfrom=5&amp;wx_lazy=1" alt="g20" /><figcaption aria-hidden="true">g20</figcaption>
+<img src="http://mmbiz.qpic.cn/mmbiz_png/yjFUicxiaClgWibpwROULeFdlOuXM57CpQwsibqIfEqKKRkLBdUjmKw79aem8wSEq7p1ZVk7l0oHxtIgWNhCksssWg/640?wx_fmt=png&amp;tp=webp&amp;wxfrom=5&amp;wx_lazy=1" alt="" /><figcaption>g20</figcaption>
 </figure>
 <p>补充一个对比例子：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>df  = pd.DataFrame(&#123;<span class="string">&#x27;x1&#x27;</span>:[<span class="number">0</span>,<span class="number">1</span>,<span class="literal">None</span>,<span class="number">3</span>,<span class="literal">None</span>],<span class="string">&#x27;x2&#x27;</span>:[<span class="literal">None</span>,<span class="number">1</span>,<span class="literal">None</span>,<span class="literal">None</span>,<span class="number">4</span>],<span class="string">&#x27;x3&#x27;</span>:[<span class="number">0</span>,<span class="literal">None</span>,<span class="literal">None</span>,<span class="number">3</span>,<span class="number">4</span>]&#125;)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>df</span><br><span class="line">    x1   x2   x3</span><br><span class="line"><span class="number">0</span>  <span class="number">0.0</span>  NaN  <span class="number">0.0</span></span><br><span class="line"><span class="number">1</span>  <span class="number">1.0</span>  <span class="number">1.0</span>  NaN</span><br><span class="line"><span class="number">2</span>  NaN  NaN  NaN</span><br><span class="line"><span class="number">3</span>  <span class="number">3.0</span>  NaN  <span class="number">3.0</span></span><br><span class="line"><span class="number">4</span>  NaN  <span class="number">4.0</span>  <span class="number">4.0</span></span><br><span class="line"></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>df.dropna(how=<span class="string">&#x27;all&#x27;</span>) <span class="comment"># 只有全部列都为NaN的行被删掉</span></span><br><span class="line">    x1   x2   x3</span><br><span class="line"><span class="number">0</span>  <span class="number">0.0</span>  NaN  <span class="number">0.0</span></span><br><span class="line"><span class="number">1</span>  <span class="number">1.0</span>  <span class="number">1.0</span>  NaN</span><br><span class="line"><span class="number">3</span>  <span class="number">3.0</span>  NaN  <span class="number">3.0</span></span><br><span class="line"><span class="number">4</span>  NaN  <span class="number">4.0</span>  <span class="number">4.0</span></span><br><span class="line"></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>df.dropna() <span class="comment"># 只要有一列包含NaN就会删除掉</span></span><br><span class="line">Empty DataFrame</span><br><span class="line">Columns: [x1, x2, x3]</span><br><span class="line">Index: []</span><br></pre></td></tr></table></figure>
@@ -254,20 +254,20 @@
 <p>可以使用fillna函数实现简单的填补工作：</p>
 <h5 id="用0填补所有缺失值">1）用0填补所有缺失值</h5>
 <figure>
-<img src="http://mmbiz.qpic.cn/mmbiz_png/yjFUicxiaClgWibpwROULeFdlOuXM57CpQwVHrjCgzFXdkuLKazjB7rvnp7vmfSEfGx1BYEkNR4QO2HMLfTJ1omXg/640?wx_fmt=png&amp;tp=webp&amp;wxfrom=5&amp;wx_lazy=1" alt="g21" /><figcaption aria-hidden="true">g21</figcaption>
+<img src="http://mmbiz.qpic.cn/mmbiz_png/yjFUicxiaClgWibpwROULeFdlOuXM57CpQwVHrjCgzFXdkuLKazjB7rvnp7vmfSEfGx1BYEkNR4QO2HMLfTJ1omXg/640?wx_fmt=png&amp;tp=webp&amp;wxfrom=5&amp;wx_lazy=1" alt="" /><figcaption>g21</figcaption>
 </figure>
 <h5 id="采用前项填充或后向填充">2)采用前项填充或后向填充</h5>
 <figure>
-<img src="http://mmbiz.qpic.cn/mmbiz_png/yjFUicxiaClgWibpwROULeFdlOuXM57CpQwjcPabZCw4lSfZWwPwfNZ0B59zQhQ7p6AsicgHYllJic5k2ib1ibicYpoJibQ/640?wx_fmt=png&amp;tp=webp&amp;wxfrom=5&amp;wx_lazy=1" alt="g22" /><figcaption aria-hidden="true">g22</figcaption>
+<img src="http://mmbiz.qpic.cn/mmbiz_png/yjFUicxiaClgWibpwROULeFdlOuXM57CpQwjcPabZCw4lSfZWwPwfNZ0B59zQhQ7p6AsicgHYllJic5k2ib1ibicYpoJibQ/640?wx_fmt=png&amp;tp=webp&amp;wxfrom=5&amp;wx_lazy=1" alt="" /><figcaption>g22</figcaption>
 </figure>
 <p>补充，使用这种填充方法，如果第一行/最后一行出现缺失值，它们将不被填充。</p>
 <h5 id="使用常量填充不同的列">3)使用常量填充不同的列</h5>
 <figure>
-<img src="http://mmbiz.qpic.cn/mmbiz_png/yjFUicxiaClgWibpwROULeFdlOuXM57CpQwOWVEYWnJ5mjkVXs0nZvSFnpZS1O1O9PhicxnXMhnLl9KmvXar28iaXKQ/640?wx_fmt=png&amp;tp=webp&amp;wxfrom=5&amp;wx_lazy=1" alt="g23" /><figcaption aria-hidden="true">g23</figcaption>
+<img src="http://mmbiz.qpic.cn/mmbiz_png/yjFUicxiaClgWibpwROULeFdlOuXM57CpQwOWVEYWnJ5mjkVXs0nZvSFnpZS1O1O9PhicxnXMhnLl9KmvXar28iaXKQ/640?wx_fmt=png&amp;tp=webp&amp;wxfrom=5&amp;wx_lazy=1" alt="" /><figcaption>g23</figcaption>
 </figure>
 <h5 id="用均值或中位数填充各自的列">4)用均值或中位数填充各自的列</h5>
 <figure>
-<img src="http://mmbiz.qpic.cn/mmbiz_png/yjFUicxiaClgWibpwROULeFdlOuXM57CpQwLoaicwu7N4ZicMsqUPwKiblWNbmYXw6PlsG1Yh5v8657HbaP82lZhMWgg/640?wx_fmt=png&amp;tp=webp&amp;wxfrom=5&amp;wx_lazy=1" alt="g24" /><figcaption aria-hidden="true">g24</figcaption>
+<img src="http://mmbiz.qpic.cn/mmbiz_png/yjFUicxiaClgWibpwROULeFdlOuXM57CpQwLoaicwu7N4ZicMsqUPwKiblWNbmYXw6PlsG1Yh5v8657HbaP82lZhMWgg/640?wx_fmt=png&amp;tp=webp&amp;wxfrom=5&amp;wx_lazy=1" alt="" /><figcaption>g24</figcaption>
 </figure>
 <p>很显然，在使用填充法时，相对于常数填充或前项、后项填充，使用各列的众数、均值或中位数填充要更加合理一点，这也是工作中常用的一个快捷手段。</p>
 <h2 id="数据透视表">数据透视表</h2>
@@ -288,59 +288,59 @@
 <p>我们仍然以student表为例，来认识一下数据透视表pivot_table函数的用法：</p>
 <p>对一个分组变量（Sex），一个数值变量（Height）作统计汇总：</p>
 <figure>
-<img src="http://mmbiz.qpic.cn/mmbiz_png/yjFUicxiaClgWibpwROULeFdlOuXM57CpQwOkHSnJ9b1pknpQhtialtrlYWtOHl3RjGcAlm82dOQkEmtnanH0hpPicw/640?wx_fmt=png&amp;tp=webp&amp;wxfrom=5&amp;wx_lazy=1" alt="g25" /><figcaption aria-hidden="true">g25</figcaption>
+<img src="http://mmbiz.qpic.cn/mmbiz_png/yjFUicxiaClgWibpwROULeFdlOuXM57CpQwOkHSnJ9b1pknpQhtialtrlYWtOHl3RjGcAlm82dOQkEmtnanH0hpPicw/640?wx_fmt=png&amp;tp=webp&amp;wxfrom=5&amp;wx_lazy=1" alt="" /><figcaption>g25</figcaption>
 </figure>
 <p>对一个分组变量（Sex），两个数值变量（Height,Weight）作统计汇总：</p>
 <figure>
-<img src="http://mmbiz.qpic.cn/mmbiz_png/yjFUicxiaClgWibpwROULeFdlOuXM57CpQwEvkhXjZcLXZDTyVq8y4knSonHt0vIgNE9xSWiaQ1rlJhwYEoeknBqWA/640?wx_fmt=png&amp;tp=webp&amp;wxfrom=5&amp;wx_lazy=1" alt="g26" /><figcaption aria-hidden="true">g26</figcaption>
+<img src="http://mmbiz.qpic.cn/mmbiz_png/yjFUicxiaClgWibpwROULeFdlOuXM57CpQwEvkhXjZcLXZDTyVq8y4knSonHt0vIgNE9xSWiaQ1rlJhwYEoeknBqWA/640?wx_fmt=png&amp;tp=webp&amp;wxfrom=5&amp;wx_lazy=1" alt="" /><figcaption>g26</figcaption>
 </figure>
 <p>对两个分组变量（Sex，Age)，两个数值变量（Height,Weight）作统计汇总：</p>
 <figure>
-<img src="http://mmbiz.qpic.cn/mmbiz_png/yjFUicxiaClgWibpwROULeFdlOuXM57CpQwwARphPnKPQgMaDicFcJMb5xZM36joibOicwokjfLiate8lwetpmq0wucTw/640?wx_fmt=png&amp;tp=webp&amp;wxfrom=5&amp;wx_lazy=1" alt="g27" /><figcaption aria-hidden="true">g27</figcaption>
+<img src="http://mmbiz.qpic.cn/mmbiz_png/yjFUicxiaClgWibpwROULeFdlOuXM57CpQwwARphPnKPQgMaDicFcJMb5xZM36joibOicwokjfLiate8lwetpmq0wucTw/640?wx_fmt=png&amp;tp=webp&amp;wxfrom=5&amp;wx_lazy=1" alt="" /><figcaption>g27</figcaption>
 </figure>
 <p>很显然这样的结果并不像Excel中预期的那样，该如何变成列联表的形式的？很简单，只需<strong>将结果进行非堆叠操作（unstack）</strong>即可：</p>
 <figure>
-<img src="http://mmbiz.qpic.cn/mmbiz_png/yjFUicxiaClgWibpwROULeFdlOuXM57CpQwHO4HwBfnD3hOW7YnQicoFVq6QMEB12PdiczUlkN1vqb7DICqewDlXQMg/640?wx_fmt=png&amp;tp=webp&amp;wxfrom=5&amp;wx_lazy=1" alt="g29" /><figcaption aria-hidden="true">g29</figcaption>
+<img src="http://mmbiz.qpic.cn/mmbiz_png/yjFUicxiaClgWibpwROULeFdlOuXM57CpQwHO4HwBfnD3hOW7YnQicoFVq6QMEB12PdiczUlkN1vqb7DICqewDlXQMg/640?wx_fmt=png&amp;tp=webp&amp;wxfrom=5&amp;wx_lazy=1" alt="" /><figcaption>g29</figcaption>
 </figure>
 <p>看，这样的结果是不是比上面那种看起来更舒服一点？</p>
 <p>使用多个聚合函数</p>
 <figure>
-<img src="http://mmbiz.qpic.cn/mmbiz_png/yjFUicxiaClgWibpwROULeFdlOuXM57CpQw6iaYk8qnZAbTygiaSMfHyM9ZU7vMlUtJTnHy78IdINNWb4VibSCgSHic1w/640?wx_fmt=png&amp;tp=webp&amp;wxfrom=5&amp;wx_lazy=1" alt="g30" /><figcaption aria-hidden="true">g30</figcaption>
+<img src="http://mmbiz.qpic.cn/mmbiz_png/yjFUicxiaClgWibpwROULeFdlOuXM57CpQw6iaYk8qnZAbTygiaSMfHyM9ZU7vMlUtJTnHy78IdINNWb4VibSCgSHic1w/640?wx_fmt=png&amp;tp=webp&amp;wxfrom=5&amp;wx_lazy=1" alt="" /><figcaption>g30</figcaption>
 </figure>
 <p>有关更多数据透视表的操作，可参考<a target="_blank" rel="noopener" href="http://python.jobbole.com/81212/">《Pandas透视表（pivot_table）详解》</a>一文。</p>
 <h2 id="多层索引的使用">多层索引的使用</h2>
 <p>最后我们再来讲讲pandas中的一个重要功能，那就是多层索引。在序列中它可以实现在一个轴上拥有多个索引，就类似于Excel中常见的这种形式：</p>
 <figure>
-<img src="http://mmbiz.qpic.cn/mmbiz_png/yjFUicxiaClgWibpwROULeFdlOuXM57CpQwhz1bhbkPiaWrZgCz4aRy9TFgYkiboicCbmGRr7J7yLwhFUCFspTKYhHLw/640?wx_fmt=png&amp;tp=webp&amp;wxfrom=5&amp;wx_lazy=1" alt="g31" /><figcaption aria-hidden="true">g31</figcaption>
+<img src="http://mmbiz.qpic.cn/mmbiz_png/yjFUicxiaClgWibpwROULeFdlOuXM57CpQwhz1bhbkPiaWrZgCz4aRy9TFgYkiboicCbmGRr7J7yLwhFUCFspTKYhHLw/640?wx_fmt=png&amp;tp=webp&amp;wxfrom=5&amp;wx_lazy=1" alt="" /><figcaption>g31</figcaption>
 </figure>
 <p>对于这样的数据格式有什么好处呢？pandas可以帮我们实现用低维度形式处理高维数数据，这里举个例子也许你就能明白了：</p>
 <figure>
-<img src="http://mmbiz.qpic.cn/mmbiz_png/yjFUicxiaClgWibpwROULeFdlOuXM57CpQwRoJDknN7JMx68wXn8t6OkywCe2GpPo7U7AXTbbwlFNictYqmo6icvHcQ/640?wx_fmt=png&amp;tp=webp&amp;wxfrom=5&amp;wx_lazy=1" alt="g32" /><figcaption aria-hidden="true">g32</figcaption>
+<img src="http://mmbiz.qpic.cn/mmbiz_png/yjFUicxiaClgWibpwROULeFdlOuXM57CpQwRoJDknN7JMx68wXn8t6OkywCe2GpPo7U7AXTbbwlFNictYqmo6icvHcQ/640?wx_fmt=png&amp;tp=webp&amp;wxfrom=5&amp;wx_lazy=1" alt="" /><figcaption>g32</figcaption>
 </figure>
 <p>对于这种多层次索引的序列，取数据就显得非常简单了：</p>
 <figure>
-<img src="http://mmbiz.qpic.cn/mmbiz_png/yjFUicxiaClgWibpwROULeFdlOuXM57CpQwMLicib4RAGgB5NjmXeVicRribQPINgEGuHu5AGOuDmyicRKHmKz8JDFYKow/640?wx_fmt=png&amp;tp=webp&amp;wxfrom=5&amp;wx_lazy=1" alt="g33" /><figcaption aria-hidden="true">g33</figcaption>
+<img src="http://mmbiz.qpic.cn/mmbiz_png/yjFUicxiaClgWibpwROULeFdlOuXM57CpQwMLicib4RAGgB5NjmXeVicRribQPINgEGuHu5AGOuDmyicRKHmKz8JDFYKow/640?wx_fmt=png&amp;tp=webp&amp;wxfrom=5&amp;wx_lazy=1" alt="" /><figcaption>g33</figcaption>
 </figure>
 <p><strong>对于这种多层次索引的序列，我们还可以非常方便的将其转换为数据框的形式</strong>：</p>
 <figure>
-<img src="http://mmbiz.qpic.cn/mmbiz_png/yjFUicxiaClgWibpwROULeFdlOuXM57CpQwq8B44icT2ibH9IX3ewMzqehxbUHJyajdRibPCyyxhic6ibXWxsuoUeN4FLA/640?wx_fmt=png&amp;tp=webp&amp;wxfrom=5&amp;wx_lazy=1" alt="g34" /><figcaption aria-hidden="true">g34</figcaption>
+<img src="http://mmbiz.qpic.cn/mmbiz_png/yjFUicxiaClgWibpwROULeFdlOuXM57CpQwq8B44icT2ibH9IX3ewMzqehxbUHJyajdRibPCyyxhic6ibXWxsuoUeN4FLA/640?wx_fmt=png&amp;tp=webp&amp;wxfrom=5&amp;wx_lazy=1" alt="" /><figcaption>g34</figcaption>
 </figure>
 <p><strong>以上针对的是序列的多层次索引</strong>，数据框也同样有多层次的索引，而且<strong>每条轴上都可以有这样的索引</strong>，就类似于Excel中常见的这种形式：</p>
 <figure>
-<img src="http://mmbiz.qpic.cn/mmbiz_png/yjFUicxiaClgWibpwROULeFdlOuXM57CpQwJPL9IAKqLqeeWRgr4b7uCkPxTDotQia6rw8ia6qKic4GDDzzmbSSZ9N4A/640?wx_fmt=png&amp;tp=webp&amp;wxfrom=5&amp;wx_lazy=1" alt="g35" /><figcaption aria-hidden="true">g35</figcaption>
+<img src="http://mmbiz.qpic.cn/mmbiz_png/yjFUicxiaClgWibpwROULeFdlOuXM57CpQwJPL9IAKqLqeeWRgr4b7uCkPxTDotQia6rw8ia6qKic4GDDzzmbSSZ9N4A/640?wx_fmt=png&amp;tp=webp&amp;wxfrom=5&amp;wx_lazy=1" alt="" /><figcaption>g35</figcaption>
 </figure>
 <p>我们不妨构造一个类似的高维数据框：</p>
 <figure>
-<img src="http://mmbiz.qpic.cn/mmbiz_png/yjFUicxiaClgWibpwROULeFdlOuXM57CpQwVrTuia5lV5R72F3jcfGz18K4Fic1tCmBJVuqtsm1Umc3C6XY9Ymkv6Og/640?wx_fmt=png&amp;tp=webp&amp;wxfrom=5&amp;wx_lazy=1" alt="g36" /><figcaption aria-hidden="true">g36</figcaption>
+<img src="http://mmbiz.qpic.cn/mmbiz_png/yjFUicxiaClgWibpwROULeFdlOuXM57CpQwVrTuia5lV5R72F3jcfGz18K4Fic1tCmBJVuqtsm1Umc3C6XY9Ymkv6Og/640?wx_fmt=png&amp;tp=webp&amp;wxfrom=5&amp;wx_lazy=1" alt="" /><figcaption>g36</figcaption>
 </figure>
 <p>同样，数据框中的多层索引也可以非常便捷的取出大块数据：</p>
 <figure>
-<img src="http://mmbiz.qpic.cn/mmbiz_png/yjFUicxiaClgWibpwROULeFdlOuXM57CpQwtiaU3cJJX3D9U0YWFHob0aibRfYibicN9RQibIp5Hr6icibMxxBEZKadsy2DQ/640?wx_fmt=png&amp;tp=webp&amp;wxfrom=5&amp;wx_lazy=1" alt="g37" /><figcaption aria-hidden="true">g37</figcaption>
+<img src="http://mmbiz.qpic.cn/mmbiz_png/yjFUicxiaClgWibpwROULeFdlOuXM57CpQwtiaU3cJJX3D9U0YWFHob0aibRfYibicN9RQibIp5Hr6icibMxxBEZKadsy2DQ/640?wx_fmt=png&amp;tp=webp&amp;wxfrom=5&amp;wx_lazy=1" alt="" /><figcaption>g37</figcaption>
 </figure>
 <p><strong>在数据框中使用多层索引，可以将整个数据集控制在二维表结构中</strong>，这对于数据重塑和基于分组的操作（如数据透视表的生成）比较有帮助。</p>
 <p>就拿student二维数据框为例，我们构造一个多层索引数据集：</p>
 <figure>
-<img src="http://mmbiz.qpic.cn/mmbiz_png/yjFUicxiaClgWibpwROULeFdlOuXM57CpQwUOxrqzve8p2GiaI1YbTTiawGY3qf5g5FJQZpZ4w7MqZ2trCAKia4JbRmw/640?wx_fmt=png&amp;tp=webp&amp;wxfrom=5&amp;wx_lazy=1" alt="g38" /><figcaption aria-hidden="true">g38</figcaption>
+<img src="http://mmbiz.qpic.cn/mmbiz_png/yjFUicxiaClgWibpwROULeFdlOuXM57CpQwUOxrqzve8p2GiaI1YbTTiawGY3qf5g5FJQZpZ4w7MqZ2trCAKia4JbRmw/640?wx_fmt=png&amp;tp=webp&amp;wxfrom=5&amp;wx_lazy=1" alt="" /><figcaption>g38</figcaption>
 </figure>
 <p>讲到这里，我们关于pandas模块的学习基本完成，其实在掌握了pandas这8个主要的应用方法就可以灵活的解决很多工作中的数据处理、统计分析等任务。有关更多的pandas介绍，可参考<a target="_blank" rel="noopener" href="http://pandas.pydata.org/pandas-docs/version/0.17.0/whatsnew.html">pandas官方文档</a>。</p>
 <p>此外，在<a target="_blank" rel="noopener" href="https://github.com/familyld/learnpython/blob/master/Efficient_Pandas_Skills.md">Efficient_Pandas_Skills</a>中收录了Pandas库使用的一些进阶技巧，也可以参考一下。</p>

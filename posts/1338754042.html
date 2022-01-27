@@ -39,7 +39,7 @@ Given <code>1-&gt;1-&gt;1-&gt;2-&gt;3</code>, return <code>2-&gt;3</code>.</p>
 <li>在else语句中<code>node-&gt;next = node-&gt;next-&gt;next;</code>改写了<code>dummy-next</code>中的内容，返回的<code>dummy-next</code>不再是队首元素，而是队尾元素。原因很微妙，应该使用<code>node = node-&gt;next;</code>，node代表节点指针变量，而node-&gt;next代表当前节点所指向的下一节点地址。具体分析可自行在纸上画图分析，可对指针和链表的理解又加深不少。</li>
 </ol>
 <figure>
-<img src="../../shared-files/images/remove_duplicates_from_sorted_list.jpg" alt="remove_duplicates_from_sorted_listd内存分析" /><figcaption aria-hidden="true">remove_duplicates_from_sorted_listd内存分析</figcaption>
+<img src="../../shared-files/images/remove_duplicates_from_sorted_list.jpg" alt="" /><figcaption>remove_duplicates_from_sorted_listd内存分析</figcaption>
 </figure>
 <p>图中上半部分为ListNode的内存示意图，每个框底下为其内存地址。<code>dummy</code>指针变量本身的地址为ox7fff5d0d2500，其保存着指针变量值为0x7fbe7bc04c50. <code>head</code>指针变量本身的地址为ox7fff5d0d2508，其保存着指针变量值为0x7fbe7bc04c00.</p>
 <p>好了，接下来看看正确实现及解析。</p>

@@ -22,7 +22,7 @@
 <h2 id="模块名和包名">模块名和包名</h2>
 <p>由于不同的人编写的模块名可能会相同，为了<strong>避免模块名冲突</strong>，Python又引入了<strong>按目录来组织模块</strong>的方法，称为<strong>包（Package）</strong>。</p>
 <figure>
-<img src="http://oe0e8k1nf.bkt.clouddn.com/My_Python_Notebook_Module0.png" alt="图片" /><figcaption aria-hidden="true">图片</figcaption>
+<img src="http://oe0e8k1nf.bkt.clouddn.com/My_Python_Notebook_Module0.png" alt="" /><figcaption>图片</figcaption>
 </figure>
 <p>假设图中abc和xyz两个模块的名字和外面其他模块名字冲突了，我们可以通过包来组织模块，避免冲突。 只要<strong>顶层包名(也即这里的mycompany文件夹)不同即可</strong>。</p>
 <p>此时abc的<strong>模块名</strong>变为 <code>mycompany.abc</code>, xyz的<strong>模块名</strong>变为 <code>mycompany.xyz</code>。</p>
@@ -32,7 +32,7 @@
 <li><p><strong>每个包目录下都必须有一个 <code>__init__.py</code> 文件</strong>，否则Python就不会把这个文件夹当作一个包。 <code>__init__.py</code>可以是空文件，也可以有Python代码，它本身就是一个模块，并且<strong>它的模块名就是包名</strong>(这里是 <code>mycompany</code>)。</p></li>
 </ul>
 <figure>
-<img src="http://oe0e8k1nf.bkt.clouddn.com/My_Python_Notebook_Module1.png" alt="图片" /><figcaption aria-hidden="true">图片</figcaption>
+<img src="http://oe0e8k1nf.bkt.clouddn.com/My_Python_Notebook_Module1.png" alt="" /><figcaption>图片</figcaption>
 </figure>
 <p><strong>包结构可以是多级的</strong>。比方说这里www.py的<strong>模块名</strong>就是 <code>mycompany.web.www</code> 。 两个utils.py的模块名分别是 <code>mycompany.utils</code> 和 <code>mycompany.web.utils</code>，它们不会冲突 。 <code>mycompany.web</code> 这个模块名对应的就是web目录下的 <code>__init__.py</code> 模块。</p>
 <p><strong>Notice</strong>:</p>
@@ -100,10 +100,10 @@
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pip install Pillow</span><br></pre></td></tr></table></figure>
 <p>在命令行键入 <code>pip install 第三方库的库名</code> 后， pip就会自动帮用户下载并安装第三方库。</p>
 <figure>
-<img src="http://imglf0.nosdn.127.net/img/dnpRZUpJZlB5VUQ2UTdlUDluSm9RZEZVQ0hEMjZrWjJReENQRmwvNVp4U0tnN3VUV004RE1BPT0.png?imageView&amp;thumbnail=500x0&amp;quality=96&amp;stripmeta=0&amp;type=jpg" alt="安装1" /><figcaption aria-hidden="true">安装1</figcaption>
+<img src="http://imglf0.nosdn.127.net/img/dnpRZUpJZlB5VUQ2UTdlUDluSm9RZEZVQ0hEMjZrWjJReENQRmwvNVp4U0tnN3VUV004RE1BPT0.png?imageView&amp;thumbnail=500x0&amp;quality=96&amp;stripmeta=0&amp;type=jpg" alt="" /><figcaption>安装1</figcaption>
 </figure>
 <figure>
-<img src="http://imglf2.nosdn.127.net/img/dnpRZUpJZlB5VUQ2UTdlUDluSm9RZU9hUFRtT0dMaFRWTENkaW1SREVrN25rd3VXSlVBKy9nPT0.png?imageView&amp;thumbnail=500x0&amp;quality=96&amp;stripmeta=0&amp;type=jpg" alt="安装2" /><figcaption aria-hidden="true">安装2</figcaption>
+<img src="http://imglf2.nosdn.127.net/img/dnpRZUpJZlB5VUQ2UTdlUDluSm9RZU9hUFRtT0dMaFRWTENkaW1SREVrN25rd3VXSlVBKy9nPT0.png?imageView&amp;thumbnail=500x0&amp;quality=96&amp;stripmeta=0&amp;type=jpg" alt="" /><figcaption>安装2</figcaption>
 </figure>
 <p>这里安装的是<strong>Python Imaging Library</strong>这个第三方库，是一个Python下非常强大的图像处理工具库。 因为PIL只支持到Python2.7，所以这里用的是基于PIL开发的支持Python3的<strong>Pillow</strong>。</p>
 <p>安装完成后打开 <code>F:\Python35\Lib\site-packages</code> 文件夹（具体路径看安装Python的位置而定）就会发现多了两个文件夹，一个是 <code>Pillow-3.1.1.dist-info</code>, 另一个是 <code>PIL</code>。 前者包含该库的一些基本信息，后者就是我们需要用到的包了，里面是有 <code>__init__.py</code> 文件的。</p>

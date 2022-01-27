@@ -138,7 +138,7 @@
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[<span class="string">&#x27;A&#x27;</span>, <span class="string">&#x27;B&#x27;</span>, <span class="string">&#x27;C&#x27;</span>, ... <span class="string">&#x27;a&#x27;</span>, <span class="string">&#x27;b&#x27;</span>, <span class="string">&#x27;c&#x27;</span>, ... <span class="string">&#x27;0&#x27;</span>, <span class="string">&#x27;1&#x27;</span>, ... <span class="string">&#x27;+&#x27;</span>, <span class="string">&#x27;/&#x27;</span>]</span><br></pre></td></tr></table></figure>
 <p>然后，对二进制数据进行处理时，每3个字节一组，就得到 <code>3x8=24 bit</code>，重新划分为4组，每组正好6个bit，有 <code>2^6=64</code> 种取值，对应64个字符的一个，：</p>
 <figure>
-<img src="http://oe0e8k1nf.bkt.clouddn.com/base64-encode.png" alt="base64-encode" /><figcaption aria-hidden="true">base64-encode</figcaption>
+<img src="http://oe0e8k1nf.bkt.clouddn.com/base64-encode.png" alt="" /><figcaption>base64-encode</figcaption>
 </figure>
 <p>这样我们就可以把二进制数据的3个字节使用4个字符来表示，这就是Base64编码。采用Base64编码会把3字节的二进制数据编码为4字节（4个字符所以是4字节）的文本数据，长度会增加33%。但好处是编码后的文本数据可以在邮件正文、网页等直接显示，而不会出现乱码的情况。</p>
 <p><strong>如果要编码的二进制数据不是3的倍数，最后多出1个或2个字节怎么办呢？</strong> Base64编码采用 <code>\x00</code> 字节在末尾补充到3个字节，在编码的末尾会使用 <code>=</code> 号表示补了多少字节。解码的时候，会自动去掉用于补足的 <code>\x00</code> 字节。</p>

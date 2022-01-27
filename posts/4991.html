@@ -403,7 +403,7 @@ Y
 <h2 id="透视表">4. 透视表</h2>
 <p><a target="_blank" rel="noopener" href="http://baike.baidu.com/view/1709397.htm">透视表</a>(Pivot Table)是一种交互式的表，可以动态地改变它的版面布置，以便按照不同方式分析数据，也可以重新安排行号、列标、页字段，比如下面的Excel透视表：</p>
 <figure>
-<img src="http://img0.pconline.com.cn/pconline/1202/22/2681570_shujvtoushi.jpg" alt="Excel透视表" /><figcaption aria-hidden="true">Excel透视表</figcaption>
+<img src="http://img0.pconline.com.cn/pconline/1202/22/2681570_shujvtoushi.jpg" alt="" /><figcaption>Excel透视表</figcaption>
 </figure>
 <p>可以自由选择用来做行号和列标的属性，非常便于我们做不同的分析。Pandas也提供类似的透视表的功能。例如<code>LoanAmount</code>这个重要的列有缺失值。我们不希望直接使用整体平均值来替换，这样太过笼统，不合理。</p>
 <p>这时可以用先根据 <code>Gender</code>、<code>Married</code>、<code>Self_Employed</code>分组后，再按各组的均值来分别替换缺失值。每个组 <code>LoanAmount</code>的均值可以用如下方法确定：</p>
@@ -883,7 +883,7 @@ b
 <p>Pandas除了表格操作之外，还可以直接绘制箱型图和直方图且只需一行代码。这样就不必单独调用matplotlib了。</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">%matplotlib inline</span><br><span class="line"><span class="comment"># coding:utf-8</span></span><br><span class="line">data.boxplot(column=<span class="string">&quot;ApplicantIncome&quot;</span>,by=<span class="string">&quot;Loan_Status&quot;</span>)</span><br></pre></td></tr></table></figure>
 <figure>
-<img src="https://raw.githubusercontent.com/familyld/learnpython/master/graph/pandas_box_1.png" alt="箱型图1" /><figcaption aria-hidden="true">箱型图1</figcaption>
+<img src="https://raw.githubusercontent.com/familyld/learnpython/master/graph/pandas_box_1.png" alt="" /><figcaption>箱型图1</figcaption>
 </figure>
 <p>###箱型图</p>
 <p>因为之前没怎么接触过箱型图，所以这里单独开一节简单归纳一下。</p>
@@ -891,7 +891,7 @@ b
 <p>因为上面那幅图不太容易看，用个简单点的例子来说，还是上一小节那个只有a列和b列的表格。按b列对a列进行分组：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">df_temp.boxplot(column=<span class="string">&quot;a&quot;</span>,by=<span class="string">&quot;b&quot;</span>)</span><br></pre></td></tr></table></figure>
 <figure>
-<img src="https://raw.githubusercontent.com/familyld/learnpython/master/graph/pandas_box_3.png" alt="箱型图2" /><figcaption aria-hidden="true">箱型图2</figcaption>
+<img src="https://raw.githubusercontent.com/familyld/learnpython/master/graph/pandas_box_3.png" alt="" /><figcaption>箱型图2</figcaption>
 </figure>
 <p>定义b列值为0的分组为Group1，b列值为1的分组为Group2。Group1分组有4，2，1三个值，毫无疑问最大值4，最小值1，在箱型图中这两个值对应箱子发出的<strong>虚线顶端的两条实线</strong>。Group2分组有3，3，2，1四个值，由于最大值3和上四分位数3(箱子顶部)相同，所以重合了。</p>
 <p>Group1中位数是2，而Group2的中位数则是中间两个数2和3的平均数，也即2.5。在箱型图中由箱子中间的有色线段表示。</p>
@@ -912,13 +912,9 @@ b
 <p>如果n-1恰好是4的倍数，那么数列中对应位置的就是各个四分位数了。但是，<strong>如果n-1不是4的倍数呢</strong>？</p>
 <p>这时位置会是一个带小数部分的数值，四分位数以<strong>距离该值最近的两个位置的加权平均值求出</strong>。其中，距离较近的数，权值为小数部分；而距离较远的数，权值为(1-小数部分)。</p>
 <p>再看例子中的Group1，Q1位置为0.5，Q2位置为1，Q3位置为1.5。（<strong>注意：位置从下标0开始！</strong>），所以：</p>
-<pre><code>Q1 = 0.5*1+0.5*2 = 1.5
-Q2 = 2
-Q3 = 0.5*2+0.5*4 = 3</code></pre>
+<p>Q1 = 0.5<em>1+0.5</em>2 = 1.5 Q2 = 2 Q3 = 0.5<em>2+0.5</em>4 = 3</p>
 <p>而Group2中，Q1位置为0.75，Q2位置为1.5，Q3位置为2.25。</p>
-<pre><code>Q1 = 0.25*1+0.72*2 = 1.75
-Q2 = 0.5*2+0.5*3 = 2.5
-Q3 = 0.25*3+0.75*3 = 3</code></pre>
+<p>Q1 = 0.25<em>1+0.72</em>2 = 1.75 Q2 = 0.5<em>2+0.5</em>3 = 2.5 Q3 = 0.25<em>3+0.75</em>3 = 3</p>
 <p>这样是否就清晰多了XD 然而，<strong>四分位数的取法还存在分歧</strong>，定义不一，我在学习这篇文章时也曾经很迷茫，<strong>直到阅读了源码！！</strong></p>
 <p>因为Pandas库依赖numpy库，所以它计算四分位数的方式自然也是使用了numpy库的。而<strong>numpy中实现计算百分比数的函数为percentile</strong>，代码实现如下：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">percentile</span>(<span class="params">N, percent, key=<span class="keyword">lambda</span> x:x</span>):</span></span><br><span class="line">    <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">    Find the percentile of a list of values.</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">    @parameter N - is a list of values. Note N MUST BE already sorted.</span></span><br><span class="line"><span class="string">    @parameter percent - a float value from 0.0 to 1.0.</span></span><br><span class="line"><span class="string">    @parameter key - optional key function to compute value from each element of N.</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">    @return - the percentile of the values</span></span><br><span class="line"><span class="string">    &quot;&quot;&quot;</span></span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">not</span> N:</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">None</span></span><br><span class="line">    k = (<span class="built_in">len</span>(N)-<span class="number">1</span>) * percent</span><br><span class="line">    f = math.floor(k)</span><br><span class="line">    c = math.ceil(k)</span><br><span class="line">    <span class="keyword">if</span> f == c:</span><br><span class="line">        <span class="keyword">return</span> key(N[<span class="built_in">int</span>(k)])</span><br><span class="line">    d0 = key(N[<span class="built_in">int</span>(f)]) * (c-k)</span><br><span class="line">    d1 = key(N[<span class="built_in">int</span>(c)]) * (k-f)</span><br><span class="line">    <span class="keyword">return</span> d0+d1</span><br></pre></td></tr></table></figure>
@@ -928,13 +924,13 @@ Q3 = 0.25*3+0.75*3 = 3</code></pre>
 <p>###直方图</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">data.hist(column=<span class="string">&quot;ApplicantIncome&quot;</span>,by=<span class="string">&quot;Loan_Status&quot;</span>,bins=<span class="number">30</span>)</span><br></pre></td></tr></table></figure>
 <figure>
-<img src="https://raw.githubusercontent.com/familyld/learnpython/master/graph/pandas_hist.png" alt="直方图" /><figcaption aria-hidden="true">直方图</figcaption>
+<img src="https://raw.githubusercontent.com/familyld/learnpython/master/graph/pandas_hist.png" alt="" /><figcaption>直方图</figcaption>
 </figure>
 <p>直方图比箱型图熟悉一些，这里就不详细展开了。结合箱型图和直方图，我们可以看出获得贷款的人和未获得贷款的人没有明显的收入差异，也即收入不是决定性因素。</p>
 <p>###离群点</p>
 <p>特别地，从直方图上我们可以看出这个数据集在收入字段上，比较集中于一个区间，区间外部有些散落的点，这些点我们称为离群点(Outlier)。前面将箱型图时没有细说，现在再回顾一下箱型图：</p>
 <figure>
-<img src="https://raw.githubusercontent.com/familyld/learnpython/master/graph/pandas_box_1.png" alt="箱型图1" /><figcaption aria-hidden="true">箱型图1</figcaption>
+<img src="https://raw.githubusercontent.com/familyld/learnpython/master/graph/pandas_box_1.png" alt="" /><figcaption>箱型图1</figcaption>
 </figure>
 <p>可以看到除了箱子以及最大最小值之外，还有很多横线，这些横线其实就表示离群点。那么可能又会有新的疑问了？<strong>怎么会有离群点在最大最小值外面呢</strong>？这样岂不是存在比最大值大，比最小值小的情况了吗？</p>
 <p>其实之前提到一下，有一个概念叫四分位距（IQR），数值上等于Q3-Q1，记作ΔQ。定义：</p>

@@ -88,22 +88,22 @@
 </ul>
 <p>如果把这些动物按照哺乳动物和鸟类分类，我们可以设计出这样的类的层次：</p>
 <figure>
-<img src="http://oe0e8k1nf.bkt.clouddn.com/My_Python_Notebook_MixIn1.png" alt="MixIn1" /><figcaption aria-hidden="true">MixIn1</figcaption>
+<img src="http://oe0e8k1nf.bkt.clouddn.com/My_Python_Notebook_MixIn1.png" alt="" /><figcaption>MixIn1</figcaption>
 </figure>
 <p>但是如果按照能跑的和能飞的来分类，则设计出这样的类的层次就变为：</p>
 <figure>
-<img src="http://oe0e8k1nf.bkt.clouddn.com/My_Python_Notebook_MixIn2.png" alt="MixIn2" /><figcaption aria-hidden="true">MixIn2</figcaption>
+<img src="http://oe0e8k1nf.bkt.clouddn.com/My_Python_Notebook_MixIn2.png" alt="" /><figcaption>MixIn2</figcaption>
 </figure>
 <p>但是，如果要把上面的两种分类方法都包含进来，我们就得<strong>设计更多的层次</strong>了。哺乳类要分为能跑的哺乳类和能飞的哺乳类，鸟类也要能跑的鸟类，能飞的鸟类。这么一来，类的层次变得很复杂了：</p>
 <figure>
-<img src="http://oe0e8k1nf.bkt.clouddn.com/My_Python_Notebook_MixIn3.png" alt="MixIn3" /><figcaption aria-hidden="true">MixIn3</figcaption>
+<img src="http://oe0e8k1nf.bkt.clouddn.com/My_Python_Notebook_MixIn3.png" alt="" /><figcaption>MixIn3</figcaption>
 </figure>
 <p>如果<strong>再增加更多的分类方式</strong>（例如：宠物和非宠物），那么<strong>类的数量会呈指数增长</strong>，这样设计就显得很不实用了。</p>
 <hr />
 <h3 id="使用多重继承">使用多重继承</h3>
 <p>分析一下前面的设计方法，其实之所以会造成类的数量呈指数增长，是因为<strong>每个类只能继承一个类</strong>，这就造成了很多不必要的重复实现。解决方法是采用<strong>多重继承</strong>。比方说设计为：</p>
 <figure>
-<img src="http://oe0e8k1nf.bkt.clouddn.com/My_Python_Notebook_MixIn4.png" alt="MixIn4" /><figcaption aria-hidden="true">MixIn4</figcaption>
+<img src="http://oe0e8k1nf.bkt.clouddn.com/My_Python_Notebook_MixIn4.png" alt="" /><figcaption>MixIn4</figcaption>
 </figure>
 <p>因为能跑和能飞这两个类不受限于动物类，它们是独立的。我们单独实现这两个类，即使要再实现其他非动物的类，比如汽车和飞机，也能很轻松地继承它们的功能，而不需要再重复构造功能类似的新的类。而动物分类方面，假设我们加入宠物非宠物的分类，也不需再构造哺乳的能飞的宠物、鸟类的能飞的宠物等等类别，通过多重继承免去了很多麻烦。先进行动物分类的定义：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Animal</span>(<span class="params"><span class="built_in">object</span></span>):</span></span><br><span class="line">    <span class="keyword">pass</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 大类:</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Mammal</span>(<span class="params">Animal</span>):</span></span><br><span class="line">    <span class="keyword">pass</span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Bird</span>(<span class="params">Animal</span>):</span></span><br><span class="line">    <span class="keyword">pass</span></span><br></pre></td></tr></table></figure>
@@ -284,7 +284,7 @@
 </ul>
 <p>也就是说，<strong>可以把类看成是元类创建出来的“实例”</strong>。</p>
 <figure>
-<img src="https://i.stack.imgur.com/QQ0OK.png" alt="metaclass" /><figcaption aria-hidden="true">metaclass</figcaption>
+<img src="https://i.stack.imgur.com/QQ0OK.png" alt="" /><figcaption>metaclass</figcaption>
 </figure>
 <p>图片来源：<a target="_blank" rel="noopener" href="http://stackoverflow.com/questions/100003/what-is-a-metaclass-in-python">What is a metaclass in Python?</a></p>
 <p>在上一个小节中，我们了解到可以使用 <code>type()</code> 函数创建类，但 <code>type</code> 的本质是什么呢？</p>

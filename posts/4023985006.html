@@ -37,7 +37,7 @@
 <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">sum</span>(<span class="params">nums</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">if</span> (nums.length === <span class="number">0</span>) <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">  <span class="keyword">if</span> (nums.length === <span class="number">1</span>) <span class="keyword">return</span> nums[<span class="number">0</span>];</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> nums[<span class="number">0</span>] + sum(nums.slice(<span class="number">1</span>));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>我们用递归树来直观地看一下。</p>
 <figure>
-<img src="../images/dynamic-programming-1.png" alt="dynamic-programming-1" /><figcaption aria-hidden="true">dynamic-programming-1</figcaption>
+<img src="../images/dynamic-programming-1.png" alt="" /><figcaption>dynamic-programming-1</figcaption>
 </figure>
 <p>这种做法本身没有问题，但是每次执行一个函数都有一定的开销，拿 JS 引擎执行 JS 来说， 每次函数执行都会进行入栈操作，并进行预处理和执行过程，所以对于内存来说是一个挑战。 很容易造成爆栈。</p>
 <blockquote>
@@ -49,7 +49,7 @@
 <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">climbStairs</span>(<span class="params">n</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">if</span> (n === <span class="number">1</span>) <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">  <span class="keyword">if</span> (n === <span class="number">2</span>) <span class="keyword">return</span> <span class="number">2</span>;</span><br><span class="line">  <span class="keyword">return</span> climbStairs(n - <span class="number">1</span>) + climbStairs(n - <span class="number">2</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>这道题和 fibnacci 数列一摸一样，我们继续用一个递归树来直观感受以下：</p>
 <figure>
-<img src="../images/dynamic-programming-2.png" alt="dynamic-programming-2" /><figcaption aria-hidden="true">dynamic-programming-2</figcaption>
+<img src="../images/dynamic-programming-2.png" alt="" /><figcaption>dynamic-programming-2</figcaption>
 </figure>
 <p>可以看出这里面有很多重复计算，我们可以使用一个 hashtable 去缓存中间计算结果，从而省去不必要的计算。 那么动态规划是怎么解决这个问题呢？ 答案就是“查表”。</p>
 <p>刚才我们说了<code>递归是从问题的结果倒推，直到问题的规模缩小到寻常。 动态规划是从寻常入手， 逐步扩大规模到最优子结构。</code></p>
@@ -58,7 +58,7 @@
 <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">climbStairs</span>(<span class="params">n</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">if</span> (n === <span class="number">1</span>) <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">  <span class="keyword">if</span> (n === <span class="number">2</span>) <span class="keyword">return</span> <span class="number">2</span>;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">let</span> a = <span class="number">1</span>;</span><br><span class="line">  <span class="keyword">let</span> b = <span class="number">2</span>;</span><br><span class="line">  <span class="keyword">let</span> temp;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">let</span> i = <span class="number">3</span>; i &lt;= n; i++) &#123;</span><br><span class="line">    temp = a + b;</span><br><span class="line">    a = b;</span><br><span class="line">    b = temp;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> temp;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>动态规划的查表过程如果画成图，就是这样的：</p>
 <figure>
-<img src="../images/dynamic-programming-3.png" alt="dynamic-programming-3" /><figcaption aria-hidden="true">dynamic-programming-3</figcaption>
+<img src="../images/dynamic-programming-3.png" alt="" /><figcaption>dynamic-programming-3</figcaption>
 </figure>
 <blockquote>
 <p>虚线代表的是查表过程</p>

@@ -24,13 +24,13 @@
 <p>才怪咧。</p>
 <p>对于拿到的相亲情况表，我们不妨将其转化成一个图。将每一个人作为一个点<strong>(编号1..N)</strong>，若两个人之间有一场相亲，则在对应的点之间连接一条无向边。(如下图)</p>
 <figure>
-<img src="../images/bipatial_graph_part_i_1.png" alt="img1" /><figcaption aria-hidden="true">img1</figcaption>
+<img src="../images/bipatial_graph_part_i_1.png" alt="" /><figcaption>img1</figcaption>
 </figure>
 <p>因为相亲总是在男女之间进行的，所以每一条边的两边对应的人总是不同性别。假设表示男性的节点染成白色，女性的节点染色黑色。对于得到的无向图来说，即每一条边的两端 一定是一白一黑。如果存在一条边两端同为白色或者黑色，则表示这一条边所表示的记录有误。</p>
 <p>由于我们并不知道每个人的性别，我们的问题就转化为<strong>判定是否存在一个合理的染色方案，使得我们所建立的无向图满足每一条边两端的顶点颜色都不相同</strong>。</p>
 <p>那么，我们不妨将所有的点初始为未染色的状态。随机选择一个点，将其染成白色。再以它为起点，将所有相邻的点染成黑色。再以这些黑色的点为起点，将所有与其相邻未染色 的点染成白色。不断重复直到整个图都染色完成。(如下图)</p>
 <figure>
-<img src="../images/bipatial_graph_part_i_2.png" alt="img2" /><figcaption aria-hidden="true">img2</figcaption>
+<img src="../images/bipatial_graph_part_i_2.png" alt="" /><figcaption>img2</figcaption>
 </figure>
 <p>在染色的过程中，我们应该怎样发现错误的记录呢？相信你一定发现了吧。对于一个已经染色的点，如果存在一个与它相邻的已染色点和它的颜色相同，那么就一定存在一条错误 的记录。(如上图的4，5节点)</p>
 <p>到此我们就得到了整个图的算法：</p>
