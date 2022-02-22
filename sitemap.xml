@@ -2,14 +2,14 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
-    <loc>https://hunlp.com/posts/26428.html</loc>
+    <loc>https://hunlp.com/posts/56743.html</loc>
     
     <lastmod>2022-02-22</lastmod>
     
   </url>
   
   <url>
-    <loc>https://hunlp.com/posts/56743.html</loc>
+    <loc>https://hunlp.com/posts/26428.html</loc>
     
     <lastmod>2022-02-22</lastmod>
     
@@ -261,14 +261,14 @@
   </url>
   
   <url>
-    <loc>https://hunlp.com/posts/41544.html</loc>
+    <loc>https://hunlp.com/posts/29902.html</loc>
     
     <lastmod>2021-06-10</lastmod>
     
   </url>
   
   <url>
-    <loc>https://hunlp.com/posts/29902.html</loc>
+    <loc>https://hunlp.com/posts/41544.html</loc>
     
     <lastmod>2021-06-10</lastmod>
     
@@ -1530,14 +1530,14 @@
   </url>
   
   <url>
-    <loc>https://hunlp.com/tags/PLSA/</loc>
+    <loc>https://hunlp.com/tags/PCA/</loc>
     <lastmod>2022-02-22</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
-    <loc>https://hunlp.com/tags/PCA/</loc>
+    <loc>https://hunlp.com/tags/PLSA/</loc>
     <lastmod>2022-02-22</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -2048,14 +2048,14 @@
   </url>
   
   <url>
-    <loc>https://hunlp.com/tags/GBDT/</loc>
+    <loc>https://hunlp.com/tags/%E6%9D%A1%E4%BB%B6%E9%9A%8F%E6%9C%BA%E5%9C%BA/</loc>
     <lastmod>2022-02-22</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
-    <loc>https://hunlp.com/tags/%E6%9D%A1%E4%BB%B6%E9%9A%8F%E6%9C%BA%E5%9C%BA/</loc>
+    <loc>https://hunlp.com/tags/GBDT/</loc>
     <lastmod>2022-02-22</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -2258,6 +2258,13 @@
   </url>
   
   <url>
+    <loc>https://hunlp.com/tags/%E4%B8%93%E9%A2%98/</loc>
+    <lastmod>2022-02-22</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
     <loc>https://hunlp.com/tags/CNN/</loc>
     <lastmod>2022-02-22</lastmod>
     <changefreq>daily</changefreq>
@@ -2266,13 +2273,6 @@
   
   <url>
     <loc>https://hunlp.com/tags/%E7%AE%97%E6%B3%95%E5%8E%9F%E7%90%86/</loc>
-    <lastmod>2022-02-22</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://hunlp.com/tags/%E4%B8%93%E9%A2%98/</loc>
     <lastmod>2022-02-22</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
