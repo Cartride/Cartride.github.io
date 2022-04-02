@@ -1,0 +1,571 @@
+<!doctype html>
+<html lang="zh"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"><meta><title>RNN原理 - MCFON</title><link rel="manifest" href="/manifest.json"><meta name="application-name" content="MCFON"><meta name="msapplication-TileImage" content="/img/favicon.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="MCFON"><meta name="apple-mobile-web-app-status-bar-style" content="default"><meta name="description" content="Recurrent Neural Network，循环神经网络  SimpleRNN  SimpleRNN其结构如下图所示：   输入为一个向量序列\(\{x_0,x_1,x_2...x_n\}\) ； 在时间步 \(t\)，序列的元素 \(x_t\) 和上一时间步的输出 $h_{t-1} $一起，经过RNN单元处理，产生输出 \(h_t\); \[h_t&amp;#x3D;ϕ(Wx_t+Uh_{t−1})\]"><meta property="og:type" content="blog"><meta property="og:title" content="RNN原理"><meta property="og:url" content="https://hunlp.com/posts/28867.html"><meta property="og:site_name" content="MCFON"><meta property="og:description" content="Recurrent Neural Network，循环神经网络  SimpleRNN  SimpleRNN其结构如下图所示：   输入为一个向量序列\(\{x_0,x_1,x_2...x_n\}\) ； 在时间步 \(t\)，序列的元素 \(x_t\) 和上一时间步的输出 $h_{t-1} $一起，经过RNN单元处理，产生输出 \(h_t\); \[h_t&amp;#x3D;ϕ(Wx_t+Uh_{t−1})\]"><meta property="og:locale" content="zh_CN"><meta property="og:image" content="https://tva1.sinaimg.cn/large/008i3skNgy1grmhqh99oij30su09hmy1.jpg"><meta property="og:image" content="https://tva1.sinaimg.cn/large/008i3skNgy1grmhqtkdoej30m00adjs8.jpg"><meta property="og:image" content="https://tva1.sinaimg.cn/large/008i3skNgy1grmhr4sn25j30vd0hlgne.jpg"><meta property="og:image" content="https://tva1.sinaimg.cn/large/008i3skNgy1grmhrh3b6yj30vd0hkac4.jpg"><meta property="og:image" content="https://tva1.sinaimg.cn/large/008i3skNgy1grmhrsab9qj60wq0akwg002.jpg"><meta property="og:image" content="https://tva1.sinaimg.cn/large/008i3skNgy1grmhs1fknpj30df08fjrm.jpg"><meta property="og:image" content="https://tva1.sinaimg.cn/large/008i3skNgy1grmhsed86aj30ac06wdfz.jpg"><meta property="og:image" content="https://tva1.sinaimg.cn/large/008i3skNgy1grmhsnq78qj30ac06wjrj.jpg"><meta property="og:image" content="https://tva1.sinaimg.cn/large/008i3skNgy1grmhswfgadj30ac06w3yn.jpg"><meta property="og:image" content="https://tva1.sinaimg.cn/large/008i3skNgy1grmht4fa5mj30ac06w74f.jpg"><meta property="og:image" content="https://tva1.sinaimg.cn/large/008i3skNgy1grmhtdnsjfj30ac06wwem.jpg"><meta property="article:published_time" content="2021-06-17T09:35:34.000Z"><meta property="article:modified_time" content="2021-06-18T08:27:54.894Z"><meta property="article:author" content="ฅ´ω`ฅ"><meta property="article:tag" content="笔记"><meta property="article:tag" content="RNN"><meta property="twitter:card" content="summary"><meta property="twitter:image" content="https://tva1.sinaimg.cn/large/008i3skNgy1grmhqh99oij30su09hmy1.jpg"><script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","mainEntityOfPage":{"@type":"WebPage","@id":"https://hunlp.com/posts/28867.html"},"headline":"RNN原理","image":["https://tva1.sinaimg.cn/large/008i3skNgy1grmhqh99oij30su09hmy1.jpg","https://tva1.sinaimg.cn/large/008i3skNgy1grmhqtkdoej30m00adjs8.jpg","https://tva1.sinaimg.cn/large/008i3skNgy1grmhr4sn25j30vd0hlgne.jpg","https://tva1.sinaimg.cn/large/008i3skNgy1grmhrh3b6yj30vd0hkac4.jpg","https://tva1.sinaimg.cn/large/008i3skNgy1grmhrsab9qj60wq0akwg002.jpg","https://tva1.sinaimg.cn/large/008i3skNgy1grmhs1fknpj30df08fjrm.jpg","https://tva1.sinaimg.cn/large/008i3skNgy1grmhsed86aj30ac06wdfz.jpg","https://tva1.sinaimg.cn/large/008i3skNgy1grmhsnq78qj30ac06wjrj.jpg","https://tva1.sinaimg.cn/large/008i3skNgy1grmhswfgadj30ac06w3yn.jpg","https://tva1.sinaimg.cn/large/008i3skNgy1grmht4fa5mj30ac06w74f.jpg","https://tva1.sinaimg.cn/large/008i3skNgy1grmhtdnsjfj30ac06wwem.jpg"],"datePublished":"2021-06-17T09:35:34.000Z","dateModified":"2021-06-18T08:27:54.894Z","author":{"@type":"Person","name":"ฅ´ω`ฅ"},"publisher":{"@type":"Organization","name":"MCFON","logo":{"@type":"ImageObject","url":"https://hunlp.com/img/logo.png"}},"description":"Recurrent Neural Network，循环神经网络  SimpleRNN  SimpleRNN其结构如下图所示：   输入为一个向量序列\\(\\{x_0,x_1,x_2...x_n\\}\\) ； 在时间步 \\(t\\)，序列的元素 \\(x_t\\) 和上一时间步的输出 $h_{t-1} $一起，经过RNN单元处理，产生输出 \\(h_t\\); \\[h_t&#x3D;ϕ(Wx_t+Uh_{t−1})\\]"}</script><link rel="canonical" href="https://hunlp.com/posts/28867.html"><link rel="icon" href="/img/favicon.png"><link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.2/css/all.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@9.12.0/styles/atom-one-light.css"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@400;600&amp;family=Source+Code+Pro"><link rel="stylesheet" href="/css/default.css"><style>body>.footer,body>.navbar,body>.section{opacity:0}</style><!--!--><script>var _hmt = _hmt || [];
+        (function() {
+            var hm = document.createElement("script");
+            hm.src = "//hm.baidu.com/hm.js?b99420d7a06d2b3361a8efeaf6e20764";
+            var s = document.getElementsByTagName("script")[0];
+            s.parentNode.insertBefore(hm, s);
+        })();</script><!--!--><!--!--><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/cookieconsent@3.1.1/build/cookieconsent.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lightgallery@1.6.8/dist/css/lightgallery.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/justifiedGallery@3.7.0/dist/css/justifiedGallery.min.css"><script src="https://www.googletagmanager.com/gtag/js?id=UA-131608076-1" async></script><script>window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+    
+        gtag('config', 'UA-131608076-1');</script><!--!--><!--!--><!--!--><script src="https://cdn.jsdelivr.net/npm/pace-js@1.0.2/pace.min.js"></script><!--!--><!--!--><meta name="generator" content="Hexo 5.4.0"></head><body class="is-3-column"><nav class="navbar navbar-main"><div class="container"><div class="navbar-brand justify-content-center"><a class="navbar-item navbar-logo" href="/"><img src="/img/logo.png" alt="MCFON" height="28"></a></div><div class="navbar-menu"><div class="navbar-start"><a class="navbar-item" href="/">主页</a><a class="navbar-item" href="/archives">归档</a><a class="navbar-item" href="/categories">分类</a><a class="navbar-item" href="/tags">标签</a><a class="navbar-item" href="/about">关于</a></div><div class="navbar-end"><a class="navbar-item" target="_blank" rel="noopener" title="Download on GitHub" href="https://github.com/ppoffice/hexo-theme-icarus"><i class="fab fa-github"></i></a><a class="navbar-item is-hidden-tablet catalogue" title="目录" href="javascript:;"><i class="fas fa-list-ul"></i></a><a class="navbar-item search" title="搜索" href="javascript:;"><i class="fas fa-search"></i></a></div></div></div></nav><section class="section"><div class="container"><div class="columns"><div class="column order-2 column-main is-8-tablet is-8-desktop is-9-widescreen"><div class="card"><article class="card-content article" role="article"><h1 class="title is-size-3 is-size-4-mobile has-text-weight-normal"><i class="fas fa-angle-double-right"></i>RNN原理</h1><div class="article-meta is-size-7 is-uppercase level is-mobile"><div class="level-left"><span class="level-item"><i class="far fa-calendar-alt"> </i><time dateTime="${date_xml(page.date)}" title="${date_xml(page.date)}">2021-06-17</time></span><span class="level-item is-hidden-mobile"><i class="far fa-calendar-check"> </i><time dateTime="${date_xml(page.updated)}" title="${date_xml(page.updated)}">2021-06-18</time></span><span class="level-item"><a class="link-muted" href="/categories/%E8%87%AA%E7%84%B6%E8%AF%AD%E8%A8%80%E5%A4%84%E7%90%86/">自然语言处理</a></span><span class="level-item">33 分钟读完 (大约4908个字)</span></div></div><div class="content"><ul>
+<li><code>Recurrent Neural Network</code>，循环神经网络</li>
+</ul>
+<h2 id="simplernn"><code>SimpleRNN</code></h2>
+<ul>
+<li><code>SimpleRNN</code>其结构如下图所示： <img src="https://tva1.sinaimg.cn/large/008i3skNgy1grmhqh99oij30su09hmy1.jpg" />
+<ul>
+<li>输入为一个向量序列<span class="math inline">\(\{x_0,x_1,x_2...x_n\}\)</span> ；</li>
+<li>在时间步 <span class="math inline">\(t\)</span>，序列的元素 <span class="math inline">\(x_t\)</span> 和上一时间步的输出 $h_{t-1} $一起，经过<code>RNN</code>单元处理，产生输出 <span class="math inline">\(h_t\)</span>; <span class="math display">\[h_t=ϕ(Wx_t+Uh_{t−1})\]</span> <span class="math display">\[y_t=Vh_t\]</span></li>
+<li><span class="math inline">\(h_t\)</span> 为隐藏层状态，携带了序列截止时间步 <span class="math inline">\(t\)</span> 的信息；<span class="math inline">\(y_t\)</span> 为时间步 <span class="math inline">\(t\)</span> 的输出；<span class="math inline">\(h_t\)</span> 继续作为下一时间步的输入</li>
+<li>整个序列被处理完，最终的输出 <span class="math inline">\(y_n\)</span> 即为<code>RNN</code>的输出；根据情况，也可返回所有的输出序列 <span class="math inline">\(\{y_0,y_1,y_2...y_n\}\)</span></li>
+<li>序列的每个元素是经过<strong><em>同一个</em></strong><code>RNN</code>处理，因此待学习的参数只有一组：<span class="math inline">\(W,U,V\)</span></li>
+</ul></li>
+</ul>
+<span id="more"></span>
+<ul>
+<li>序列元素依次经过<code>RNN</code>的激活<code>(sigmoid/tanh)</code>函数的处理，存在信息丢失；并且在训练时反向传播会导致梯度消失，因此只能储存<strong>短期记忆</strong>
+<ul>
+<li>例如训练单词<code>it</code>对应的向量时，只能利用<code>time</code>和<code>is</code>对应的信息，而<code>what</code>对应的信息丢失</li>
+</ul></li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"></span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"></span><br></pre></td></tr></table></figure>
+<h2 id="lstm"><code>LSTM</code></h2>
+<h3 id="lstm原理"><code>LSTM</code>原理</h3>
+<ul>
+<li><code>Long Short-Term Memory</code>，其框架如下所示，<code>LSTM</code>单元利用当前输入、短期记忆和长期记忆，更新长期和短期记忆，并产生输出 <img src="https://tva1.sinaimg.cn/large/008i3skNgy1grmhqtkdoej30m00adjs8.jpg" /></li>
+</ul>
+<h3 id="lstm结构"><code>LSTM</code>结构</h3>
+<ul>
+<li><p><code>LSTM</code>的结构如下图所示，包含四个门：<code>forget gate</code>,<code>learn gate</code>,<code>remember gate</code>,<code>ouput(use) gate</code> <img src="https://tva1.sinaimg.cn/large/008i3skNgy1grmhr4sn25j30vd0hlgne.jpg" /></p>
+<ul>
+<li><p><code>forget gate</code>：决定<strong>长期记忆</strong><span class="math inline">\(c_t\)</span>中哪些信息该保留，哪些该忘记</p>
+<ul>
+<li>首先整合当前输入<span class="math inline">\(x_t\)</span>和短期记忆<span class="math inline">\(h_{t-1}\)</span>，输出一个向量<span class="math inline">\(f_t\)</span>；</li>
+<li><span class="math inline">\(f_t\)</span>的值介于<span class="math inline">\(0-1\)</span>之间，每一位对应于<strong>长期记忆</strong>的一个数字，<span class="math inline">\(1\)</span>表示完全保留，<span class="math inline">\(0\)</span>表示完全丢弃 <span class="math display">\[f_t=\sigma(W_f[h_{t-1},x_t]+b_f)\]</span> <span class="math display">\[Out_f = c_{t-1}\cdot f_t\]</span></li>
+</ul></li>
+<li><p><code>learn gate</code>：决定短期记忆和当前输入中学到的信息</p>
+<ul>
+<li>首先整合 <span class="math inline">\(x_t\)</span> 和短期记忆 <span class="math inline">\(h_{t-1}\)</span> 的信息 <span class="math inline">\(\hat c_t\)</span></li>
+<li>然后通过 <span class="math inline">\(x_t\)</span> 和 <span class="math inline">\(h_{t-1}\)</span> 获得一个遗忘因子 <span class="math inline">\(i_t\)</span>，其值位于<span class="math inline">\(0-1\)</span>之间</li>
+<li>再将上两步的结果结合 <span class="math display">\[\hat c_t=tanh(W_n[h_{t-1},x_t]+b_n)\]</span><br />
+<span class="math display">\[i_t=\sigma(W_i[h_{t-1},x_t]+b_i)\]</span> <span class="math display">\[Out_n = i_t\cdot \hat c_t\]</span></li>
+</ul></li>
+<li><p><code>remember gate</code>：整合上一步的长短期记忆，更新长期记忆 <span class="math display">\[c_t = Out_f+Out_n\]</span></p></li>
+<li><p><code>output(use) gate</code>：整合上一步的长短期记忆，更新短期记忆 <span class="math display">\[o_t=\sigma(W_o[h_{t-1},x_t]+b_o)\]</span> <span class="math display">\[h_t=o_t\cdot tanh(c_t)\]</span></p></li>
+</ul></li>
+<li><p>短期记忆<span class="math inline">\(h_t\)</span>，即为<code>LSTM</code>当前时间步<span class="math inline">\(t\)</span>的输出</p></li>
+<li><p>综上<code>LSTM</code>单元的训练参数有四组：<code>forget gate</code>参数<span class="math inline">\(\{W_f,b_f\}\)</span>，<code>learn gate</code>参数<span class="math inline">\(\{W_n,b_n\}\)</span>和<span class="math inline">\(\{W_i,b_i\}\)</span>，<code>output gate</code>参数<span class="math inline">\(\{W_o,b_o\}\)</span></p></li>
+<li><p><code>LSTM</code>中不同位置处<code>sigmoid</code>和<code>tanh</code>激活函数的选择，向量相加加或相乘的确定，具有一定的随意性。之所以选择现结构，是因为在实践中有效</p></li>
+</ul>
+<h3 id="peephole机制"><code>peephole</code>机制</h3>
+<ul>
+<li>门机制中的<code>sigmoid</code>激活函数，将输入转化成<span class="math inline">\(0-1\)</span>数值；<code>sigmoid</code>乘以另一向量，即可决定保留该向量的哪些信息；</li>
+<li>上述<code>LSTM</code>结构中三个<code>sigmoid</code>函数的输入都是当前输入和短期记忆<span class="math inline">\([h_{t_1},x_t]\)</span>，即决定<code>LSTM</code>单元保留哪些信息的都是短期记忆；</li>
+<li><code>peephole connections</code>：将长期记忆也加入到<code>sigmoid</code>激活函数的输入中，其在<code>LSTM</code>中的决策参与度提高了，即长期和短期记忆共同决定保留哪些信息、丢弃哪些信息 <img src="https://tva1.sinaimg.cn/large/008i3skNgy1grmhrh3b6yj30vd0hkac4.jpg" /> <span class="math display">\[f_t=\sigma(W_f[c_{t-1},h_{t-1},x_t]+b_f)\]</span> <span class="math display">\[i_t=\sigma(W_i[c_{t-1},h_{t-1},x_t]+b_i)\]</span> <span class="math display">\[o_t=\sigma(W_o[c_{t-1},h_{t-1},x_t]+b_o)\]</span></li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"></span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"></span><br></pre></td></tr></table></figure>
+<h2 id="gru"><code>GRU</code></h2>
+<ul>
+<li><code>Gated Recurrent Unit</code>，将<code>forget gate</code>和<code>learn gate</code>整合成单个的<code>update gate</code>，单元状态(长期记忆)<span class="math inline">\(c_{t}\)</span>与隐藏状态(短期记忆)<span class="math inline">\(h_t\)</span>合并 <img src="https://tva1.sinaimg.cn/large/008i3skNgy1grmhrsab9qj60wq0akwg002.jpg" /></li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"></span><br></pre></td></tr></table></figure>
+<h1 id="rnn实现"><code>RNN</code>实现</h1>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"><span class="keyword">import</span> torch.nn <span class="keyword">as</span> nn</span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt</span><br><span class="line"></span><br><span class="line">%matplotlib inline</span><br></pre></td></tr></table></figure>
+<h2 id="simplernn层"><code>SimpleRNN</code>层</h2>
+<p>对输入序列的每个向量<span class="math inline">\(x_t\)</span>，进行如下计算： <span class="math inline">\(h_t=tanh(W_{ih}x_t+b_{ih}+W_{hh}h_{(t−1)}+b_{hh})\)</span></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 指定输入的特征量，隐藏状态的长度，rnn的层数</span></span><br><span class="line">rnn = nn.RNN(</span><br><span class="line">    input_size=<span class="number">6</span>,</span><br><span class="line">    hidden_size=<span class="number">10</span>,</span><br><span class="line">    num_layers=<span class="number">2</span>,</span><br><span class="line">    batch_first=<span class="literal">True</span>,  <span class="comment"># 输入和输出张量形状：batch,seq,feature</span></span><br><span class="line">    bidirectional=<span class="literal">False</span>,  <span class="comment"># 双向RNN</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 输入张量：</span></span><br><span class="line"><span class="built_in">input</span> = torch.randn(<span class="number">5</span>, <span class="number">3</span>, <span class="number">6</span>)  <span class="comment"># batch,seq,feature</span></span><br><span class="line">h0 = torch.randn(<span class="number">2</span>, <span class="number">5</span>, <span class="number">10</span>)  <span class="comment"># num_layers,batch,hidden_size</span></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;输入形状：&quot;</span>, <span class="built_in">input</span>.shape)</span><br><span class="line"></span><br><span class="line">output, hn = rnn(<span class="built_in">input</span>, h0)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;输出形状：&quot;</span>, output.shape, <span class="string">&quot; 隐藏层状态形状：&quot;</span>, hn.shape)</span><br></pre></td></tr></table></figure>
+<pre><code>输入形状： torch.Size([5, 3, 6])
+输出形状： torch.Size([5, 3, 10])  隐藏层状态形状： torch.Size([2, 5, 10])</code></pre>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">print</span>(<span class="string">&quot;输入向量对应的权重 W_ih：&quot;</span>,rnn.weight_ih_l0.shape)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;隐藏状态对应的权重 W_hh：&quot;</span>,rnn.weight_hh_l0.shape)</span><br></pre></td></tr></table></figure>
+<pre><code>输入向量对应的权重 W_ih： torch.Size([10, 6])
+隐藏状态对应的权重 W_hh： torch.Size([10, 10])</code></pre>
+<h2 id="lstm层"><code>LSTM</code>层</h2>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">rnn = nn.LSTM(</span><br><span class="line">    input_size=<span class="number">6</span>,</span><br><span class="line">    hidden_size=<span class="number">10</span>,</span><br><span class="line">    num_layers=<span class="number">2</span>,</span><br><span class="line">    batch_first=<span class="literal">True</span>,  <span class="comment"># 输入和输出张量形状：batch,seq,feature</span></span><br><span class="line">    bidirectional=<span class="literal">False</span>,</span><br><span class="line">)</span><br><span class="line"><span class="built_in">input</span> = torch.randn(<span class="number">5</span>, <span class="number">3</span>, <span class="number">6</span>)</span><br><span class="line">h0 = torch.randn(<span class="number">2</span>, <span class="number">5</span>, <span class="number">10</span>) <span class="comment"># num_layer,batch,hidden</span></span><br><span class="line">c0 = torch.randn(<span class="number">2</span>, <span class="number">5</span>, <span class="number">10</span>)</span><br><span class="line"></span><br><span class="line">output, (hn, cn) = rnn(<span class="built_in">input</span>, (h0, c0))</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;输出形状：&quot;</span>, output.shape)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;hidden state：&quot;</span>, hn.shape)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;cell state：&quot;</span>, cn.shape)</span><br></pre></td></tr></table></figure>
+<pre><code>输出形状： torch.Size([5, 3, 10])
+hidden state： torch.Size([2, 5, 10])
+cell state： torch.Size([2, 5, 10])</code></pre>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"></span><br></pre></td></tr></table></figure>
+<h2 id="gru层"><code>GRU</code>层</h2>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">rnn = nn.GRU(<span class="number">10</span>, <span class="number">20</span>, <span class="number">2</span>)</span><br><span class="line"><span class="built_in">input</span> = torch.randn(<span class="number">5</span>, <span class="number">3</span>, <span class="number">10</span>)</span><br><span class="line">h0 = torch.randn(<span class="number">2</span>, <span class="number">3</span>, <span class="number">20</span>)</span><br><span class="line">output, hn = rnn(<span class="built_in">input</span>, h0)</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">h0.shape</span><br></pre></td></tr></table></figure>
+<pre><code>torch.Size([2, 3, 15])</code></pre>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"></span><br></pre></td></tr></table></figure>
+<h2 id="rnn训练流程"><code>RNN</code>训练流程</h2>
+<h3 id="训练数据">训练数据</h3>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">plt.figure(figsize=(<span class="number">8</span>, <span class="number">5</span>))</span><br><span class="line"></span><br><span class="line"><span class="comment"># 序列数据</span></span><br><span class="line">seq_length = <span class="number">20</span></span><br><span class="line">time_steps = np.linspace(<span class="number">0</span>, np.pi, seq_length + <span class="number">1</span>)</span><br><span class="line">data = np.sin(time_steps)</span><br><span class="line">data.resize((seq_length + <span class="number">1</span>, <span class="number">1</span>))</span><br><span class="line"></span><br><span class="line">x = data[:-<span class="number">1</span>]  <span class="comment"># 数据</span></span><br><span class="line">y = data[<span class="number">1</span>:]  <span class="comment"># 标签</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 图示数据</span></span><br><span class="line">plt.plot(time_steps[<span class="number">1</span>:], x, <span class="string">&#x27;r.&#x27;</span>, label=<span class="string">&#x27;input,  x&#x27;</span>)</span><br><span class="line">plt.plot(time_steps[<span class="number">1</span>:], y, <span class="string">&#x27;b.&#x27;</span>, label=<span class="string">&#x27;target, y&#x27;</span>)</span><br><span class="line"></span><br><span class="line">plt.legend(loc=<span class="string">&#x27;best&#x27;</span>)</span><br><span class="line">plt.show()</span><br></pre></td></tr></table></figure>
+<p><img src="https://tva1.sinaimg.cn/large/008i3skNgy1grmhs1fknpj30df08fjrm.jpg" /></p>
+<h3 id="定义模型">定义模型</h3>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">RNN</span>(<span class="params">nn.Module</span>):</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span>(<span class="params">self, input_size, output_size, hidden_dim, n_layers</span>):</span></span><br><span class="line">        <span class="built_in">super</span>(RNN, self).__init__()</span><br><span class="line">        self.hidden_dim = hidden_dim</span><br><span class="line">        self.rnn = nn.RNN(input_size, hidden_dim, n_layers, batch_first=<span class="literal">True</span>)</span><br><span class="line">        self.fc = nn.Linear(hidden_dim, output_size)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">forward</span>(<span class="params">self, x, hidden</span>):</span></span><br><span class="line">        batch_size = x.size(<span class="number">0</span>)</span><br><span class="line">        r_out, hidden = self.rnn(x, hidden)</span><br><span class="line">        r_out = r_out.view(-<span class="number">1</span>, self.hidden_dim)</span><br><span class="line">        output = self.fc(r_out)</span><br><span class="line">        <span class="keyword">return</span> output, hidden</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 检测正确建模</span></span><br><span class="line">test_rnn = RNN(input_size=<span class="number">1</span>, output_size=<span class="number">1</span>, hidden_dim=<span class="number">10</span>, n_layers=<span class="number">2</span>)</span><br><span class="line"></span><br><span class="line">test_input = torch.Tensor(data).unsqueeze(<span class="number">0</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;Input size:&#x27;</span>, test_input.size())</span><br><span class="line"></span><br><span class="line">test_out, test_h = test_rnn(test_input, <span class="literal">None</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;Output size:&#x27;</span>, test_out.size())</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;Hidden state size:&#x27;</span>, test_h.size())</span><br></pre></td></tr></table></figure>
+<pre><code>Input size: torch.Size([1, 21, 1])
+Output size: torch.Size([21, 1])
+Hidden state size: torch.Size([2, 1, 10])</code></pre>
+<h3 id="训练模型">训练模型</h3>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 参数</span></span><br><span class="line">input_size = <span class="number">1</span></span><br><span class="line">output_size = <span class="number">1</span></span><br><span class="line">hidden_dim = <span class="number">32</span></span><br><span class="line">n_layers = <span class="number">1</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 初始化模型</span></span><br><span class="line">rnn = RNN(input_size, output_size, hidden_dim, n_layers)</span><br><span class="line"><span class="built_in">print</span>(rnn)</span><br></pre></td></tr></table></figure>
+<pre><code>RNN(
+  (rnn): RNN(1, 32, batch_first=True)
+  (fc): Linear(in_features=32, out_features=1, bias=True)
+)</code></pre>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 损失函数和优化器</span></span><br><span class="line">criterion = nn.MSELoss()</span><br><span class="line">optimizer = torch.optim.Adam(rnn.parameters(), lr=<span class="number">0.01</span>)</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 训练模型</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">train</span>(<span class="params">rnn, n_steps, print_every</span>):</span></span><br><span class="line">    hidden = <span class="literal">None</span></span><br><span class="line">    <span class="keyword">for</span> batch_i, step <span class="keyword">in</span> <span class="built_in">enumerate</span>(<span class="built_in">range</span>(n_steps)):</span><br><span class="line">        x_tensor = torch.Tensor(x).unsqueeze(<span class="number">0</span>)</span><br><span class="line">        y_tensor = torch.Tensor(y)</span><br><span class="line"></span><br><span class="line">        <span class="comment"># 前向推理</span></span><br><span class="line">        prediction, hidden = rnn(x_tensor, hidden)</span><br><span class="line">        hidden = hidden.data</span><br><span class="line"></span><br><span class="line">        <span class="comment"># 损失函数</span></span><br><span class="line">        loss = criterion(prediction, y_tensor)</span><br><span class="line"></span><br><span class="line">        <span class="comment"># 梯度归零</span></span><br><span class="line">        optimizer.zero_grad()</span><br><span class="line"></span><br><span class="line">        <span class="comment"># 反向传播</span></span><br><span class="line">        loss.backward()</span><br><span class="line"></span><br><span class="line">        <span class="comment"># 更新梯度</span></span><br><span class="line">        optimizer.step()</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> batch_i % print_every == <span class="number">0</span>:</span><br><span class="line">            <span class="built_in">print</span>(<span class="string">&#x27;Loss: &#x27;</span>, loss.item())</span><br><span class="line">            plt.plot(time_steps[<span class="number">1</span>:], x, <span class="string">&#x27;r.&#x27;</span>)</span><br><span class="line">            plt.plot(time_steps[<span class="number">1</span>:], prediction.data.numpy().flatten(), <span class="string">&#x27;b.&#x27;</span>)</span><br><span class="line">            plt.show()</span><br><span class="line">    <span class="keyword">return</span> rnn</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">n_steps = <span class="number">75</span></span><br><span class="line">print_every = <span class="number">15</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 训练</span></span><br><span class="line">trained_rnn = train(rnn, n_steps, print_every)</span><br></pre></td></tr></table></figure>
+<pre><code>Loss:  0.40589970350265503</code></pre>
+<p><img src="https://tva1.sinaimg.cn/large/008i3skNgy1grmhsed86aj30ac06wdfz.jpg" /></p>
+<pre><code>Loss:  0.035483404994010925</code></pre>
+<p><img src="https://tva1.sinaimg.cn/large/008i3skNgy1grmhsnq78qj30ac06wjrj.jpg" /></p>
+<pre><code>Loss:  0.012853428721427917</code></pre>
+<p><img src="https://tva1.sinaimg.cn/large/008i3skNgy1grmhswfgadj30ac06w3yn.jpg" /></p>
+<pre><code>Loss:  0.00824706070125103</code></pre>
+<p><img src="https://tva1.sinaimg.cn/large/008i3skNgy1grmht4fa5mj30ac06w74f.jpg" /></p>
+<pre><code>Loss:  0.010340889915823936</code></pre>
+<p><img src="https://tva1.sinaimg.cn/large/008i3skNgy1grmhtdnsjfj30ac06wwem.jpg" /></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"></span><br></pre></td></tr></table></figure>
+<h1 id="rnn示例字符级文本生成"><code>RNN</code>示例：字符级文本生成</h1>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"><span class="keyword">import</span> torch.nn <span class="keyword">as</span> nn</span><br><span class="line"><span class="keyword">import</span> torch.nn.functional <span class="keyword">as</span> F</span><br></pre></td></tr></table></figure>
+<h2 id="数据集">数据集</h2>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">with</span> <span class="built_in">open</span>(<span class="string">&#x27;datasets/anna.txt&#x27;</span>, <span class="string">&#x27;r&#x27;</span>) <span class="keyword">as</span> f:</span><br><span class="line">    text = f.read()</span><br><span class="line">    </span><br><span class="line">text[:<span class="number">100</span>]    </span><br></pre></td></tr></table></figure>
+<pre><code>&#39;Chapter 1\n\n\nHappy families are all alike; every unhappy family is unhappy in its own\nway.\n\nEverythin&#39;</code></pre>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 文本向量化</span></span><br><span class="line"></span><br><span class="line">chars = <span class="built_in">tuple</span>(<span class="built_in">set</span>(text))</span><br><span class="line">int2char = <span class="built_in">dict</span>(<span class="built_in">enumerate</span>(chars))</span><br><span class="line">char2int = &#123;ch: ii <span class="keyword">for</span> ii, ch <span class="keyword">in</span> int2char.items()&#125;</span><br><span class="line"></span><br><span class="line">encoded = np.array([char2int[ch] <span class="keyword">for</span> ch <span class="keyword">in</span> text])</span><br><span class="line">encoded[:<span class="number">20</span>]</span><br></pre></td></tr></table></figure>
+<pre><code>array([77, 41, 28, 66,  7, 21, 47, 58,  4, 35, 35, 35, 23, 28, 66, 66, 31,
+       58,  9, 28])</code></pre>
+<h2 id="数据预处理">数据预处理</h2>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">one_hot_encode</span>(<span class="params">arr, n_labels</span>):</span></span><br><span class="line">    one_hot = np.zeros((arr.size, n_labels), dtype=np.float32)</span><br><span class="line">    one_hot[np.arange(one_hot.shape[<span class="number">0</span>]), arr.flatten()] = <span class="number">1.</span></span><br><span class="line">    one_hot = one_hot.reshape((*arr.shape, n_labels))</span><br><span class="line">    <span class="keyword">return</span> one_hot</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">test_seq = np.array([[<span class="number">3</span>, <span class="number">5</span>, <span class="number">1</span>]])</span><br><span class="line">one_hot = one_hot_encode(test_seq, <span class="number">8</span>)</span><br><span class="line"><span class="built_in">print</span>(one_hot)</span><br></pre></td></tr></table></figure>
+<pre><code>[[[0. 0. 0. 1. 0. 0. 0. 0.]
+  [0. 0. 0. 0. 0. 1. 0. 0.]
+  [0. 1. 0. 0. 0. 0. 0. 0.]]]</code></pre>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 创建批量数据</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">get_batches</span>(<span class="params">arr, batch_size, seq_length</span>):</span></span><br><span class="line"></span><br><span class="line">    batch_size_total = batch_size * seq_length</span><br><span class="line">    n_batches = <span class="built_in">len</span>(arr) // batch_size_total</span><br><span class="line">    arr = arr[:n_batches * batch_size_total]</span><br><span class="line"></span><br><span class="line">    arr = arr.reshape((batch_size, -<span class="number">1</span>))</span><br><span class="line">    <span class="keyword">for</span> n <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">0</span>, arr.shape[<span class="number">1</span>], seq_length):</span><br><span class="line">        x = arr[:, n:n + seq_length]</span><br><span class="line">        y = np.zeros_like(x)</span><br><span class="line">        <span class="keyword">try</span>:</span><br><span class="line">            y[:, :-<span class="number">1</span>], y[:, -<span class="number">1</span>] = x[:, <span class="number">1</span>:], arr[:, n + seq_length]</span><br><span class="line">        <span class="keyword">except</span> IndexError:</span><br><span class="line">            y[:, :-<span class="number">1</span>], y[:, -<span class="number">1</span>] = x[:, <span class="number">1</span>:], arr[:, <span class="number">0</span>]</span><br><span class="line">        <span class="keyword">yield</span> x, y</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">batches = get_batches(encoded, <span class="number">8</span>, <span class="number">50</span>)</span><br><span class="line">x, y = <span class="built_in">next</span>(batches)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;x\n&#x27;</span>, x[:<span class="number">4</span>, :<span class="number">10</span>])</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;\ny\n&#x27;</span>, y[:<span class="number">4</span>, :<span class="number">10</span>])</span><br></pre></td></tr></table></figure>
+<pre><code>x
+ [[77 41 28 66  7 21 47 58  4 35]
+ [39 81 37 58  7 41 28  7 58 28]
+ [21 37 67 58 81 47 58 28 58  9]
+ [39 58  7 41 21 58 11 41 12 21]]
+
+y
+ [[41 28 66  7 21 47 58  4 35 35]
+ [81 37 58  7 41 28  7 58 28  7]
+ [37 67 58 81 47 58 28 58  9 81]
+ [58  7 41 21 58 11 41 12 21  9]]</code></pre>
+<h2 id="创建模型">创建模型</h2>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># gpu 可用</span></span><br><span class="line">train_on_gpu = torch.cuda.is_available()</span><br><span class="line"><span class="keyword">if</span> (train_on_gpu):</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&#x27;Training on GPU!&#x27;</span>)</span><br><span class="line"><span class="keyword">else</span>:</span><br><span class="line">    <span class="built_in">print</span>(</span><br><span class="line">        <span class="string">&#x27;No GPU available, training on CPU; consider making n_epochs very small.&#x27;</span></span><br><span class="line">    )</span><br></pre></td></tr></table></figure>
+<pre><code>Training on GPU!</code></pre>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 创建模型</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">CharRNN</span>(<span class="params">nn.Module</span>):</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span>(<span class="params">self,</span></span></span><br><span class="line"><span class="params"><span class="function">                 tokens,</span></span></span><br><span class="line"><span class="params"><span class="function">                 n_hidden=<span class="number">256</span>,</span></span></span><br><span class="line"><span class="params"><span class="function">                 n_layers=<span class="number">2</span>,</span></span></span><br><span class="line"><span class="params"><span class="function">                 drop_prob=<span class="number">0.5</span>,</span></span></span><br><span class="line"><span class="params"><span class="function">                 lr=<span class="number">0.001</span></span>):</span></span><br><span class="line">        <span class="built_in">super</span>(CharRNN, self).__init__()</span><br><span class="line">        self.drop_prob = drop_prob</span><br><span class="line">        self.n_layers = n_layers</span><br><span class="line">        self.n_hidden = n_hidden</span><br><span class="line">        self.lr = lr</span><br><span class="line"></span><br><span class="line">        self.chars = tokens</span><br><span class="line">        self.int2char = <span class="built_in">dict</span>(<span class="built_in">enumerate</span>(self.chars))</span><br><span class="line">        self.char2int = &#123;ch: ii <span class="keyword">for</span> ii, ch <span class="keyword">in</span> self.int2char.items()&#125;</span><br><span class="line"></span><br><span class="line">        self.lstm = nn.LSTM(<span class="built_in">len</span>(self.chars),</span><br><span class="line">                            n_hidden,</span><br><span class="line">                            n_layers,</span><br><span class="line">                            dropout=drop_prob,</span><br><span class="line">                            batch_first=<span class="literal">True</span>)</span><br><span class="line"></span><br><span class="line">        self.dropout = nn.Dropout(drop_prob)</span><br><span class="line">        self.fc = nn.Linear(n_hidden, <span class="built_in">len</span>(self.chars))</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">forward</span>(<span class="params">self, x, hidden</span>):</span></span><br><span class="line">        r_output, hidden = self.lstm(x, hidden)</span><br><span class="line">        out = self.dropout(r_output)</span><br><span class="line">        out = out.contiguous().view(-<span class="number">1</span>, self.n_hidden)</span><br><span class="line">        out = self.fc(out)</span><br><span class="line">        <span class="keyword">return</span> out, hidden</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">init_hidden</span>(<span class="params">self, batch_size</span>):</span></span><br><span class="line">        weight = <span class="built_in">next</span>(self.parameters()).data</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> train_on_gpu:</span><br><span class="line">            hidden = (weight.new(self.n_layers, batch_size,</span><br><span class="line">                                 self.n_hidden).zero_().cuda(),</span><br><span class="line">                      weight.new(self.n_layers, batch_size,</span><br><span class="line">                                 self.n_hidden).zero_().cuda())</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            hidden = (weight.new(self.n_layers, batch_size,</span><br><span class="line">                                 self.n_hidden).zero_(),</span><br><span class="line">                      weight.new(self.n_layers, batch_size,</span><br><span class="line">                                 self.n_hidden).zero_())</span><br><span class="line">        <span class="keyword">return</span> hidden</span><br></pre></td></tr></table></figure>
+<h2 id="训练模型-1">训练模型</h2>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">train</span>(<span class="params">net,</span></span></span><br><span class="line"><span class="params"><span class="function">          data,</span></span></span><br><span class="line"><span class="params"><span class="function">          epochs=<span class="number">10</span>,</span></span></span><br><span class="line"><span class="params"><span class="function">          batch_size=<span class="number">10</span>,</span></span></span><br><span class="line"><span class="params"><span class="function">          seq_length=<span class="number">10</span>,</span></span></span><br><span class="line"><span class="params"><span class="function">          lr=<span class="number">0.001</span>,</span></span></span><br><span class="line"><span class="params"><span class="function">          clip=<span class="number">5</span>,</span></span></span><br><span class="line"><span class="params"><span class="function">          val_frac=<span class="number">0.1</span>,</span></span></span><br><span class="line"><span class="params"><span class="function">          print_every=<span class="number">10</span></span>):</span></span><br><span class="line">    net.train()</span><br><span class="line"></span><br><span class="line">    opt = torch.optim.Adam(net.parameters(), lr=lr)</span><br><span class="line">    criterion = nn.CrossEntropyLoss()</span><br><span class="line"></span><br><span class="line">    val_idx = <span class="built_in">int</span>(<span class="built_in">len</span>(data) * (<span class="number">1</span> - val_frac))</span><br><span class="line">    data, val_data = data[:val_idx], data[val_idx:]</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> train_on_gpu:</span><br><span class="line">        net.cuda()</span><br><span class="line"></span><br><span class="line">    counter = <span class="number">0</span></span><br><span class="line">    n_chars = <span class="built_in">len</span>(net.chars)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> e <span class="keyword">in</span> <span class="built_in">range</span>(epochs):</span><br><span class="line">        h = net.init_hidden(batch_size)</span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span> x, y <span class="keyword">in</span> get_batches(data, batch_size, seq_length):</span><br><span class="line">            counter += <span class="number">1</span></span><br><span class="line"></span><br><span class="line">            x = one_hot_encode(x, n_chars)</span><br><span class="line">            inputs, targets = torch.from_numpy(x), torch.from_numpy(y)</span><br><span class="line"></span><br><span class="line">            <span class="keyword">if</span> train_on_gpu:</span><br><span class="line">                inputs, targets = inputs.cuda(), targets.cuda()</span><br><span class="line"></span><br><span class="line">            h = <span class="built_in">tuple</span>([each.data <span class="keyword">for</span> each <span class="keyword">in</span> h])</span><br><span class="line"></span><br><span class="line">            net.zero_grad()</span><br><span class="line"></span><br><span class="line">            output, h = net(inputs, h)</span><br><span class="line"></span><br><span class="line">            loss = criterion(output,</span><br><span class="line">                             targets.view(batch_size * seq_length).long())</span><br><span class="line">            loss.backward()</span><br><span class="line">            nn.utils.clip_grad_norm_(net.parameters(), clip)</span><br><span class="line">            opt.step()</span><br><span class="line"></span><br><span class="line">            <span class="keyword">if</span> counter % print_every == <span class="number">0</span>:</span><br><span class="line">                val_h = net.init_hidden(batch_size)</span><br><span class="line">                val_losses = []</span><br><span class="line">                net.<span class="built_in">eval</span>()</span><br><span class="line">                <span class="keyword">for</span> x, y <span class="keyword">in</span> get_batches(val_data, batch_size, seq_length):</span><br><span class="line">                    x = one_hot_encode(x, n_chars)</span><br><span class="line">                    x, y = torch.from_numpy(x), torch.from_numpy(y)</span><br><span class="line"></span><br><span class="line">                    val_h = <span class="built_in">tuple</span>([each.data <span class="keyword">for</span> each <span class="keyword">in</span> val_h])</span><br><span class="line"></span><br><span class="line">                    inputs, targets = x, y</span><br><span class="line">                    <span class="keyword">if</span> (train_on_gpu):</span><br><span class="line">                        inputs, targets = inputs.cuda(), targets.cuda()</span><br><span class="line"></span><br><span class="line">                    output, val_h = net(inputs, val_h)</span><br><span class="line">                    val_loss = criterion(</span><br><span class="line">                        output,</span><br><span class="line">                        targets.view(batch_size * seq_length).long())</span><br><span class="line"></span><br><span class="line">                    val_losses.append(val_loss.item())</span><br><span class="line"></span><br><span class="line">                net.train()</span><br><span class="line"></span><br><span class="line">                <span class="built_in">print</span>(<span class="string">&quot;Epoch: &#123;&#125;/&#123;&#125;...&quot;</span>.<span class="built_in">format</span>(e + <span class="number">1</span>, epochs),</span><br><span class="line">                      <span class="string">&quot;Step: &#123;&#125;...&quot;</span>.<span class="built_in">format</span>(counter),</span><br><span class="line">                      <span class="string">&quot;Loss: &#123;:.4f&#125;...&quot;</span>.<span class="built_in">format</span>(loss.item()),</span><br><span class="line">                      <span class="string">&quot;Val Loss: &#123;:.4f&#125;&quot;</span>.<span class="built_in">format</span>(np.mean(val_losses)))</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">n_hidden = <span class="number">512</span></span><br><span class="line">n_layers = <span class="number">2</span></span><br><span class="line"></span><br><span class="line">net = CharRNN(chars, n_hidden, n_layers)</span><br><span class="line"><span class="built_in">print</span>(net)</span><br></pre></td></tr></table></figure>
+<pre><code>CharRNN(
+  (lstm): LSTM(83, 512, num_layers=2, batch_first=True, dropout=0.5)
+  (dropout): Dropout(p=0.5, inplace=False)
+  (fc): Linear(in_features=512, out_features=83, bias=True)
+)</code></pre>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">batch_size = <span class="number">128</span></span><br><span class="line">seq_length = <span class="number">100</span></span><br><span class="line">n_epochs = <span class="number">20</span></span><br><span class="line"></span><br><span class="line">train(net,</span><br><span class="line">      encoded,</span><br><span class="line">      epochs=n_epochs,</span><br><span class="line">      batch_size=batch_size,</span><br><span class="line">      seq_length=seq_length,</span><br><span class="line">      lr=<span class="number">0.001</span>,</span><br><span class="line">      print_every=<span class="number">10</span>)</span><br></pre></td></tr></table></figure>
+<pre><code>Epoch: 1/20... Step: 10... Loss: 3.2684... Val Loss: 3.2099
+Epoch: 1/20... Step: 20... Loss: 3.1553... Val Loss: 3.1399
+Epoch: 1/20... Step: 30... Loss: 3.1438... Val Loss: 3.1250
+Epoch: 1/20... Step: 40... Loss: 3.1109... Val Loss: 3.1204
+Epoch: 1/20... Step: 50... Loss: 3.1416... Val Loss: 3.1175
+Epoch: 1/20... Step: 60... Loss: 3.1164... Val Loss: 3.1145
+Epoch: 1/20... Step: 70... Loss: 3.1047... Val Loss: 3.1109
+Epoch: 1/20... Step: 80... Loss: 3.1169... Val Loss: 3.1029
+Epoch: 1/20... Step: 90... Loss: 3.1012... Val Loss: 3.0809
+Epoch: 1/20... Step: 100... Loss: 3.0419... Val Loss: 3.0239
+Epoch: 1/20... Step: 110... Loss: 2.9835... Val Loss: 2.9680
+Epoch: 1/20... Step: 120... Loss: 2.8329... Val Loss: 2.8223
+Epoch: 1/20... Step: 130... Loss: 2.8383... Val Loss: 2.8556
+Epoch: 2/20... Step: 140... Loss: 2.7164... Val Loss: 2.6663
+Epoch: 2/20... Step: 150... Loss: 2.6229... Val Loss: 2.5753
+Epoch: 2/20... Step: 160... Loss: 2.5504... Val Loss: 2.5114
+Epoch: 2/20... Step: 170... Loss: 2.4817... Val Loss: 2.4664
+Epoch: 2/20... Step: 180... Loss: 2.4539... Val Loss: 2.4292
+Epoch: 2/20... Step: 190... Loss: 2.4003... Val Loss: 2.3941
+Epoch: 2/20... Step: 200... Loss: 2.4008... Val Loss: 2.3660
+Epoch: 2/20... Step: 210... Loss: 2.3633... Val Loss: 2.3358
+Epoch: 2/20... Step: 220... Loss: 2.3302... Val Loss: 2.3069
+Epoch: 2/20... Step: 230... Loss: 2.3156... Val Loss: 2.2811
+Epoch: 2/20... Step: 240... Loss: 2.2904... Val Loss: 2.2567
+Epoch: 2/20... Step: 250... Loss: 2.2315... Val Loss: 2.2277
+Epoch: 2/20... Step: 260... Loss: 2.1987... Val Loss: 2.1988
+Epoch: 2/20... Step: 270... Loss: 2.2062... Val Loss: 2.1753
+Epoch: 3/20... Step: 280... Loss: 2.2010... Val Loss: 2.1486
+Epoch: 3/20... Step: 290... Loss: 2.1719... Val Loss: 2.1246
+Epoch: 3/20... Step: 300... Loss: 2.1350... Val Loss: 2.1097
+Epoch: 3/20... Step: 310... Loss: 2.1090... Val Loss: 2.0875
+Epoch: 3/20... Step: 320... Loss: 2.0769... Val Loss: 2.0644
+Epoch: 3/20... Step: 330... Loss: 2.0504... Val Loss: 2.0463
+Epoch: 3/20... Step: 340... Loss: 2.0679... Val Loss: 2.0248
+Epoch: 3/20... Step: 350... Loss: 2.0545... Val Loss: 2.0122
+Epoch: 3/20... Step: 360... Loss: 1.9831... Val Loss: 1.9931
+Epoch: 3/20... Step: 370... Loss: 2.0144... Val Loss: 1.9765
+Epoch: 3/20... Step: 380... Loss: 1.9839... Val Loss: 1.9569
+Epoch: 3/20... Step: 390... Loss: 1.9620... Val Loss: 1.9429
+Epoch: 3/20... Step: 400... Loss: 1.9336... Val Loss: 1.9274
+Epoch: 3/20... Step: 410... Loss: 1.9439... Val Loss: 1.9143
+Epoch: 4/20... Step: 420... Loss: 1.9417... Val Loss: 1.8957
+Epoch: 4/20... Step: 430... Loss: 1.9184... Val Loss: 1.8853
+Epoch: 4/20... Step: 440... Loss: 1.9016... Val Loss: 1.8775
+Epoch: 4/20... Step: 450... Loss: 1.8396... Val Loss: 1.8572
+Epoch: 4/20... Step: 460... Loss: 1.8320... Val Loss: 1.8479
+Epoch: 4/20... Step: 470... Loss: 1.8746... Val Loss: 1.8396
+Epoch: 4/20... Step: 480... Loss: 1.8527... Val Loss: 1.8245
+Epoch: 4/20... Step: 490... Loss: 1.8512... Val Loss: 1.8171
+Epoch: 4/20... Step: 500... Loss: 1.8388... Val Loss: 1.8028
+Epoch: 4/20... Step: 510... Loss: 1.8212... Val Loss: 1.7942
+Epoch: 4/20... Step: 520... Loss: 1.8299... Val Loss: 1.7832
+Epoch: 4/20... Step: 530... Loss: 1.7957... Val Loss: 1.7752
+Epoch: 4/20... Step: 540... Loss: 1.7593... Val Loss: 1.7640
+Epoch: 4/20... Step: 550... Loss: 1.8066... Val Loss: 1.7529
+Epoch: 5/20... Step: 560... Loss: 1.7772... Val Loss: 1.7441
+Epoch: 5/20... Step: 570... Loss: 1.7592... Val Loss: 1.7396
+Epoch: 5/20... Step: 580... Loss: 1.7381... Val Loss: 1.7289
+Epoch: 5/20... Step: 590... Loss: 1.7341... Val Loss: 1.7203
+Epoch: 5/20... Step: 600... Loss: 1.7233... Val Loss: 1.7146
+Epoch: 5/20... Step: 610... Loss: 1.7124... Val Loss: 1.7046
+Epoch: 5/20... Step: 620... Loss: 1.7138... Val Loss: 1.7029
+Epoch: 5/20... Step: 630... Loss: 1.7224... Val Loss: 1.6903
+Epoch: 5/20... Step: 640... Loss: 1.6983... Val Loss: 1.6863
+Epoch: 5/20... Step: 650... Loss: 1.6905... Val Loss: 1.6752
+Epoch: 5/20... Step: 660... Loss: 1.6594... Val Loss: 1.6704
+Epoch: 5/20... Step: 670... Loss: 1.6819... Val Loss: 1.6640
+Epoch: 5/20... Step: 680... Loss: 1.6872... Val Loss: 1.6568
+Epoch: 5/20... Step: 690... Loss: 1.6595... Val Loss: 1.6552
+Epoch: 6/20... Step: 700... Loss: 1.6551... Val Loss: 1.6462
+Epoch: 6/20... Step: 710... Loss: 1.6496... Val Loss: 1.6408
+Epoch: 6/20... Step: 720... Loss: 1.6318... Val Loss: 1.6312
+Epoch: 6/20... Step: 730... Loss: 1.6589... Val Loss: 1.6292
+Epoch: 6/20... Step: 740... Loss: 1.6186... Val Loss: 1.6267
+Epoch: 6/20... Step: 750... Loss: 1.6037... Val Loss: 1.6149
+Epoch: 6/20... Step: 760... Loss: 1.6439... Val Loss: 1.6133
+Epoch: 6/20... Step: 770... Loss: 1.6214... Val Loss: 1.6056
+Epoch: 6/20... Step: 780... Loss: 1.6137... Val Loss: 1.6016
+Epoch: 6/20... Step: 790... Loss: 1.5932... Val Loss: 1.5931
+Epoch: 6/20... Step: 800... Loss: 1.6040... Val Loss: 1.5969
+Epoch: 6/20... Step: 810... Loss: 1.5964... Val Loss: 1.5870
+Epoch: 6/20... Step: 820... Loss: 1.5575... Val Loss: 1.5828
+Epoch: 6/20... Step: 830... Loss: 1.6043... Val Loss: 1.5756
+Epoch: 7/20... Step: 840... Loss: 1.5554... Val Loss: 1.5712
+Epoch: 7/20... Step: 850... Loss: 1.5727... Val Loss: 1.5696
+Epoch: 7/20... Step: 860... Loss: 1.5676... Val Loss: 1.5616
+Epoch: 7/20... Step: 870... Loss: 1.5734... Val Loss: 1.5599
+Epoch: 7/20... Step: 880... Loss: 1.5708... Val Loss: 1.5537
+Epoch: 7/20... Step: 890... Loss: 1.5672... Val Loss: 1.5536
+Epoch: 7/20... Step: 900... Loss: 1.5418... Val Loss: 1.5477
+Epoch: 7/20... Step: 910... Loss: 1.5274... Val Loss: 1.5427
+Epoch: 7/20... Step: 920... Loss: 1.5348... Val Loss: 1.5420
+Epoch: 7/20... Step: 930... Loss: 1.5371... Val Loss: 1.5350
+Epoch: 7/20... Step: 940... Loss: 1.5318... Val Loss: 1.5341
+Epoch: 7/20... Step: 950... Loss: 1.5469... Val Loss: 1.5285
+Epoch: 7/20... Step: 960... Loss: 1.5396... Val Loss: 1.5269
+Epoch: 7/20... Step: 970... Loss: 1.5491... Val Loss: 1.5230
+Epoch: 8/20... Step: 980... Loss: 1.5196... Val Loss: 1.5151
+Epoch: 8/20... Step: 990... Loss: 1.5156... Val Loss: 1.5145
+Epoch: 8/20... Step: 1000... Loss: 1.5137... Val Loss: 1.5077
+Epoch: 8/20... Step: 1010... Loss: 1.5480... Val Loss: 1.5094
+Epoch: 8/20... Step: 1020... Loss: 1.5163... Val Loss: 1.5056
+Epoch: 8/20... Step: 1030... Loss: 1.4934... Val Loss: 1.5022
+Epoch: 8/20... Step: 1040... Loss: 1.5129... Val Loss: 1.5031
+Epoch: 8/20... Step: 1050... Loss: 1.4812... Val Loss: 1.4964
+Epoch: 8/20... Step: 1060... Loss: 1.4982... Val Loss: 1.4925
+Epoch: 8/20... Step: 1070... Loss: 1.4994... Val Loss: 1.4875
+Epoch: 8/20... Step: 1080... Loss: 1.4974... Val Loss: 1.4881
+Epoch: 8/20... Step: 1090... Loss: 1.4706... Val Loss: 1.4843
+Epoch: 8/20... Step: 1100... Loss: 1.4743... Val Loss: 1.4796
+Epoch: 8/20... Step: 1110... Loss: 1.4622... Val Loss: 1.4781
+Epoch: 9/20... Step: 1120... Loss: 1.4796... Val Loss: 1.4796
+Epoch: 9/20... Step: 1130... Loss: 1.4893... Val Loss: 1.4764
+Epoch: 9/20... Step: 1140... Loss: 1.4759... Val Loss: 1.4679
+Epoch: 9/20... Step: 1150... Loss: 1.4925... Val Loss: 1.4718
+Epoch: 9/20... Step: 1160... Loss: 1.4514... Val Loss: 1.4657
+Epoch: 9/20... Step: 1170... Loss: 1.4605... Val Loss: 1.4629
+Epoch: 9/20... Step: 1180... Loss: 1.4495... Val Loss: 1.4687
+Epoch: 9/20... Step: 1190... Loss: 1.4862... Val Loss: 1.4622
+Epoch: 9/20... Step: 1200... Loss: 1.4313... Val Loss: 1.4548
+Epoch: 9/20... Step: 1210... Loss: 1.4401... Val Loss: 1.4512
+Epoch: 9/20... Step: 1220... Loss: 1.4504... Val Loss: 1.4553
+Epoch: 9/20... Step: 1230... Loss: 1.4249... Val Loss: 1.4508
+Epoch: 9/20... Step: 1240... Loss: 1.4332... Val Loss: 1.4452
+Epoch: 9/20... Step: 1250... Loss: 1.4445... Val Loss: 1.4436
+Epoch: 10/20... Step: 1260... Loss: 1.4480... Val Loss: 1.4434
+Epoch: 10/20... Step: 1270... Loss: 1.4383... Val Loss: 1.4392
+Epoch: 10/20... Step: 1280... Loss: 1.4405... Val Loss: 1.4332
+Epoch: 10/20... Step: 1290... Loss: 1.4421... Val Loss: 1.4338
+Epoch: 10/20... Step: 1300... Loss: 1.4320... Val Loss: 1.4349
+Epoch: 10/20... Step: 1310... Loss: 1.4420... Val Loss: 1.4338
+Epoch: 10/20... Step: 1320... Loss: 1.4085... Val Loss: 1.4336
+Epoch: 10/20... Step: 1330... Loss: 1.4142... Val Loss: 1.4289
+Epoch: 10/20... Step: 1340... Loss: 1.3981... Val Loss: 1.4257
+Epoch: 10/20... Step: 1350... Loss: 1.3931... Val Loss: 1.4213
+Epoch: 10/20... Step: 1360... Loss: 1.3841... Val Loss: 1.4259
+Epoch: 10/20... Step: 1370... Loss: 1.3755... Val Loss: 1.4218
+Epoch: 10/20... Step: 1380... Loss: 1.4250... Val Loss: 1.4148
+Epoch: 10/20... Step: 1390... Loss: 1.4314... Val Loss: 1.4170
+Epoch: 11/20... Step: 1400... Loss: 1.4284... Val Loss: 1.4185
+Epoch: 11/20... Step: 1410... Loss: 1.4427... Val Loss: 1.4147
+Epoch: 11/20... Step: 1420... Loss: 1.4309... Val Loss: 1.4073
+Epoch: 11/20... Step: 1430... Loss: 1.3992... Val Loss: 1.4105
+Epoch: 11/20... Step: 1440... Loss: 1.4362... Val Loss: 1.4060
+Epoch: 11/20... Step: 1450... Loss: 1.3561... Val Loss: 1.4054
+Epoch: 11/20... Step: 1460... Loss: 1.3756... Val Loss: 1.4073
+Epoch: 11/20... Step: 1470... Loss: 1.3766... Val Loss: 1.4047
+Epoch: 11/20... Step: 1480... Loss: 1.3972... Val Loss: 1.3992
+Epoch: 11/20... Step: 1490... Loss: 1.3747... Val Loss: 1.3967
+Epoch: 11/20... Step: 1500... Loss: 1.3645... Val Loss: 1.3986
+Epoch: 11/20... Step: 1510... Loss: 1.3538... Val Loss: 1.3992
+Epoch: 11/20... Step: 1520... Loss: 1.3887... Val Loss: 1.3923
+Epoch: 12/20... Step: 1530... Loss: 1.4452... Val Loss: 1.3915
+Epoch: 12/20... Step: 1540... Loss: 1.3953... Val Loss: 1.3887
+Epoch: 12/20... Step: 1550... Loss: 1.3962... Val Loss: 1.3859
+Epoch: 12/20... Step: 1560... Loss: 1.4023... Val Loss: 1.3845
+Epoch: 12/20... Step: 1570... Loss: 1.3618... Val Loss: 1.3864
+Epoch: 12/20... Step: 1580... Loss: 1.3288... Val Loss: 1.3844
+Epoch: 12/20... Step: 1590... Loss: 1.3300... Val Loss: 1.3844
+Epoch: 12/20... Step: 1600... Loss: 1.3490... Val Loss: 1.3835
+Epoch: 12/20... Step: 1610... Loss: 1.3478... Val Loss: 1.3864
+Epoch: 12/20... Step: 1620... Loss: 1.3535... Val Loss: 1.3791
+Epoch: 12/20... Step: 1630... Loss: 1.3670... Val Loss: 1.3753
+Epoch: 12/20... Step: 1640... Loss: 1.3440... Val Loss: 1.3791
+Epoch: 12/20... Step: 1650... Loss: 1.3304... Val Loss: 1.3763
+Epoch: 12/20... Step: 1660... Loss: 1.3709... Val Loss: 1.3695
+Epoch: 13/20... Step: 1670... Loss: 1.3404... Val Loss: 1.3753
+Epoch: 13/20... Step: 1680... Loss: 1.3551... Val Loss: 1.3698
+Epoch: 13/20... Step: 1690... Loss: 1.3301... Val Loss: 1.3665
+Epoch: 13/20... Step: 1700... Loss: 1.3306... Val Loss: 1.3616
+Epoch: 13/20... Step: 1710... Loss: 1.3086... Val Loss: 1.3666
+Epoch: 13/20... Step: 1720... Loss: 1.3270... Val Loss: 1.3703
+Epoch: 13/20... Step: 1730... Loss: 1.3601... Val Loss: 1.3625
+Epoch: 13/20... Step: 1740... Loss: 1.3294... Val Loss: 1.3621
+Epoch: 13/20... Step: 1750... Loss: 1.2962... Val Loss: 1.3605
+Epoch: 13/20... Step: 1760... Loss: 1.3291... Val Loss: 1.3585
+Epoch: 13/20... Step: 1770... Loss: 1.3347... Val Loss: 1.3585
+Epoch: 13/20... Step: 1780... Loss: 1.3094... Val Loss: 1.3519
+Epoch: 13/20... Step: 1790... Loss: 1.3037... Val Loss: 1.3556
+Epoch: 13/20... Step: 1800... Loss: 1.3259... Val Loss: 1.3502
+Epoch: 14/20... Step: 1810... Loss: 1.3300... Val Loss: 1.3498
+Epoch: 14/20... Step: 1820... Loss: 1.3115... Val Loss: 1.3474
+Epoch: 14/20... Step: 1830... Loss: 1.3319... Val Loss: 1.3431
+Epoch: 14/20... Step: 1840... Loss: 1.2688... Val Loss: 1.3421
+Epoch: 14/20... Step: 1850... Loss: 1.2637... Val Loss: 1.3406
+Epoch: 14/20... Step: 1860... Loss: 1.3170... Val Loss: 1.3437
+Epoch: 14/20... Step: 1870... Loss: 1.3217... Val Loss: 1.3407
+Epoch: 14/20... Step: 1880... Loss: 1.3195... Val Loss: 1.3401
+Epoch: 14/20... Step: 1890... Loss: 1.3369... Val Loss: 1.3401
+Epoch: 14/20... Step: 1900... Loss: 1.2999... Val Loss: 1.3382
+Epoch: 14/20... Step: 1910... Loss: 1.3153... Val Loss: 1.3349
+Epoch: 14/20... Step: 1920... Loss: 1.3041... Val Loss: 1.3391
+Epoch: 14/20... Step: 1930... Loss: 1.2676... Val Loss: 1.3367
+Epoch: 14/20... Step: 1940... Loss: 1.3331... Val Loss: 1.3396
+Epoch: 15/20... Step: 1950... Loss: 1.3017... Val Loss: 1.3355
+Epoch: 15/20... Step: 1960... Loss: 1.3021... Val Loss: 1.3367
+Epoch: 15/20... Step: 1970... Loss: 1.2851... Val Loss: 1.3269
+Epoch: 15/20... Step: 1980... Loss: 1.2824... Val Loss: 1.3319
+Epoch: 15/20... Step: 1990... Loss: 1.2737... Val Loss: 1.3260
+Epoch: 15/20... Step: 2000... Loss: 1.2606... Val Loss: 1.3242
+Epoch: 15/20... Step: 2010... Loss: 1.2767... Val Loss: 1.3311
+Epoch: 15/20... Step: 2020... Loss: 1.3080... Val Loss: 1.3249
+Epoch: 15/20... Step: 2030... Loss: 1.2721... Val Loss: 1.3248
+Epoch: 15/20... Step: 2040... Loss: 1.2891... Val Loss: 1.3206
+Epoch: 15/20... Step: 2050... Loss: 1.2806... Val Loss: 1.3202
+Epoch: 15/20... Step: 2060... Loss: 1.2827... Val Loss: 1.3219
+Epoch: 15/20... Step: 2070... Loss: 1.2918... Val Loss: 1.3219
+Epoch: 15/20... Step: 2080... Loss: 1.2858... Val Loss: 1.3213
+Epoch: 16/20... Step: 2090... Loss: 1.2936... Val Loss: 1.3203
+Epoch: 16/20... Step: 2100... Loss: 1.2737... Val Loss: 1.3163
+Epoch: 16/20... Step: 2110... Loss: 1.2669... Val Loss: 1.3130
+Epoch: 16/20... Step: 2120... Loss: 1.2843... Val Loss: 1.3172
+Epoch: 16/20... Step: 2130... Loss: 1.2545... Val Loss: 1.3134
+Epoch: 16/20... Step: 2140... Loss: 1.2673... Val Loss: 1.3119
+Epoch: 16/20... Step: 2150... Loss: 1.2944... Val Loss: 1.3089
+Epoch: 16/20... Step: 2160... Loss: 1.2658... Val Loss: 1.3128
+Epoch: 16/20... Step: 2170... Loss: 1.2693... Val Loss: 1.3130
+Epoch: 16/20... Step: 2180... Loss: 1.2581... Val Loss: 1.3123
+Epoch: 16/20... Step: 2190... Loss: 1.2856... Val Loss: 1.3108
+Epoch: 16/20... Step: 2200... Loss: 1.2443... Val Loss: 1.3063
+Epoch: 16/20... Step: 2210... Loss: 1.2143... Val Loss: 1.3135
+Epoch: 16/20... Step: 2220... Loss: 1.2763... Val Loss: 1.3081
+Epoch: 17/20... Step: 2230... Loss: 1.2509... Val Loss: 1.3117
+Epoch: 17/20... Step: 2240... Loss: 1.2526... Val Loss: 1.3090
+Epoch: 17/20... Step: 2250... Loss: 1.2455... Val Loss: 1.3028
+Epoch: 17/20... Step: 2260... Loss: 1.2519... Val Loss: 1.3079
+Epoch: 17/20... Step: 2270... Loss: 1.2622... Val Loss: 1.3007
+Epoch: 17/20... Step: 2280... Loss: 1.2646... Val Loss: 1.2985
+Epoch: 17/20... Step: 2290... Loss: 1.2591... Val Loss: 1.3006
+Epoch: 17/20... Step: 2300... Loss: 1.2187... Val Loss: 1.3061
+Epoch: 17/20... Step: 2310... Loss: 1.2488... Val Loss: 1.3003
+Epoch: 17/20... Step: 2320... Loss: 1.2377... Val Loss: 1.3023
+Epoch: 17/20... Step: 2330... Loss: 1.2464... Val Loss: 1.3072
+Epoch: 17/20... Step: 2340... Loss: 1.2496... Val Loss: 1.2971
+Epoch: 17/20... Step: 2350... Loss: 1.2634... Val Loss: 1.2999
+Epoch: 17/20... Step: 2360... Loss: 1.2586... Val Loss: 1.2965
+Epoch: 18/20... Step: 2370... Loss: 1.2422... Val Loss: 1.2945
+Epoch: 18/20... Step: 2380... Loss: 1.2481... Val Loss: 1.2942
+Epoch: 18/20... Step: 2390... Loss: 1.2385... Val Loss: 1.3051
+Epoch: 18/20... Step: 2400... Loss: 1.2693... Val Loss: 1.2974
+Epoch: 18/20... Step: 2410... Loss: 1.2627... Val Loss: 1.2962
+Epoch: 18/20... Step: 2420... Loss: 1.2337... Val Loss: 1.2883
+Epoch: 18/20... Step: 2430... Loss: 1.2447... Val Loss: 1.2922
+Epoch: 18/20... Step: 2440... Loss: 1.2341... Val Loss: 1.2936
+Epoch: 18/20... Step: 2450... Loss: 1.2323... Val Loss: 1.2899
+Epoch: 18/20... Step: 2460... Loss: 1.2457... Val Loss: 1.2914
+Epoch: 18/20... Step: 2470... Loss: 1.2332... Val Loss: 1.2993
+Epoch: 18/20... Step: 2480... Loss: 1.2231... Val Loss: 1.2909
+Epoch: 18/20... Step: 2490... Loss: 1.2181... Val Loss: 1.2913
+Epoch: 18/20... Step: 2500... Loss: 1.2346... Val Loss: 1.2918
+Epoch: 19/20... Step: 2510... Loss: 1.2335... Val Loss: 1.2922
+Epoch: 19/20... Step: 2520... Loss: 1.2471... Val Loss: 1.2908
+Epoch: 19/20... Step: 2530... Loss: 1.2490... Val Loss: 1.2854
+Epoch: 19/20... Step: 2540... Loss: 1.2635... Val Loss: 1.2854
+Epoch: 19/20... Step: 2550... Loss: 1.2124... Val Loss: 1.2876
+Epoch: 19/20... Step: 2560... Loss: 1.2234... Val Loss: 1.2851
+Epoch: 19/20... Step: 2570... Loss: 1.2193... Val Loss: 1.2875
+Epoch: 19/20... Step: 2580... Loss: 1.2569... Val Loss: 1.2992
+Epoch: 19/20... Step: 2590... Loss: 1.2133... Val Loss: 1.2876
+Epoch: 19/20... Step: 2600... Loss: 1.2198... Val Loss: 1.2921
+Epoch: 19/20... Step: 2610... Loss: 1.2273... Val Loss: 1.2813
+Epoch: 19/20... Step: 2620... Loss: 1.2029... Val Loss: 1.2822
+Epoch: 19/20... Step: 2630... Loss: 1.2044... Val Loss: 1.2786
+Epoch: 19/20... Step: 2640... Loss: 1.2234... Val Loss: 1.2819
+Epoch: 20/20... Step: 2650... Loss: 1.2344... Val Loss: 1.2802
+Epoch: 20/20... Step: 2660... Loss: 1.2336... Val Loss: 1.2819
+Epoch: 20/20... Step: 2670... Loss: 1.2329... Val Loss: 1.2765
+Epoch: 20/20... Step: 2680... Loss: 1.2183... Val Loss: 1.2775
+Epoch: 20/20... Step: 2690... Loss: 1.2269... Val Loss: 1.2758
+Epoch: 20/20... Step: 2700... Loss: 1.2301... Val Loss: 1.2785
+Epoch: 20/20... Step: 2710... Loss: 1.1988... Val Loss: 1.2817
+Epoch: 20/20... Step: 2720... Loss: 1.2052... Val Loss: 1.2792
+Epoch: 20/20... Step: 2730... Loss: 1.1917... Val Loss: 1.2770
+Epoch: 20/20... Step: 2740... Loss: 1.1990... Val Loss: 1.2773
+Epoch: 20/20... Step: 2750... Loss: 1.1967... Val Loss: 1.2780
+Epoch: 20/20... Step: 2760... Loss: 1.1961... Val Loss: 1.2748
+Epoch: 20/20... Step: 2770... Loss: 1.2353... Val Loss: 1.2739
+Epoch: 20/20... Step: 2780... Loss: 1.2497... Val Loss: 1.2741</code></pre>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"></span><br></pre></td></tr></table></figure>
+<h2 id="获取最优模型">获取最优模型</h2>
+<ul>
+<li>过拟合与欠拟合
+<ul>
+<li>实时监控训练和验证损失，如果训练损失远远低于验证损失，则模型过拟合；添加正则化、<code>dropout</code>，或使用更小的模型；</li>
+<li>如果训练和验证损失相近，则过拟合，可以增加模型的尺寸</li>
+</ul></li>
+<li>超参数
+<ul>
+<li>模型定义时：隐藏层神经元数量<code>n_hidden</code>，<code>LSTM</code>的层数<code>n_layers</code>
+<ul>
+<li><code>n_layers</code>建议设置值2或3，模型的总参数量与训练数据量处于同样的量级；如100MB的数据，当模型150K参数，模型会严重欠拟合，而10MB数量模型10M参数，模型会欠拟合，增大<code>dropout</code>参数</li>
+<li><strong>总是训练较大的模型，然后尝试不同的<code>dropout</code></strong></li>
+</ul></li>
+<li>模型训练时：<code>batch_size</code>,<code>seq_length</code>,<code>lr</code>,及数据拆分为训练集及验证集的拆分比列
+<ul>
+<li>尝试不同的超参数组合，选择性能最佳模型</li>
+</ul></li>
+</ul></li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"></span><br></pre></td></tr></table></figure>
+<h2 id="保存模型">保存模型</h2>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">model_name = <span class="string">&#x27;rnn_20_epoch.net&#x27;</span></span><br><span class="line"></span><br><span class="line">checkpoint = &#123;<span class="string">&#x27;n_hidden&#x27;</span>: net.n_hidden,</span><br><span class="line">              <span class="string">&#x27;n_layers&#x27;</span>: net.n_layers,</span><br><span class="line">              <span class="string">&#x27;state_dict&#x27;</span>: net.state_dict(),</span><br><span class="line">              <span class="string">&#x27;tokens&#x27;</span>: net.chars&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">with</span> <span class="built_in">open</span>(model_name, <span class="string">&#x27;wb&#x27;</span>) <span class="keyword">as</span> f:</span><br><span class="line">    torch.save(checkpoint, f)</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"></span><br></pre></td></tr></table></figure>
+<h2 id="文本生成">文本生成</h2>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">predict</span>(<span class="params">net, char, h=<span class="literal">None</span>, top_k=<span class="literal">None</span></span>):</span></span><br><span class="line">        <span class="comment"># tensor inputs</span></span><br><span class="line">        x = np.array([[net.char2int[char]]])</span><br><span class="line">        x = one_hot_encode(x, <span class="built_in">len</span>(net.chars))</span><br><span class="line">        inputs = torch.from_numpy(x)</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">if</span>(train_on_gpu):</span><br><span class="line">            inputs = inputs.cuda()</span><br><span class="line">        </span><br><span class="line">        <span class="comment"># detach hidden state from history</span></span><br><span class="line">        h = <span class="built_in">tuple</span>([each.data <span class="keyword">for</span> each <span class="keyword">in</span> h])</span><br><span class="line">        <span class="comment"># get the output of the model</span></span><br><span class="line">        out, h = net(inputs, h)</span><br><span class="line"></span><br><span class="line">        <span class="comment"># get the character probabilities</span></span><br><span class="line">        p = F.softmax(out, dim=<span class="number">1</span>).data</span><br><span class="line">        <span class="keyword">if</span>(train_on_gpu):</span><br><span class="line">            p = p.cpu() <span class="comment"># move to cpu</span></span><br><span class="line">        </span><br><span class="line">        <span class="comment"># topK采样</span></span><br><span class="line">        <span class="keyword">if</span> top_k <span class="keyword">is</span> <span class="literal">None</span>:</span><br><span class="line">            top_ch = np.arange(<span class="built_in">len</span>(net.chars))</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            p, top_ch = p.topk(top_k)</span><br><span class="line">            top_ch = top_ch.numpy().squeeze()</span><br><span class="line">        </span><br><span class="line">        <span class="comment"># select the likely next character with some element of randomness</span></span><br><span class="line">        p = p.numpy().squeeze()</span><br><span class="line">        char = np.random.choice(top_ch, p=p/p.<span class="built_in">sum</span>())</span><br><span class="line">        </span><br><span class="line">        <span class="comment"># return the encoded value of the predicted char and the hidden state</span></span><br><span class="line">        <span class="keyword">return</span> net.int2char[char], h</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 文本生成</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">sample</span>(<span class="params">net, size, prime=<span class="string">&#x27;The&#x27;</span>, top_k=<span class="literal">None</span></span>):</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (train_on_gpu):</span><br><span class="line">        net.cuda()</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        net.cpu()</span><br><span class="line"></span><br><span class="line">    net.<span class="built_in">eval</span>()  <span class="comment"># eval mode</span></span><br><span class="line"></span><br><span class="line">    <span class="comment"># First off, run through the prime characters</span></span><br><span class="line">    chars = [ch <span class="keyword">for</span> ch <span class="keyword">in</span> prime]</span><br><span class="line">    h = net.init_hidden(<span class="number">1</span>)</span><br><span class="line">    <span class="keyword">for</span> ch <span class="keyword">in</span> prime:</span><br><span class="line">        char, h = predict(net, ch, h, top_k=top_k)</span><br><span class="line"></span><br><span class="line">    chars.append(char)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># Now pass in the previous character and get a new one</span></span><br><span class="line">    <span class="keyword">for</span> ii <span class="keyword">in</span> <span class="built_in">range</span>(size):</span><br><span class="line">        char, h = predict(net, chars[-<span class="number">1</span>], h, top_k=top_k)</span><br><span class="line">        chars.append(char)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="string">&#x27;&#x27;</span>.join(chars)</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(sample(net, <span class="number">1000</span>, prime=<span class="string">&#x27;Anna&#x27;</span>, top_k=<span class="number">5</span>))</span><br></pre></td></tr></table></figure>
+<pre><code>Anna
+with a smile to holding a person was, and a line white sheel, who
+did not know. His father was a long while, and her friend, and the
+secundes, time and some of or that some made a dress so as happy, and
+to see it. To her that he was not finished, he went into the same
+time, the princess had always taken up to the corridor, was in which
+the prevent position he was an expression to the table, and she could
+do to triem to herself what they seemed to the cletched of the
+coup of the sick man are a sinting state of charming head, was not to
+such her for his brother&#39;s woman that when they were since he was sitting to
+the soft might have been seening that her family and with the proviss,
+which she had been set off the same thing, who had been disagreeable
+and had sore of the propersy of always. And he set her. He spoke tran
+out of the stranger and her husband who had no supported
+that he had not heard the face of her starts, began to say, the pissons were
+far in shame, and her heart, their sho</code></pre>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"></span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"></span><br></pre></td></tr></table></figure>
+</div><div class="article-licensing box"><div class="licensing-title"><p>RNN原理</p><p><a href="https://hunlp.com/posts/28867.html">https://hunlp.com/posts/28867.html</a></p></div><div class="licensing-meta level is-mobile"><div class="level-left"><div class="level-item is-narrow"><div><h6>作者</h6><p>ฅ´ω`ฅ</p></div></div><div class="level-item is-narrow"><div><h6>发布于</h6><p>2021-06-17</p></div></div><div class="level-item is-narrow"><div><h6>更新于</h6><p>2021-06-18</p></div></div><div class="level-item is-narrow"><div><h6>许可协议</h6><p><a class="icons" rel="noopener" target="_blank" title="Creative Commons" href="https://creativecommons.org/"><i class="icon fab fa-creative-commons"></i></a><a class="icons" rel="noopener" target="_blank" title="Attribution" href="https://creativecommons.org/licenses/by/4.0/"><i class="icon fab fa-creative-commons-by"></i></a><a class="icons" rel="noopener" target="_blank" title="Noncommercial" href="https://creativecommons.org/licenses/by-nc/4.0/"><i class="icon fab fa-creative-commons-nc"></i></a></p></div></div></div></div></div><hr style="height:1px;margin:1rem 0"><div class="level is-mobile is-flex"><div class="article-tags is-size-7 is-uppercase"><i class="fas fa-tags has-text-grey"></i> <a class="link-muted" rel="tag" href="/tags/%E7%AC%94%E8%AE%B0/">笔记, </a><a class="link-muted" rel="tag" href="/tags/RNN/">RNN </a></div></div><div class="bdsharebuttonbox"><a class="bds_more" href="#" data-cmd="more"></a><a class="bds_qzone" href="#" data-cmd="qzone" title="分享到QQ空间"></a><a class="bds_tsina" href="#" data-cmd="tsina" title="分享到新浪微博"></a><a class="bds_tqq" href="#" data-cmd="tqq" title="分享到腾讯微博"></a><a class="bds_renren" href="#" data-cmd="renren" title="分享到人人网"></a><a class="bds_weixin" href="#" data-cmd="weixin" title="分享到微信"></a></div><script>window._bd_share_config = { "common": { "bdSnsKey": {}, "bdText": "", "bdMini": "2", "bdPic": "", "bdStyle": "0", "bdSize": "16" }, "share": {} }; with (document) 0[(getElementsByTagName('head')[0] || body).appendChild(createElement('script')).src = 'http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion=' + ~(-new Date() / 36e5)];</script></article></div><div class="card"><div class="card-content"><h3 class="menu-label has-text-centered">喜欢这篇文章？打赏一下作者吧</h3><div class="buttons is-centered"><a class="button donate" data-type="alipay"><span class="icon is-small"><i class="fab fa-alipay"></i></span><span>支付宝</span><span class="qrcode"><img src="/img/zfb.jpg" alt="支付宝"></span></a><a class="button donate" data-type="wechat"><span class="icon is-small"><i class="fab fa-weixin"></i></span><span>微信</span><span class="qrcode"><img src="/img/wx.jpg" alt="微信"></span></a></div></div></div><nav class="post-navigation mt-4 level is-mobile"><div class="level-start"><a class="article-nav-prev level level-item link-muted" href="/posts/19440.html"><i class="level-item fas fa-chevron-left"></i><span class="level-item">EM算法及其推广</span></a></div><div class="level-end"><a class="article-nav-next level level-item link-muted" href="/posts/19438.html"><span class="level-item">接口 interface</span><i class="level-item fas fa-chevron-right"></i></a></div></nav><div class="card"><div class="card-content"><h3 class="title is-5">评论</h3><div id="comment-container"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1.7.2/dist/gitalk.css"><script src="https://cdn.jsdelivr.net/npm/gitalk@1.7.2/dist/gitalk.min.js"></script><script>var gitalk = new Gitalk({
+            id: "71dffa752948fd648f08386b2ef2b6de",
+            repo: "Cartride.github.io",
+            owner: "Cartride",
+            clientID: "8f4a2426c347380a6ee4",
+            clientSecret: "8dc8cd44b071426b35d0bd60634941371170b798",
+            admin: ["Cartride"],
+            createIssueManually: false,
+            distractionFreeMode: false,
+            perPage: 10,
+            pagerDirection: "last",
+            
+            
+            enableHotKey: true,
+            
+        })
+        gitalk.render('comment-container')</script></div></div></div><div class="column column-left is-4-tablet is-4-desktop is-3-widescreen  order-1 is-sticky"><div class="card widget" id="toc" data-type="toc"><div class="card-content"><div class="menu"><h3 class="menu-label">目录</h3><ul class="menu-list"><ul class="menu-list"><li><a class="level is-mobile" href="#simplernn"><span class="level-left"><span class="level-item">1.1</span><span class="level-item">SimpleRNN</span></span></a></li><li><a class="level is-mobile" href="#lstm"><span class="level-left"><span class="level-item">1.2</span><span class="level-item">LSTM</span></span></a><ul class="menu-list"><li><a class="level is-mobile" href="#lstm原理"><span class="level-left"><span class="level-item">1.2.1</span><span class="level-item">LSTM原理</span></span></a></li><li><a class="level is-mobile" href="#lstm结构"><span class="level-left"><span class="level-item">1.2.2</span><span class="level-item">LSTM结构</span></span></a></li><li><a class="level is-mobile" href="#peephole机制"><span class="level-left"><span class="level-item">1.2.3</span><span class="level-item">peephole机制</span></span></a></li></ul></li><li><a class="level is-mobile" href="#gru"><span class="level-left"><span class="level-item">1.3</span><span class="level-item">GRU</span></span></a></li></ul><li><a class="level is-mobile" href="#rnn实现"><span class="level-left"><span class="level-item">2</span><span class="level-item">RNN实现</span></span></a><ul class="menu-list"><li><a class="level is-mobile" href="#simplernn层"><span class="level-left"><span class="level-item">2.1</span><span class="level-item">SimpleRNN层</span></span></a></li><li><a class="level is-mobile" href="#lstm层"><span class="level-left"><span class="level-item">2.2</span><span class="level-item">LSTM层</span></span></a></li><li><a class="level is-mobile" href="#gru层"><span class="level-left"><span class="level-item">2.3</span><span class="level-item">GRU层</span></span></a></li><li><a class="level is-mobile" href="#rnn训练流程"><span class="level-left"><span class="level-item">2.4</span><span class="level-item">RNN训练流程</span></span></a><ul class="menu-list"><li><a class="level is-mobile" href="#训练数据"><span class="level-left"><span class="level-item">2.4.1</span><span class="level-item">训练数据</span></span></a></li><li><a class="level is-mobile" href="#定义模型"><span class="level-left"><span class="level-item">2.4.2</span><span class="level-item">定义模型</span></span></a></li><li><a class="level is-mobile" href="#训练模型"><span class="level-left"><span class="level-item">2.4.3</span><span class="level-item">训练模型</span></span></a></li></ul></li></ul></li><li><a class="level is-mobile" href="#rnn示例字符级文本生成"><span class="level-left"><span class="level-item">3</span><span class="level-item">RNN示例：字符级文本生成</span></span></a><ul class="menu-list"><li><a class="level is-mobile" href="#数据集"><span class="level-left"><span class="level-item">3.1</span><span class="level-item">数据集</span></span></a></li><li><a class="level is-mobile" href="#数据预处理"><span class="level-left"><span class="level-item">3.2</span><span class="level-item">数据预处理</span></span></a></li><li><a class="level is-mobile" href="#创建模型"><span class="level-left"><span class="level-item">3.3</span><span class="level-item">创建模型</span></span></a></li><li><a class="level is-mobile" href="#训练模型-1"><span class="level-left"><span class="level-item">3.4</span><span class="level-item">训练模型</span></span></a></li><li><a class="level is-mobile" href="#获取最优模型"><span class="level-left"><span class="level-item">3.5</span><span class="level-item">获取最优模型</span></span></a></li><li><a class="level is-mobile" href="#保存模型"><span class="level-left"><span class="level-item">3.6</span><span class="level-item">保存模型</span></span></a></li><li><a class="level is-mobile" href="#文本生成"><span class="level-left"><span class="level-item">3.7</span><span class="level-item">文本生成</span></span></a></li></ul></li></ul></div></div><style>#toc .menu-list > li > a.is-active + .menu-list { display: block; }#toc .menu-list > li > a + .menu-list { display: none; }</style><script src="/js/toc.js" defer></script></div></div><!--!--></div></div></section><footer class="footer"><div class="container"><div class="level"><div class="level-start"><a class="footer-logo is-block mb-2" href="/"><img src="/img/logo.png" alt="MCFON" height="28"></a><p class="is-size-7"><span>&copy; 2022 ฅ´ω`ฅ</span>  Powered by <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a> &amp; <a href="https://github.com/ppoffice/hexo-theme-icarus" target="_blank" rel="noopener">Icarus</a></p></div><div class="level-end"><div class="field has-addons"><p class="control"><a class="button is-transparent is-large" target="_blank" rel="noopener" title="Creative Commons" href="https://creativecommons.org/"><i class="fab fa-creative-commons"></i></a></p><p class="control"><a class="button is-transparent is-large" target="_blank" rel="noopener" title="Attribution 4.0 International" href="https://creativecommons.org/licenses/by/4.0/"><i class="fab fa-creative-commons-by"></i></a></p><p class="control"><a class="button is-transparent is-large" target="_blank" rel="noopener" title="Download on GitHub" href="https://github.com/ppoffice/hexo-theme-icarus"><i class="fab fa-github"></i></a></p></div></div></div></div></footer><script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script><script src="https://cdn.jsdelivr.net/npm/moment@2.22.2/min/moment-with-locales.min.js"></script><script src="https://cdn.jsdelivr.net/npm/clipboard@2.0.4/dist/clipboard.min.js" defer></script><script>moment.locale("zh-CN");</script><script>var IcarusThemeSettings = {
+            article: {
+                highlight: {
+                    clipboard: true,
+                    fold: 'unfolded'
+                }
+            }
+        };</script><script src="/js/column.js"></script><script src="/js/animation.js"></script><a id="back-to-top" title="回到顶端" href="javascript:;"><i class="fas fa-chevron-up"></i></a><script src="/js/back_to_top.js" defer></script><!--!--><!--!--><!--!--><script src="https://cdn.jsdelivr.net/npm/cookieconsent@3.1.1/build/cookieconsent.min.js" defer></script><script>window.addEventListener("load", () => {
+      window.cookieconsent.initialise({
+        type: "info",
+        theme: "edgeless",
+        static: false,
+        position: "bottom-left",
+        content: {
+          message: "此网站使用Cookie来改善您的体验。",
+          dismiss: "知道了！",
+          allow: "允许使用Cookie",
+          deny: "拒绝",
+          link: "了解更多",
+          policy: "Cookie政策",
+          href: "https://www.cookiesandyou.com/",
+        },
+        palette: {
+          popup: {
+            background: "#edeff5",
+            text: "#838391"
+          },
+          button: {
+            background: "#4b81e8"
+          },
+        },
+      });
+    });</script><script src="https://cdn.jsdelivr.net/npm/lightgallery@1.6.8/dist/js/lightgallery.min.js" defer></script><script src="https://cdn.jsdelivr.net/npm/justifiedGallery@3.7.0/dist/js/jquery.justifiedGallery.min.js" defer></script><script>window.addEventListener("load", () => {
+            if (typeof $.fn.lightGallery === 'function') {
+                $('.article').lightGallery({ selector: '.gallery-item' });
+            }
+            if (typeof $.fn.justifiedGallery === 'function') {
+                if ($('.justified-gallery > p > .gallery-item').length) {
+                    $('.justified-gallery > p > .gallery-item').unwrap();
+                }
+                $('.justified-gallery').justifiedGallery();
+            }
+        });</script><!--!--><!--!--><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.css"><script src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.js" defer></script><script src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/contrib/auto-render.min.js" defer></script><script src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/contrib/mhchem.js" defer></script><script>window.addEventListener("load", function() {
+            document.querySelectorAll('[role="article"] > .content').forEach(function(element) {
+                renderMathInElement(element);
+            });
+        });</script><script type="text/x-mathjax-config">MathJax.Hub.Config({
+            'HTML-CSS': {
+                matchFontHeight: false
+            },
+            SVG: {
+                matchFontHeight: false
+            },
+            CommonHTML: {
+                matchFontHeight: false
+            },
+            tex2jax: {
+                inlineMath: [
+                    ['$','$'],
+                    ['\\(','\\)']
+                ]
+            }
+        });</script><script src="https://cdn.jsdelivr.net/npm/mathjax@2.7.5/unpacked/MathJax.js?config=TeX-MML-AM_CHTML" defer></script><!--!--><!--!--><!--!--><script src="/js/main.js" defer></script><div class="searchbox"><div class="searchbox-container"><div class="searchbox-header"><div class="searchbox-input-container"><input class="searchbox-input" type="text" placeholder="想要查找什么..."></div><a class="searchbox-close" href="javascript:;">×</a></div><div class="searchbox-body"></div></div></div><script src="/js/insight.js" defer></script><script>document.addEventListener('DOMContentLoaded', function () {
+            loadInsight({"contentUrl":"/content.json"}, {"hint":"想要查找什么...","untitled":"(无标题)","posts":"文章","pages":"页面","categories":"分类","tags":"标签"});
+        });</script></body></html>

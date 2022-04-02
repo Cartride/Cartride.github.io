@@ -1,0 +1,758 @@
+<!doctype html>
+<html lang="zh"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"><meta><title>基于HMM和Viterbi算法的序列标注 - MCFON</title><link rel="manifest" href="/manifest.json"><meta name="application-name" content="MCFON"><meta name="msapplication-TileImage" content="/img/favicon.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="MCFON"><meta name="apple-mobile-web-app-status-bar-style" content="default"><meta name="description" content="HMM生成模型 给定句子 \(S\)，对应的输出词性序列 \(T\)，HMM模型的联合概率： \[ \begin{align} P(T|S) &amp;amp;&amp;#x3D; \frac{P(S|T)\cdot P(T)}{P(S)}\\ P(S,T) &amp;amp;&amp;#x3D; P(S|T)\cdot P(T)\\        &amp;amp;&amp;#x3D; \prod_{i&amp;#x3D;1}^{n}P(w_i|T)\cdot P(T)\\"><meta property="og:type" content="blog"><meta property="og:title" content="基于HMM和Viterbi算法的序列标注"><meta property="og:url" content="https://hunlp.com/posts/553.html"><meta property="og:site_name" content="MCFON"><meta property="og:description" content="HMM生成模型 给定句子 \(S\)，对应的输出词性序列 \(T\)，HMM模型的联合概率： \[ \begin{align} P(T|S) &amp;amp;&amp;#x3D; \frac{P(S|T)\cdot P(T)}{P(S)}\\ P(S,T) &amp;amp;&amp;#x3D; P(S|T)\cdot P(T)\\        &amp;amp;&amp;#x3D; \prod_{i&amp;#x3D;1}^{n}P(w_i|T)\cdot P(T)\\"><meta property="og:locale" content="zh_CN"><meta property="og:image" content="https://tva1.sinaimg.cn/large/008i3skNly1gr7wek4drmj31240gutb3.jpg"><meta property="og:image" content="https://tva1.sinaimg.cn/large/008i3skNly1gr7wek4drmj31240gutb3.jpg"><meta property="article:published_time" content="2021-06-05T17:17:37.000Z"><meta property="article:modified_time" content="2021-06-05T17:26:19.642Z"><meta property="article:author" content="ฅ´ω`ฅ"><meta property="article:tag" content="HMM"><meta property="article:tag" content="Viterbi"><meta property="twitter:card" content="summary"><meta property="twitter:image" content="https://tva1.sinaimg.cn/large/008i3skNly1gr7wek4drmj31240gutb3.jpg"><script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","mainEntityOfPage":{"@type":"WebPage","@id":"https://hunlp.com/posts/553.html"},"headline":"基于HMM和Viterbi算法的序列标注","image":["https://tva1.sinaimg.cn/large/008i3skNly1gr7wek4drmj31240gutb3.jpg","https://tva1.sinaimg.cn/large/008i3skNly1gr7wek4drmj31240gutb3.jpg"],"datePublished":"2021-06-05T17:17:37.000Z","dateModified":"2021-06-05T17:26:19.642Z","author":{"@type":"Person","name":"ฅ´ω`ฅ"},"publisher":{"@type":"Organization","name":"MCFON","logo":{"@type":"ImageObject","url":"https://hunlp.com/img/logo.png"}},"description":"HMM生成模型 给定句子 \\(S\\)，对应的输出词性序列 \\(T\\)，HMM模型的联合概率： \\[ \\begin{align} P(T|S) &amp;&#x3D; \\frac{P(S|T)\\cdot P(T)}{P(S)}\\\\ P(S,T) &amp;&#x3D; P(S|T)\\cdot P(T)\\\\        &amp;&#x3D; \\prod_{i&#x3D;1}^{n}P(w_i|T)\\cdot P(T)\\\\"}</script><link rel="canonical" href="https://hunlp.com/posts/553.html"><link rel="icon" href="/img/favicon.png"><link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.2/css/all.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@9.12.0/styles/atom-one-light.css"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@400;600&amp;family=Source+Code+Pro"><link rel="stylesheet" href="/css/default.css"><style>body>.footer,body>.navbar,body>.section{opacity:0}</style><!--!--><script>var _hmt = _hmt || [];
+        (function() {
+            var hm = document.createElement("script");
+            hm.src = "//hm.baidu.com/hm.js?b99420d7a06d2b3361a8efeaf6e20764";
+            var s = document.getElementsByTagName("script")[0];
+            s.parentNode.insertBefore(hm, s);
+        })();</script><!--!--><!--!--><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/cookieconsent@3.1.1/build/cookieconsent.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lightgallery@1.6.8/dist/css/lightgallery.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/justifiedGallery@3.7.0/dist/css/justifiedGallery.min.css"><script src="https://www.googletagmanager.com/gtag/js?id=UA-131608076-1" async></script><script>window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+    
+        gtag('config', 'UA-131608076-1');</script><!--!--><!--!--><!--!--><script src="https://cdn.jsdelivr.net/npm/pace-js@1.0.2/pace.min.js"></script><!--!--><!--!--><meta name="generator" content="Hexo 5.4.0"></head><body class="is-3-column"><nav class="navbar navbar-main"><div class="container"><div class="navbar-brand justify-content-center"><a class="navbar-item navbar-logo" href="/"><img src="/img/logo.png" alt="MCFON" height="28"></a></div><div class="navbar-menu"><div class="navbar-start"><a class="navbar-item" href="/">主页</a><a class="navbar-item" href="/archives">归档</a><a class="navbar-item" href="/categories">分类</a><a class="navbar-item" href="/tags">标签</a><a class="navbar-item" href="/about">关于</a></div><div class="navbar-end"><a class="navbar-item" target="_blank" rel="noopener" title="Download on GitHub" href="https://github.com/ppoffice/hexo-theme-icarus"><i class="fab fa-github"></i></a><a class="navbar-item is-hidden-tablet catalogue" title="目录" href="javascript:;"><i class="fas fa-list-ul"></i></a><a class="navbar-item search" title="搜索" href="javascript:;"><i class="fas fa-search"></i></a></div></div></div></nav><section class="section"><div class="container"><div class="columns"><div class="column order-2 column-main is-8-tablet is-8-desktop is-9-widescreen"><div class="card"><article class="card-content article" role="article"><h1 class="title is-size-3 is-size-4-mobile has-text-weight-normal"><i class="fas fa-angle-double-right"></i>基于HMM和Viterbi算法的序列标注</h1><div class="article-meta is-size-7 is-uppercase level is-mobile"><div class="level-left"><span class="level-item"><i class="far fa-calendar-alt"> </i><time dateTime="${date_xml(page.date)}" title="${date_xml(page.date)}">2021-06-06</time></span><span class="level-item is-hidden-mobile"><i class="far fa-calendar-check"> </i><time dateTime="${date_xml(page.updated)}" title="${date_xml(page.updated)}">2021-06-06</time></span><span class="level-item"><a class="link-muted" href="/categories/%E8%87%AA%E7%84%B6%E8%AF%AD%E8%A8%80%E5%A4%84%E7%90%86/">自然语言处理</a></span><span class="level-item">26 分钟读完 (大约3944个字)</span></div></div><div class="content"><h1 id="hmm生成模型"><code>HMM</code>生成模型</h1>
+<p>给定句子 <span class="math inline">\(S\)</span>，对应的输出词性序列 <span class="math inline">\(T\)</span>，<code>HMM</code>模型的联合概率： <span class="math display">\[
+\begin{align}
+P(T|S) &amp;= \frac{P(S|T)\cdot P(T)}{P(S)}\\
+P(S,T) &amp;= P(S|T)\cdot P(T)\\
+       &amp;= \prod_{i=1}^{n}P(w_i|T)\cdot P(T)\\
+       &amp;= \prod_{i=1}^{n}P(w_i|t_i)\cdot P(T)\\
+       &amp;= \prod_{i=1}^{n}P(w_i|t_i)\cdot P(t_i|t_{i-1})\\       
+\end{align}
+\]</span></p>
+<span id="more"></span>
+<blockquote>
+<p>首先贝叶斯公式展开，然后利用 <strong><em>以下假设</em></strong> 简化：<br/> - 由词之间相互独立假设，得到 <span class="math inline">\(\prod_{i=1}^{n}P(w_i|T)\)</span> - 由单词概率仅依赖于其自身的标签，得到<strong>发射<code>(emission)</code>概率</strong> <span class="math inline">\(\prod_{i=1}^{n}P(w_i|t_i)\)</span> - 由马尔可夫假设，使用 <code>bi-gram</code> 得到<strong>转移<code>(transition)</code>概率</strong> <span class="math inline">\(P(t_i|t_{i-1})\)</span></p>
+</blockquote>
+<hr />
+<p>目标函数：</p>
+<p><span class="math display">\[
+(\hat{t_1},\hat{t_2}...\hat{t_n})=arg max\prod_{i=1}^{n}P(w_i|t_i)\cdot P(t_i|t_{i-1})
+\]</span></p>
+<hr />
+<p>综上，<code>HMM</code>假设了两类特征：当前词性与上一词性的关系，当前词与当前词性的关系<br/> HMM的学习过程就是在训练集中学习这两个概率矩阵，大小分别为<code>(t,t),(w,t)</code>，<code>w</code>为单词的个数，<code>t</code>为词性的个数</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"></span><br></pre></td></tr></table></figure>
+<h1 id="实战词性标注">实战：词性标注</h1>
+<ul>
+<li>词性标注<code>(Part-Of-Speech tagging, POS tagging)</code>，判断句子中单词的词性：谓词、虚词、代词、感叹词等</li>
+<li>本质上属于分类问题，将句子中的单词按词性分类</li>
+<li>因此需要词性标注好的语料库，其中给定句子<span class="math inline">\(s=w_1w_2...w_n\)</span>及对应的词性 <span class="math inline">\(t=z_1z_2...z_n\)</span> &gt; 语料格式：每一行为词+词性，特殊符号 <code>,</code> 等表示句子结尾 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">&#x27;Newsweek/NNP\n&#x27;,</span><br><span class="line">&#x27;,/,\n&#x27;,</span><br><span class="line">&#x27;trying/VBG\n&#x27;,</span><br><span class="line">&#x27;to/TO\n&#x27;,</span><br><span class="line">&#x27;keep/VB\n&#x27;,</span><br><span class="line">&#x27;pace/NN\n&#x27;,</span><br><span class="line">&#x27;with/IN\n&#x27;,</span><br></pre></td></tr></table></figure></li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 语料样本</span></span><br><span class="line"><span class="built_in">open</span>(<span class="string">&#x27;../datasets/pos_tagging_data.txt&#x27;</span>,<span class="string">&#x27;r&#x27;</span>).readlines(<span class="number">50</span>)</span><br></pre></td></tr></table></figure>
+<pre><code>[&#39;Newsweek/NNP\n&#39;,
+ &#39;,/,\n&#39;,
+ &#39;trying/VBG\n&#39;,
+ &#39;to/TO\n&#39;,
+ &#39;keep/VB\n&#39;,
+ &#39;pace/NN\n&#39;,
+ &#39;with/IN\n&#39;]</code></pre>
+<h2 id="创建词汇表">创建词汇表</h2>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 创建字典，便于将文本数值化</span></span><br><span class="line"></span><br><span class="line">tag2id, id2tag = &#123;&#125;, &#123;&#125;</span><br><span class="line">word2id, id2word = &#123;&#125;, &#123;&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> line <span class="keyword">in</span> <span class="built_in">open</span>(<span class="string">&#x27;../datasets/pos_tagging_data.txt&#x27;</span>, <span class="string">&#x27;r&#x27;</span>):</span><br><span class="line">    items = line.split(<span class="string">&#x27;/&#x27;</span>)</span><br><span class="line">    word, tag = items[<span class="number">0</span>], items[<span class="number">1</span>].rstrip()</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> word <span class="keyword">not</span> <span class="keyword">in</span> word2id:</span><br><span class="line">        word2id[word] = <span class="built_in">len</span>(word2id)</span><br><span class="line">        id2word[<span class="built_in">len</span>(id2word)] = word</span><br><span class="line">    <span class="keyword">if</span> tag <span class="keyword">not</span> <span class="keyword">in</span> tag2id:</span><br><span class="line">        tag2id[tag] = <span class="built_in">len</span>(tag2id)</span><br><span class="line">        id2tag[<span class="built_in">len</span>(tag2id)] = tag</span><br><span class="line"></span><br><span class="line">M = <span class="built_in">len</span>(word2id)  <span class="comment"># 词典的大小</span></span><br><span class="line">N = <span class="built_in">len</span>(tag2id)  <span class="comment"># 词性的种类</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(M,N)</span><br></pre></td></tr></table></figure>
+<h2 id="发射矩阵和转移矩阵">发射矩阵和转移矩阵</h2>
+<ul>
+<li>基于语料库，计算发射矩阵和转移矩阵</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"></span><br><span class="line">pi = np.zeros(N)  <span class="comment"># 每个 tag 出现在句首的概率</span></span><br><span class="line">A = np.zeros((N, M))  <span class="comment"># A[i][j],给定 tag i,出现单词 j 的概率</span></span><br><span class="line">B = np.zeros((N, N))  <span class="comment"># B[i][j],词性为 tag i 时，其后单词的词性为 tag j 的概率</span></span><br><span class="line"></span><br><span class="line">prev_tag = <span class="string">&quot;&quot;</span></span><br><span class="line"><span class="keyword">for</span> line <span class="keyword">in</span> <span class="built_in">open</span>(<span class="string">&#x27;../datasets/pos_tagging_data.txt&#x27;</span>, <span class="string">&#x27;r&#x27;</span>):</span><br><span class="line">    items = line.split(<span class="string">&#x27;/&#x27;</span>)</span><br><span class="line">    wordId, tagId = word2id[items[<span class="number">0</span>]], tag2id[items[<span class="number">1</span>].rstrip()]</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> prev_tag == <span class="string">&quot;&quot;</span>:  <span class="comment"># 判断句子的开始</span></span><br><span class="line">        pi[tagId] += <span class="number">1</span></span><br><span class="line">        A[tagId][wordId] += <span class="number">1</span></span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        A[tagId][wordId] += <span class="number">1</span></span><br><span class="line">        B[tag2id[prev_tag]][tagId] += <span class="number">1</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> items[<span class="number">0</span>] == <span class="string">&quot;.&quot;</span>:</span><br><span class="line">        prev_tag = <span class="string">&quot;&quot;</span></span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        prev_tag = items[<span class="number">1</span>].rstrip()</span><br><span class="line"></span><br><span class="line"><span class="comment"># 转化成概率</span></span><br><span class="line">pi = pi / <span class="built_in">sum</span>(pi)</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(N):</span><br><span class="line">    A[i] /= <span class="built_in">sum</span>(A[i])</span><br><span class="line">    B[i] /= <span class="built_in">sum</span>(B[i])</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pi</span><br></pre></td></tr></table></figure>
+<h2 id="维特比算法求解最优标注">维特比算法求解最优标注</h2>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">log_</span>(<span class="params">v</span>):</span></span><br><span class="line">    <span class="keyword">if</span> v==<span class="number">0</span>:</span><br><span class="line">        <span class="keyword">return</span> np.log(v+<span class="number">0.000001</span>)</span><br><span class="line">    <span class="keyword">return</span> np.log(v)</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> math <span class="keyword">import</span> log</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">viterbi</span>(<span class="params">x, pi, A, B</span>):</span>  <span class="comment"># x 为输入句子，&quot;I like playing soccer&quot;</span></span><br><span class="line">    x = [word2id[word] <span class="keyword">for</span> word <span class="keyword">in</span> x.split(<span class="string">&quot; &quot;</span>)]</span><br><span class="line">    T = <span class="built_in">len</span>(x)</span><br><span class="line"></span><br><span class="line">    dp = np.zeros((T, N))  <span class="comment"># 默认浮点数</span></span><br><span class="line">    ptr = np.array([[<span class="number">0</span> <span class="keyword">for</span> x <span class="keyword">in</span> <span class="built_in">range</span>(N)] <span class="keyword">for</span> y <span class="keyword">in</span> <span class="built_in">range</span>(T)])  <span class="comment"># 整数</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> j <span class="keyword">in</span> <span class="built_in">range</span>(N):</span><br><span class="line">        dp[<span class="number">0</span>][j] = log_(pi[j]) + log_(A[j][x[<span class="number">0</span>]])  <span class="comment"># 需要添加平滑项</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">1</span>, T):</span><br><span class="line">        <span class="keyword">for</span> j <span class="keyword">in</span> <span class="built_in">range</span>(N):</span><br><span class="line">            dp[i][j] = <span class="built_in">float</span>(<span class="string">&#x27;-inf&#x27;</span>)</span><br><span class="line">            <span class="keyword">for</span> k <span class="keyword">in</span> <span class="built_in">range</span>(N):</span><br><span class="line">                score = dp[i - <span class="number">1</span>][k] + log_(B[k][j]) + log_(A[j][x[i]])</span><br><span class="line">                <span class="keyword">if</span> score &gt; dp[i][j]:</span><br><span class="line">                    dp[i][j] = score</span><br><span class="line">                    ptr[i][j] = k</span><br><span class="line"></span><br><span class="line">    <span class="comment"># decoding：找出最好的 tag sequence</span></span><br><span class="line">    best_seq = [<span class="number">0</span>] * T</span><br><span class="line">    <span class="comment"># step1：找出最后一个单词的词性</span></span><br><span class="line">    best_seq[T - <span class="number">1</span>] = np.argmax(dp[T - <span class="number">1</span>])</span><br><span class="line"></span><br><span class="line">    <span class="comment"># step2：从后向前循环依次找出每个单词的词性</span></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(T - <span class="number">2</span>, -<span class="number">1</span>, -<span class="number">1</span>):</span><br><span class="line">        best_seq[i] = ptr[i + <span class="number">1</span>][best_seq[i + <span class="number">1</span>]]</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> [id2tag[<span class="built_in">id</span>] <span class="keyword">for</span> <span class="built_in">id</span> <span class="keyword">in</span> best_seq]</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">x = <span class="string">&quot;I like play soccer&quot;</span></span><br><span class="line">viterbi(x,pi,A,B)</span><br></pre></td></tr></table></figure>
+<h1 id="实战命名实体识别">实战：命名实体识别</h1>
+<p>基于人民日报语料，词汇表及标签已经处理完成</p>
+<h2 id="根据语料获取转移矩阵与发射矩阵">根据语料获取转移矩阵与发射矩阵</h2>
+<p>语料每一行为一个子句，每个子句中用空格隔开标注好的单字，单字与其词性用<code>/</code>连接</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">with</span> <span class="built_in">open</span>(<span class="string">&quot;../datasets/ner/renmin/vocab.pkl&quot;</span>, <span class="string">&#x27;rb&#x27;</span>) <span class="keyword">as</span> inp:</span><br><span class="line">    token2idx = pickle.load(inp)</span><br><span class="line">    idx2token = pickle.load(inp)</span><br><span class="line"></span><br><span class="line"><span class="keyword">with</span> <span class="built_in">open</span>(<span class="string">&quot;../datasets/ner/renmin/tags.pkl&quot;</span>, <span class="string">&quot;rb&quot;</span>) <span class="keyword">as</span> inp:</span><br><span class="line">    tag2idx = pickle.load(inp)</span><br><span class="line">    idx2tag = pickle.load(inp)    </span><br><span class="line"></span><br><span class="line"><span class="comment"># 模型参数    </span></span><br><span class="line">N = <span class="built_in">len</span>(tag2idx)</span><br><span class="line">M = <span class="built_in">len</span>(token2idx)</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> codecs</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">train_hmm</span>(<span class="params">data_file</span>):</span></span><br><span class="line">    input_data = codecs.<span class="built_in">open</span>(data_file, <span class="string">&#x27;r&#x27;</span>, <span class="string">&#x27;utf-8&#x27;</span>)</span><br><span class="line"></span><br><span class="line">    pi = np.zeros(N)  <span class="comment"># 每个 tag 出现在句首的概率</span></span><br><span class="line">    A = np.zeros((N, M))  <span class="comment"># A[i][j],给定 tag i,出现单词 j 的概率</span></span><br><span class="line">    B = np.zeros((N, N))  <span class="comment"># B[i][j],词性为 tag i 时，其后单词的词性为 tag j 的概率</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> line <span class="keyword">in</span> input_data.readlines():</span><br><span class="line">        line = line.strip().split()</span><br><span class="line">        tokens = [token2idx[string.split(<span class="string">&#x27;/&#x27;</span>)[<span class="number">0</span>].strip()] <span class="keyword">for</span> string <span class="keyword">in</span> line]</span><br><span class="line">        tags = [tag2idx[string.split(<span class="string">&#x27;/&#x27;</span>)[<span class="number">1</span>].strip()] <span class="keyword">for</span> string <span class="keyword">in</span> line]</span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span> idx <span class="keyword">in</span> <span class="built_in">range</span>(<span class="built_in">len</span>(tokens)):</span><br><span class="line">            <span class="keyword">if</span> idx == <span class="number">0</span>:</span><br><span class="line">                pi[tags[idx]] += <span class="number">1</span></span><br><span class="line">                A[tags[idx]][tokens[idx]] += <span class="number">1</span></span><br><span class="line">            <span class="keyword">else</span>:</span><br><span class="line">                A[tags[idx]][tokens[idx]] += <span class="number">1</span></span><br><span class="line">                B[tags[idx - <span class="number">1</span>]][tags[idx]] += <span class="number">1</span></span><br><span class="line"></span><br><span class="line">    pi = pi / <span class="built_in">sum</span>(pi)</span><br><span class="line">    A = A / A.<span class="built_in">sum</span>(axis=-<span class="number">1</span>).reshape(-<span class="number">1</span>, <span class="number">1</span>)</span><br><span class="line">    B = B / B.<span class="built_in">sum</span>(axis=-<span class="number">1</span>).reshape(-<span class="number">1</span>, <span class="number">1</span>)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> pi, A, B</span><br><span class="line"></span><br><span class="line"><span class="comment"># data_file = &#x27;../datasets/ner/renmin/renmin4.txt&#x27;</span></span><br><span class="line"><span class="comment"># pi, A, B = train_hmm(data_file)</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># with open(&#x27;../models/ner/hmm.pkl&#x27;, &#x27;wb&#x27;) as output:</span></span><br><span class="line"><span class="comment">#     pickle.dump(pi, output)</span></span><br><span class="line"><span class="comment">#     pickle.dump(A, output)    </span></span><br><span class="line"><span class="comment">#     pickle.dump(B, output)    </span></span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">with</span> <span class="built_in">open</span>(<span class="string">&#x27;../models/ner/hmm.pkl&#x27;</span>, <span class="string">&#x27;rb&#x27;</span>) <span class="keyword">as</span> inp:</span><br><span class="line">    pi = pickle.load(inp)</span><br><span class="line">    A = pickle.load(inp)    </span><br><span class="line">    B = pickle.load(inp)    </span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> pandas <span class="keyword">as</span> pd</span><br><span class="line"></span><br><span class="line"><span class="comment"># 转移矩阵，给定前一个标记的标签，后一个标记的标签的概率分布</span></span><br><span class="line"></span><br><span class="line">index = [</span><br><span class="line">    <span class="string">&#x27;B_nt&#x27;</span>, <span class="string">&#x27;M_nt&#x27;</span>, <span class="string">&#x27;E_nt&#x27;</span>, <span class="string">&#x27;B_nr&#x27;</span>, <span class="string">&#x27;M_nr&#x27;</span>, <span class="string">&#x27;E_nr&#x27;</span>, <span class="string">&#x27;B_ns&#x27;</span>, <span class="string">&#x27;M_ns&#x27;</span>, <span class="string">&#x27;E_ns&#x27;</span>, <span class="string">&#x27;O&#x27;</span></span><br><span class="line">]</span><br><span class="line">transitions = pd.DataFrame(B, index=idx2tag.values(), columns=idx2tag.values())</span><br><span class="line">transitions.reindex(index, axis=<span class="number">0</span>).reindex(index, axis=<span class="number">1</span>).<span class="built_in">round</span>(</span><br><span class="line">    <span class="number">2</span>).style.applymap(<span class="keyword">lambda</span> v: <span class="string">&#x27;background-color: %s&#x27;</span> % <span class="string">&#x27;#B0C4DE&#x27;</span></span><br><span class="line">                      <span class="keyword">if</span> v &gt; <span class="number">0</span> <span class="keyword">else</span> <span class="string">&#x27;background-color: %s&#x27;</span> % <span class="string">&#x27;#FFFFFF&#x27;</span>)</span><br></pre></td></tr></table></figure>
+<p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gr7wek4drmj31240gutb3.jpg" /></p>
+<blockquote>
+<p>从上表中，通过语料训练得到的转移矩阵，可以看出，连续的两个标签之间的联合概率</p>
+</blockquote>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 句首标记的标签分布</span></span><br><span class="line"></span><br><span class="line">start_status = pd.DataFrame(pi, index=idx2tag.values())</span><br><span class="line">start_status.reindex(index, axis=<span class="number">0</span>).<span class="built_in">round</span>(<span class="number">2</span>).style.applymap(</span><br><span class="line">    <span class="keyword">lambda</span> v: <span class="string">&#x27;background-color: %s&#x27;</span> % <span class="string">&#x27;#B0C4DE&#x27;</span></span><br><span class="line">    <span class="keyword">if</span> v &gt; <span class="number">0</span> <span class="keyword">else</span> <span class="string">&#x27;background-color: %s&#x27;</span> % <span class="string">&#x27;#FFFFFF&#x27;</span>)</span><br></pre></td></tr></table></figure>
+<p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gr7wek4drmj31240gutb3.jpg" /></p>
+<blockquote>
+<p>句首单字的标签的概率分布</p>
+</blockquote>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"></span><br></pre></td></tr></table></figure>
+<h2 id="评估性能">评估性能</h2>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> pickle</span><br><span class="line"></span><br><span class="line">pickle_path = <span class="string">&#x27;../datasets/ner/renmin/renmindata.pkl&#x27;</span></span><br><span class="line"><span class="keyword">with</span> <span class="built_in">open</span>(pickle_path, <span class="string">&#x27;rb&#x27;</span>) <span class="keyword">as</span> inp:</span><br><span class="line">    word2id = pickle.load(inp)</span><br><span class="line">    id2word = pickle.load(inp)</span><br><span class="line">    tag2id = pickle.load(inp)</span><br><span class="line">    id2tag = pickle.load(inp)</span><br><span class="line">    x_train = pickle.load(inp)</span><br><span class="line">    y_train = pickle.load(inp)</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 测试数据集</span></span><br><span class="line">    x_test = pickle.load(inp)</span><br><span class="line">    y_test = pickle.load(inp)</span><br><span class="line">    </span><br><span class="line">    x_valid = pickle.load(inp)</span><br><span class="line">    y_valid = pickle.load(inp)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;train len:&quot;</span>, <span class="built_in">len</span>(x_train))</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;test len:&quot;</span>, <span class="built_in">len</span>(x_test))</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;valid len:&quot;</span>, <span class="built_in">len</span>(x_valid))</span><br></pre></td></tr></table></figure>
+<pre><code>train len: 24271
+test len: 7585
+valid len: 6068</code></pre>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">x_test[<span class="number">0</span>], y_test[<span class="number">0</span>]</span><br></pre></td></tr></table></figure>
+<pre><code>(array([ 3, 33,  5,  2,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
+         0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
+         0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
+         0,  0,  0,  0,  0,  0,  0,  0,  0]),
+ array([3, 3, 5, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]))</code></pre>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">log_</span>(<span class="params">v</span>):</span></span><br><span class="line">    <span class="keyword">return</span> np.log(v + <span class="number">0.000001</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"># 解码</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">viterbi_decode</span>(<span class="params">x, pi, A, B</span>):</span></span><br><span class="line"></span><br><span class="line">    T = <span class="built_in">len</span>(x)</span><br><span class="line">    N = <span class="built_in">len</span>(tag2idx)</span><br><span class="line"></span><br><span class="line">    dp = np.full((T, N), <span class="built_in">float</span>(<span class="string">&#x27;-inf&#x27;</span>))</span><br><span class="line">    ptr = np.zeros_like(dp, dtype=np.int32)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    dp[<span class="number">0</span>] = log_(pi) + log_(A[:, x[<span class="number">0</span>]])</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">1</span>, T):</span><br><span class="line">        v = dp[i - <span class="number">1</span>].reshape(-<span class="number">1</span>, <span class="number">1</span>) + log_(B)</span><br><span class="line">        dp[i] = np.<span class="built_in">max</span>(v, axis=<span class="number">0</span>) + log_(A[:, x[i]])</span><br><span class="line">        ptr[i] = np.argmax(v, axis=<span class="number">0</span>)</span><br><span class="line">        </span><br><span class="line"></span><br><span class="line">    best_seq = [<span class="number">0</span>] * T</span><br><span class="line">    best_seq[-<span class="number">1</span>] = np.argmax(dp[-<span class="number">1</span>])</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(T - <span class="number">2</span>, -<span class="number">1</span>, -<span class="number">1</span>):</span><br><span class="line">        best_seq[i] = ptr[i + <span class="number">1</span>][best_seq[i + <span class="number">1</span>]]</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">return</span> best_seq</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> sklearn.metrics <span class="keyword">import</span> precision_score, recall_score, f1_score, classification_report</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">test</span>(<span class="params">x_test, y_test</span>):</span></span><br><span class="line">    preds, labels = [], []</span><br><span class="line">    <span class="keyword">for</span> index, x <span class="keyword">in</span> <span class="built_in">enumerate</span>(x_test):</span><br><span class="line">        x = x[:<span class="built_in">sum</span>(x &gt; <span class="number">0</span>)]</span><br><span class="line">        y_pred = viterbi_decode(x, pi, A, B)</span><br><span class="line">        y_true = y_test[index][:<span class="built_in">sum</span>(x &gt; <span class="number">0</span>)]</span><br><span class="line"></span><br><span class="line">        preds.extend(y_pred)</span><br><span class="line">        labels.extend(y_true)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 损失值与评测指标</span></span><br><span class="line">    precision = precision_score(labels, preds, average=<span class="string">&#x27;macro&#x27;</span>)</span><br><span class="line">    recall = recall_score(labels, preds, average=<span class="string">&#x27;macro&#x27;</span>)</span><br><span class="line">    f1 = f1_score(labels, preds, average=<span class="string">&#x27;macro&#x27;</span>)</span><br><span class="line">    report = classification_report(labels, preds)</span><br><span class="line">    <span class="built_in">print</span>(report)</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">test(x_test, y_test)</span><br></pre></td></tr></table></figure>
+<pre><code>              precision    recall  f1-score   support
+
+           0       0.73      0.69      0.71      2151
+           1       0.74      0.75      0.74      8090
+           2       0.89      0.78      0.83      3965
+           3       0.94      0.96      0.95     77532
+           4       0.92      0.83      0.87      3964
+           5       0.83      0.80      0.81      4522
+           6       0.66      0.70      0.68      2691
+           7       0.80      0.76      0.78      4524
+           8       0.88      0.84      0.86      3654
+           9       0.75      0.74      0.74      2146
+
+    accuracy                           0.90    113239
+   macro avg       0.81      0.78      0.80    113239
+weighted avg       0.90      0.90      0.90    113239</code></pre>
+<h2 id="进行预测">进行预测</h2>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"></span><br></pre></td></tr></table></figure>
+<h3 id="文本向量化">文本向量化</h3>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> re, pickle</span><br><span class="line"></span><br><span class="line"><span class="comment"># 文本向量化</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Tokenizer</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span>(<span class="params">self, vocab_file</span>):</span></span><br><span class="line">        <span class="keyword">with</span> <span class="built_in">open</span>(vocab_file, <span class="string">&#x27;rb&#x27;</span>) <span class="keyword">as</span> inp:</span><br><span class="line">            self.token2idx = pickle.load(inp)</span><br><span class="line">            self.idx2token = pickle.load(inp)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">encode</span>(<span class="params">self, text, maxlen</span>):</span></span><br><span class="line">        seqs = re.split(<span class="string">&#x27;[，。！？、‘’“”:]&#x27;</span>, text.strip())</span><br><span class="line">        </span><br><span class="line">        <span class="comment"># 将文本转换成索引</span></span><br><span class="line">        seq_ids = []</span><br><span class="line">        <span class="keyword">for</span> seq <span class="keyword">in</span> seqs:</span><br><span class="line">            token_ids = []</span><br><span class="line">            <span class="keyword">if</span> seq:</span><br><span class="line">                <span class="keyword">for</span> char <span class="keyword">in</span> seq:</span><br><span class="line">                    <span class="keyword">if</span> char <span class="keyword">not</span> <span class="keyword">in</span> self.token2idx:</span><br><span class="line">                        token_ids.append(self.token2idx[<span class="string">&#x27;[unknown]&#x27;</span>])</span><br><span class="line">                    <span class="keyword">else</span>:</span><br><span class="line">                        token_ids.append(self.token2idx[char])</span><br><span class="line">                seq_ids.append(token_ids)</span><br><span class="line">        </span><br><span class="line">        <span class="comment"># 等长化处理</span></span><br><span class="line">        num_samples = <span class="built_in">len</span>(seq_ids)</span><br><span class="line">        x = np.full((num_samples, maxlen), <span class="number">0.</span>, dtype=np.int64)</span><br><span class="line">        <span class="keyword">for</span> idx, s <span class="keyword">in</span> <span class="built_in">enumerate</span>(seq_ids):</span><br><span class="line">            trunc = np.array(s[:maxlen], dtype=np.int64)</span><br><span class="line">            x[idx, :<span class="built_in">len</span>(trunc)] = trunc</span><br><span class="line">        <span class="keyword">return</span> x</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">vocab_file = <span class="string">&quot;../datasets/ner/renmin/vocab.pkl&quot;</span></span><br><span class="line">tokenizer = Tokenizer(vocab_file)</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">text = <span class="string">&quot;新冠肺炎疫情发生后，以习近平同志为核心的党中央将疫情防控作为头等大事来抓，习近平\</span></span><br><span class="line"><span class="string">总书记亲自指挥、亲自部署，坚持把人民生命安全和身体健康放在第一位，领导全党全军全国各族人民打好疫情\</span></span><br><span class="line"><span class="string">防控的人民战争、总体战、阻击战。经过艰苦卓绝的努力，武汉保卫战、湖北保卫战取得决定性成果，疫情防控\</span></span><br><span class="line"><span class="string">阻击战取得重大战略成果，统筹推进疫情防控和经济社会发展工作取得积极成效。&quot;</span></span><br><span class="line"></span><br><span class="line">tokenizer.encode(text, maxlen=<span class="number">30</span>);</span><br></pre></td></tr></table></figure>
+<h3 id="进行预测-1">进行预测</h3>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">predict</span>(<span class="params">input_ids</span>):</span></span><br><span class="line">    res = []</span><br><span class="line">    <span class="keyword">for</span> idx, x <span class="keyword">in</span> <span class="built_in">enumerate</span>(input_ids):</span><br><span class="line">        x = x[x &gt; <span class="number">0</span>]</span><br><span class="line">        y_pred = viterbi_decode(x, pi, A, B)</span><br><span class="line">        res.append(y_pred)</span><br><span class="line">    <span class="keyword">return</span> res</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">input_ids = tokenizer.encode(text, maxlen=<span class="number">30</span>)</span><br><span class="line">predict(input_ids)</span><br></pre></td></tr></table></figure>
+<pre><code>[[3, 3, 3, 3, 3, 3, 3, 3, 3],
+ [3,
+  3,
+  3,
+  3,
+  3,
+  3,
+  3,
+  3,
+  3,
+  3,
+  9,
+  1,
+  0,
+  3,
+  3,
+  3,
+  3,
+  3,
+  3,
+  3,
+  3,
+  3,
+  3,
+  3,
+  3,
+  3],
+ [3, 3, 3, 3, 3, 3, 3, 3, 3, 3],
+ [3, 3, 3, 3],
+ [3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3],
+ [3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3],
+ [3, 3, 3],
+ [3, 3, 3],
+ [3, 3, 3, 3, 3, 3, 3, 3, 3],
+ [9, 1, 1, 1, 1],
+ [5, 7, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3],
+ [3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3],
+ [3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3]]</code></pre>
+<h3 id="预测向量转标签序列">预测向量转标签序列</h3>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Parser</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span>(<span class="params">self, tags_file</span>):</span></span><br><span class="line">        <span class="keyword">with</span> <span class="built_in">open</span>(tags_file, <span class="string">&quot;rb&quot;</span>) <span class="keyword">as</span> inp:</span><br><span class="line">            self.tag2idx = pickle.load(inp)</span><br><span class="line">            self.idx2tag = pickle.load(inp)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">decode</span>(<span class="params">self, text, paths</span>):</span></span><br><span class="line"></span><br><span class="line">        seqs = re.split(<span class="string">&#x27;[，。！？、‘’“”:]&#x27;</span>, text)</span><br><span class="line">        labels = [[self.idx2tag[idx] <span class="keyword">for</span> idx <span class="keyword">in</span> seq] <span class="keyword">for</span> seq <span class="keyword">in</span> paths]</span><br><span class="line"></span><br><span class="line">        res = []</span><br><span class="line">        <span class="keyword">for</span> sent, tags <span class="keyword">in</span> <span class="built_in">zip</span>(seqs, labels):</span><br><span class="line">            <span class="built_in">print</span>(tags)</span><br><span class="line">            tags = self._correct_tags(tags)</span><br><span class="line">            <span class="built_in">print</span>(tags)</span><br><span class="line">            <span class="built_in">print</span>(<span class="string">&#x27;-&#x27;</span>*<span class="number">100</span>)</span><br><span class="line">            res.append(<span class="built_in">list</span>(<span class="built_in">zip</span>(sent, tags)))</span><br><span class="line">        <span class="keyword">return</span> res</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">_correct_tags</span>(<span class="params">self, tags</span>):</span></span><br><span class="line">        stack = []</span><br><span class="line">        <span class="keyword">for</span> idx, tag <span class="keyword">in</span> <span class="built_in">enumerate</span>(tags):</span><br><span class="line">            <span class="comment"># 判断标签是否合理</span></span><br><span class="line">            <span class="keyword">if</span> tag.startswith(<span class="string">&quot;B&quot;</span>):</span><br><span class="line">                stack.append(idx)</span><br><span class="line">            <span class="keyword">elif</span> tag.startswith(<span class="string">&quot;M&quot;</span>) <span class="keyword">and</span> stack <span class="keyword">and</span> tags[</span><br><span class="line">                    stack[-<span class="number">1</span>]] == <span class="string">&#x27;B_&#x27;</span> + tag[<span class="number">2</span>:]:</span><br><span class="line">                <span class="keyword">continue</span></span><br><span class="line">            <span class="keyword">elif</span> tag.startswith(<span class="string">&quot;E&quot;</span>) <span class="keyword">and</span> stack <span class="keyword">and</span> tags[</span><br><span class="line">                    stack[-<span class="number">1</span>]] == <span class="string">&#x27;B_&#x27;</span> + tag[<span class="number">2</span>:]:</span><br><span class="line">                stack.pop()</span><br><span class="line">            <span class="keyword">else</span>:</span><br><span class="line">                stack.append(idx)</span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span> idx <span class="keyword">in</span> stack:</span><br><span class="line">            tags[idx] = <span class="string">&#x27;O&#x27;</span></span><br><span class="line">        <span class="keyword">return</span> tags</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">tags_file = <span class="string">&quot;../datasets/ner/renmin/tags.pkl&quot;</span></span><br><span class="line">parser = Parser(tags_file)</span><br><span class="line"></span><br><span class="line">paths = predict(input_ids)</span><br><span class="line"></span><br><span class="line">parser.decode(text, paths)</span><br></pre></td></tr></table></figure>
+<pre><code>[&#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;]
+[&#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;]
+----------------------------------------------------------------------------------------------------
+[&#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;B_nt&#39;, &#39;M_nt&#39;, &#39;E_nt&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;]
+[&#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;B_nt&#39;, &#39;M_nt&#39;, &#39;E_nt&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;]
+----------------------------------------------------------------------------------------------------
+[&#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;]
+[&#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;]
+----------------------------------------------------------------------------------------------------
+[&#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;]
+[&#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;]
+----------------------------------------------------------------------------------------------------
+[&#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;]
+[&#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;]
+----------------------------------------------------------------------------------------------------
+[&#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;]
+[&#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;]
+----------------------------------------------------------------------------------------------------
+[&#39;O&#39;, &#39;O&#39;, &#39;O&#39;]
+[&#39;O&#39;, &#39;O&#39;, &#39;O&#39;]
+----------------------------------------------------------------------------------------------------
+[&#39;O&#39;, &#39;O&#39;, &#39;O&#39;]
+[&#39;O&#39;, &#39;O&#39;, &#39;O&#39;]
+----------------------------------------------------------------------------------------------------
+[&#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;]
+[&#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;]
+----------------------------------------------------------------------------------------------------
+[&#39;B_nt&#39;, &#39;M_nt&#39;, &#39;M_nt&#39;, &#39;M_nt&#39;, &#39;M_nt&#39;]
+[&#39;O&#39;, &#39;M_nt&#39;, &#39;M_nt&#39;, &#39;M_nt&#39;, &#39;M_nt&#39;]
+----------------------------------------------------------------------------------------------------
+[&#39;B_ns&#39;, &#39;E_ns&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;]
+[&#39;B_ns&#39;, &#39;E_ns&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;]
+----------------------------------------------------------------------------------------------------
+[&#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;]
+[&#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;]
+----------------------------------------------------------------------------------------------------
+[&#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;]
+[&#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;]
+----------------------------------------------------------------------------------------------------
+
+
+
+
+
+[[(&#39;新&#39;, &#39;O&#39;),
+  (&#39;冠&#39;, &#39;O&#39;),
+  (&#39;肺&#39;, &#39;O&#39;),
+  (&#39;炎&#39;, &#39;O&#39;),
+  (&#39;疫&#39;, &#39;O&#39;),
+  (&#39;情&#39;, &#39;O&#39;),
+  (&#39;发&#39;, &#39;O&#39;),
+  (&#39;生&#39;, &#39;O&#39;),
+  (&#39;后&#39;, &#39;O&#39;)],
+ [(&#39;以&#39;, &#39;O&#39;),
+  (&#39;习&#39;, &#39;O&#39;),
+  (&#39;近&#39;, &#39;O&#39;),
+  (&#39;平&#39;, &#39;O&#39;),
+  (&#39;同&#39;, &#39;O&#39;),
+  (&#39;志&#39;, &#39;O&#39;),
+  (&#39;为&#39;, &#39;O&#39;),
+  (&#39;核&#39;, &#39;O&#39;),
+  (&#39;心&#39;, &#39;O&#39;),
+  (&#39;的&#39;, &#39;O&#39;),
+  (&#39;党&#39;, &#39;B_nt&#39;),
+  (&#39;中&#39;, &#39;M_nt&#39;),
+  (&#39;央&#39;, &#39;E_nt&#39;),
+  (&#39;将&#39;, &#39;O&#39;),
+  (&#39;疫&#39;, &#39;O&#39;),
+  (&#39;情&#39;, &#39;O&#39;),
+  (&#39;防&#39;, &#39;O&#39;),
+  (&#39;控&#39;, &#39;O&#39;),
+  (&#39;作&#39;, &#39;O&#39;),
+  (&#39;为&#39;, &#39;O&#39;),
+  (&#39;头&#39;, &#39;O&#39;),
+  (&#39;等&#39;, &#39;O&#39;),
+  (&#39;大&#39;, &#39;O&#39;),
+  (&#39;事&#39;, &#39;O&#39;),
+  (&#39;来&#39;, &#39;O&#39;),
+  (&#39;抓&#39;, &#39;O&#39;)],
+ [(&#39;习&#39;, &#39;O&#39;),
+  (&#39;近&#39;, &#39;O&#39;),
+  (&#39;平&#39;, &#39;O&#39;),
+  (&#39;总&#39;, &#39;O&#39;),
+  (&#39;书&#39;, &#39;O&#39;),
+  (&#39;记&#39;, &#39;O&#39;),
+  (&#39;亲&#39;, &#39;O&#39;),
+  (&#39;自&#39;, &#39;O&#39;),
+  (&#39;指&#39;, &#39;O&#39;),
+  (&#39;挥&#39;, &#39;O&#39;)],
+ [(&#39;亲&#39;, &#39;O&#39;), (&#39;自&#39;, &#39;O&#39;), (&#39;部&#39;, &#39;O&#39;), (&#39;署&#39;, &#39;O&#39;)],
+ [(&#39;坚&#39;, &#39;O&#39;),
+  (&#39;持&#39;, &#39;O&#39;),
+  (&#39;把&#39;, &#39;O&#39;),
+  (&#39;人&#39;, &#39;O&#39;),
+  (&#39;民&#39;, &#39;O&#39;),
+  (&#39;生&#39;, &#39;O&#39;),
+  (&#39;命&#39;, &#39;O&#39;),
+  (&#39;安&#39;, &#39;O&#39;),
+  (&#39;全&#39;, &#39;O&#39;),
+  (&#39;和&#39;, &#39;O&#39;),
+  (&#39;身&#39;, &#39;O&#39;),
+  (&#39;体&#39;, &#39;O&#39;),
+  (&#39;健&#39;, &#39;O&#39;),
+  (&#39;康&#39;, &#39;O&#39;),
+  (&#39;放&#39;, &#39;O&#39;),
+  (&#39;在&#39;, &#39;O&#39;),
+  (&#39;第&#39;, &#39;O&#39;),
+  (&#39;一&#39;, &#39;O&#39;),
+  (&#39;位&#39;, &#39;O&#39;)],
+ [(&#39;领&#39;, &#39;O&#39;),
+  (&#39;导&#39;, &#39;O&#39;),
+  (&#39;全&#39;, &#39;O&#39;),
+  (&#39;党&#39;, &#39;O&#39;),
+  (&#39;全&#39;, &#39;O&#39;),
+  (&#39;军&#39;, &#39;O&#39;),
+  (&#39;全&#39;, &#39;O&#39;),
+  (&#39;国&#39;, &#39;O&#39;),
+  (&#39;各&#39;, &#39;O&#39;),
+  (&#39;族&#39;, &#39;O&#39;),
+  (&#39;人&#39;, &#39;O&#39;),
+  (&#39;民&#39;, &#39;O&#39;),
+  (&#39;打&#39;, &#39;O&#39;),
+  (&#39;好&#39;, &#39;O&#39;),
+  (&#39;疫&#39;, &#39;O&#39;),
+  (&#39;情&#39;, &#39;O&#39;),
+  (&#39;防&#39;, &#39;O&#39;),
+  (&#39;控&#39;, &#39;O&#39;),
+  (&#39;的&#39;, &#39;O&#39;),
+  (&#39;人&#39;, &#39;O&#39;),
+  (&#39;民&#39;, &#39;O&#39;),
+  (&#39;战&#39;, &#39;O&#39;),
+  (&#39;争&#39;, &#39;O&#39;)],
+ [(&#39;总&#39;, &#39;O&#39;), (&#39;体&#39;, &#39;O&#39;), (&#39;战&#39;, &#39;O&#39;)],
+ [(&#39;阻&#39;, &#39;O&#39;), (&#39;击&#39;, &#39;O&#39;), (&#39;战&#39;, &#39;O&#39;)],
+ [(&#39;经&#39;, &#39;O&#39;),
+  (&#39;过&#39;, &#39;O&#39;),
+  (&#39;艰&#39;, &#39;O&#39;),
+  (&#39;苦&#39;, &#39;O&#39;),
+  (&#39;卓&#39;, &#39;O&#39;),
+  (&#39;绝&#39;, &#39;O&#39;),
+  (&#39;的&#39;, &#39;O&#39;),
+  (&#39;努&#39;, &#39;O&#39;),
+  (&#39;力&#39;, &#39;O&#39;)],
+ [(&#39;武&#39;, &#39;O&#39;), (&#39;汉&#39;, &#39;M_nt&#39;), (&#39;保&#39;, &#39;M_nt&#39;), (&#39;卫&#39;, &#39;M_nt&#39;), (&#39;战&#39;, &#39;M_nt&#39;)],
+ [(&#39;湖&#39;, &#39;B_ns&#39;),
+  (&#39;北&#39;, &#39;E_ns&#39;),
+  (&#39;保&#39;, &#39;O&#39;),
+  (&#39;卫&#39;, &#39;O&#39;),
+  (&#39;战&#39;, &#39;O&#39;),
+  (&#39;取&#39;, &#39;O&#39;),
+  (&#39;得&#39;, &#39;O&#39;),
+  (&#39;决&#39;, &#39;O&#39;),
+  (&#39;定&#39;, &#39;O&#39;),
+  (&#39;性&#39;, &#39;O&#39;),
+  (&#39;成&#39;, &#39;O&#39;),
+  (&#39;果&#39;, &#39;O&#39;)],
+ [(&#39;疫&#39;, &#39;O&#39;),
+  (&#39;情&#39;, &#39;O&#39;),
+  (&#39;防&#39;, &#39;O&#39;),
+  (&#39;控&#39;, &#39;O&#39;),
+  (&#39;阻&#39;, &#39;O&#39;),
+  (&#39;击&#39;, &#39;O&#39;),
+  (&#39;战&#39;, &#39;O&#39;),
+  (&#39;取&#39;, &#39;O&#39;),
+  (&#39;得&#39;, &#39;O&#39;),
+  (&#39;重&#39;, &#39;O&#39;),
+  (&#39;大&#39;, &#39;O&#39;),
+  (&#39;战&#39;, &#39;O&#39;),
+  (&#39;略&#39;, &#39;O&#39;),
+  (&#39;成&#39;, &#39;O&#39;),
+  (&#39;果&#39;, &#39;O&#39;)],
+ [(&#39;统&#39;, &#39;O&#39;),
+  (&#39;筹&#39;, &#39;O&#39;),
+  (&#39;推&#39;, &#39;O&#39;),
+  (&#39;进&#39;, &#39;O&#39;),
+  (&#39;疫&#39;, &#39;O&#39;),
+  (&#39;情&#39;, &#39;O&#39;),
+  (&#39;防&#39;, &#39;O&#39;),
+  (&#39;控&#39;, &#39;O&#39;),
+  (&#39;和&#39;, &#39;O&#39;),
+  (&#39;经&#39;, &#39;O&#39;),
+  (&#39;济&#39;, &#39;O&#39;),
+  (&#39;社&#39;, &#39;O&#39;),
+  (&#39;会&#39;, &#39;O&#39;),
+  (&#39;发&#39;, &#39;O&#39;),
+  (&#39;展&#39;, &#39;O&#39;),
+  (&#39;工&#39;, &#39;O&#39;),
+  (&#39;作&#39;, &#39;O&#39;),
+  (&#39;取&#39;, &#39;O&#39;),
+  (&#39;得&#39;, &#39;O&#39;),
+  (&#39;积&#39;, &#39;O&#39;),
+  (&#39;极&#39;, &#39;O&#39;),
+  (&#39;成&#39;, &#39;O&#39;),
+  (&#39;效&#39;, &#39;O&#39;)]]</code></pre>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ttt = [(<span class="string">&#x27;武&#x27;</span>, <span class="string">&#x27;O&#x27;</span>), (<span class="string">&#x27;汉&#x27;</span>, <span class="string">&#x27;M_nt&#x27;</span>), (<span class="string">&#x27;保&#x27;</span>, <span class="string">&#x27;M_nt&#x27;</span>), (<span class="string">&#x27;卫&#x27;</span>, <span class="string">&#x27;M_nt&#x27;</span>), (<span class="string">&#x27;战&#x27;</span>, <span class="string">&#x27;M_nt&#x27;</span>)]</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tttags = [tmp[<span class="number">1</span>] <span class="keyword">for</span> tmp <span class="keyword">in</span> ttt]</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tttags</span><br></pre></td></tr></table></figure>
+<pre><code>[&#39;O&#39;, &#39;M_nt&#39;, &#39;M_nt&#39;, &#39;M_nt&#39;, &#39;M_nt&#39;]</code></pre>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">parser._correct_tags(tttags)</span><br></pre></td></tr></table></figure>
+<pre><code>[&#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;, &#39;O&#39;]</code></pre>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">seqs = re.findall(<span class="string">&#x27;[，。！？、‘’“”:]&#x27;</span>, text.strip())</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">seqs</span><br></pre></td></tr></table></figure>
+<pre><code>[&#39;，&#39;, &#39;，&#39;, &#39;、&#39;, &#39;，&#39;, &#39;，&#39;, &#39;、&#39;, &#39;、&#39;, &#39;。&#39;, &#39;，&#39;, &#39;、&#39;, &#39;，&#39;, &#39;，&#39;, &#39;。&#39;]</code></pre>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">text[<span class="number">9</span>]</span><br></pre></td></tr></table></figure>
+<pre><code>&#39;，&#39;</code></pre>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">text[<span class="number">10</span>]</span><br></pre></td></tr></table></figure>
+<pre><code>&#39;以&#39;</code></pre>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> string</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">string.punctuation</span><br></pre></td></tr></table></figure>
+<pre><code>&#39;!&quot;#$%&amp;\&#39;()*+,-./:;&lt;=&gt;?@[\\]^_`&#123;|&#125;~&#39;</code></pre>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Tokenizer</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span>(<span class="params">self, vocab_file</span>):</span></span><br><span class="line">        <span class="keyword">with</span> <span class="built_in">open</span>(vocab_file, <span class="string">&#x27;rb&#x27;</span>) <span class="keyword">as</span> inp:</span><br><span class="line">            self.token2idx = pickle.load(inp)</span><br><span class="line">            self.idx2token = pickle.load(inp)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">encode</span>(<span class="params">self, text</span>):</span></span><br><span class="line">        sep = <span class="built_in">set</span>(<span class="string">&#x27;，。！？、‘’“”:&#x27;</span>)</span><br><span class="line">        </span><br><span class="line">        res = &#123;&#125;</span><br><span class="line">        </span><br><span class="line">        start = <span class="number">0</span></span><br><span class="line">        end = <span class="number">0</span></span><br><span class="line">        <span class="keyword">for</span> idx, char <span class="keyword">in</span> <span class="built_in">enumerate</span>(text):</span><br><span class="line">            end = idx</span><br><span class="line">            <span class="keyword">if</span> char <span class="keyword">in</span> sep:</span><br><span class="line">                ids = [self.token2idx[char] <span class="keyword">for</span> char <span class="keyword">in</span> text[start:end]]</span><br><span class="line">                res[(start,end)] = ids</span><br><span class="line">                start</span><br><span class="line">                </span><br><span class="line">                </span><br><span class="line">            </span><br><span class="line">        seqs = re.split(<span class="string">&#x27;[，。！？、‘’“”:]&#x27;</span>, text.strip())</span><br><span class="line">        </span><br><span class="line">        <span class="comment"># 将文本转换成索引</span></span><br><span class="line">        seq_ids = []</span><br><span class="line">        <span class="keyword">for</span> seq <span class="keyword">in</span> seqs:</span><br><span class="line">            token_ids = []</span><br><span class="line">            <span class="keyword">if</span> seq:</span><br><span class="line">                <span class="keyword">for</span> char <span class="keyword">in</span> seq:</span><br><span class="line">                    <span class="keyword">if</span> char <span class="keyword">not</span> <span class="keyword">in</span> self.token2idx:</span><br><span class="line">                        token_ids.append(self.token2idx[<span class="string">&#x27;[unknown]&#x27;</span>])</span><br><span class="line">                    <span class="keyword">else</span>:</span><br><span class="line">                        token_ids.append(self.token2idx[char])</span><br><span class="line">                seq_ids.append(token_ids)</span><br><span class="line">        </span><br><span class="line">        <span class="comment"># 等长化处理</span></span><br><span class="line">        num_samples = <span class="built_in">len</span>(seq_ids)</span><br><span class="line">        x = np.full((num_samples, maxlen), <span class="number">0.</span>, dtype=np.int64)</span><br><span class="line">        <span class="keyword">for</span> idx, s <span class="keyword">in</span> <span class="built_in">enumerate</span>(seq_ids):</span><br><span class="line">            trunc = np.array(s[:maxlen], dtype=np.int64)</span><br><span class="line">            x[idx, :<span class="built_in">len</span>(trunc)] = trunc</span><br><span class="line">        <span class="keyword">return</span> x</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"></span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">text = <span class="string">&quot;新冠肺炎疫情发生后，以习近平同志为核心的党中央将疫情防控作为头等大事来抓，习近平\</span></span><br><span class="line"><span class="string">总书记亲自指挥、亲自部署，坚持把人民生命安全和身体健康放在第一位，领导全党全军全国各族人民打好疫情\</span></span><br><span class="line"><span class="string">防控的人民战争、总体战、阻击战。经过艰苦卓绝的努力，武汉保卫战、湖北保卫战取得决定性成果，疫情防控\</span></span><br><span class="line"><span class="string">阻击战取得重大战略成果，统筹推进疫情防控和经济社会发展工作取得积极成效。&quot;</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">res = []</span><br><span class="line">start = <span class="number">0</span></span><br><span class="line"><span class="keyword">for</span> m <span class="keyword">in</span> re.finditer(<span class="string">&#x27;[，。！？、‘’“”:]&#x27;</span>, text):</span><br><span class="line">    end = m.span()[<span class="number">0</span>]</span><br><span class="line">    seg = text[start:end]</span><br><span class="line">    seg_ids = [token2idx[token] <span class="keyword">for</span> token <span class="keyword">in</span> seg]</span><br><span class="line">    seg_labels = viterbi_decode(seg_ids, pi, A, B)</span><br><span class="line">    res.append(<span class="built_in">list</span>(<span class="built_in">zip</span>(<span class="built_in">list</span>(<span class="built_in">range</span>(start, end)), seg_labels)))</span><br><span class="line">    start = m.span()[<span class="number">1</span>]</span><br><span class="line">res</span><br></pre></td></tr></table></figure>
+<pre><code>[[(0, 3), (1, 3), (2, 3), (3, 3), (4, 3), (5, 3), (6, 3), (7, 3), (8, 3)],
+ [(10, 3),
+  (11, 3),
+  (12, 3),
+  (13, 3),
+  (14, 3),
+  (15, 3),
+  (16, 3),
+  (17, 3),
+  (18, 3),
+  (19, 3),
+  (20, 9),
+  (21, 1),
+  (22, 0),
+  (23, 3),
+  (24, 3),
+  (25, 3),
+  (26, 3),
+  (27, 3),
+  (28, 3),
+  (29, 3),
+  (30, 3),
+  (31, 3),
+  (32, 3),
+  (33, 3),
+  (34, 3),
+  (35, 3)],
+ [(37, 3),
+  (38, 3),
+  (39, 3),
+  (40, 3),
+  (41, 3),
+  (42, 3),
+  (43, 3),
+  (44, 3),
+  (45, 3),
+  (46, 3)],
+ [(48, 3), (49, 3), (50, 3), (51, 3)],
+ [(53, 3),
+  (54, 3),
+  (55, 3),
+  (56, 3),
+  (57, 3),
+  (58, 3),
+  (59, 3),
+  (60, 3),
+  (61, 3),
+  (62, 3),
+  (63, 3),
+  (64, 3),
+  (65, 3),
+  (66, 3),
+  (67, 3),
+  (68, 3),
+  (69, 3),
+  (70, 3),
+  (71, 3)],
+ [(73, 3),
+  (74, 3),
+  (75, 3),
+  (76, 3),
+  (77, 3),
+  (78, 3),
+  (79, 3),
+  (80, 3),
+  (81, 3),
+  (82, 3),
+  (83, 3),
+  (84, 3),
+  (85, 3),
+  (86, 3),
+  (87, 3),
+  (88, 3),
+  (89, 3),
+  (90, 3),
+  (91, 3),
+  (92, 3),
+  (93, 3),
+  (94, 3),
+  (95, 3)],
+ [(97, 3), (98, 3), (99, 3)],
+ [(101, 3), (102, 3), (103, 3)],
+ [(105, 3),
+  (106, 3),
+  (107, 3),
+  (108, 3),
+  (109, 3),
+  (110, 3),
+  (111, 3),
+  (112, 3),
+  (113, 3)],
+ [(115, 9), (116, 1), (117, 1), (118, 1), (119, 1)],
+ [(121, 5),
+  (122, 7),
+  (123, 3),
+  (124, 3),
+  (125, 3),
+  (126, 3),
+  (127, 3),
+  (128, 3),
+  (129, 3),
+  (130, 3),
+  (131, 3),
+  (132, 3)],
+ [(134, 3),
+  (135, 3),
+  (136, 3),
+  (137, 3),
+  (138, 3),
+  (139, 3),
+  (140, 3),
+  (141, 3),
+  (142, 3),
+  (143, 3),
+  (144, 3),
+  (145, 3),
+  (146, 3),
+  (147, 3),
+  (148, 3)],
+ [(150, 3),
+  (151, 3),
+  (152, 3),
+  (153, 3),
+  (154, 3),
+  (155, 3),
+  (156, 3),
+  (157, 3),
+  (158, 3),
+  (159, 3),
+  (160, 3),
+  (161, 3),
+  (162, 3),
+  (163, 3),
+  (164, 3),
+  (165, 3),
+  (166, 3),
+  (167, 3),
+  (168, 3),
+  (169, 3),
+  (170, 3),
+  (171, 3),
+  (172, 3)]]</code></pre>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> seg <span class="keyword">in</span> res:</span><br><span class="line">    <span class="keyword">for</span> idx, tag_id <span class="keyword">in</span> seg:</span><br><span class="line">        <span class="built_in">print</span>(text[idx], idx2tag[tag_id])</span><br></pre></td></tr></table></figure>
+<pre><code>新 O
+冠 O
+肺 O
+炎 O
+疫 O
+情 O
+发 O
+生 O
+后 O
+以 O
+习 O
+近 O
+平 O
+同 O
+志 O
+为 O
+核 O
+心 O
+的 O
+党 B_nt
+中 M_nt
+央 E_nt
+将 O
+疫 O
+情 O
+防 O
+控 O
+作 O
+为 O
+头 O
+等 O
+大 O
+事 O
+来 O
+抓 O
+习 O
+近 O
+平 O
+总 O
+书 O
+记 O
+亲 O
+自 O
+指 O
+挥 O
+亲 O
+自 O
+部 O
+署 O
+坚 O
+持 O
+把 O
+人 O
+民 O
+生 O
+命 O
+安 O
+全 O
+和 O
+身 O
+体 O
+健 O
+康 O
+放 O
+在 O
+第 O
+一 O
+位 O
+领 O
+导 O
+全 O
+党 O
+全 O
+军 O
+全 O
+国 O
+各 O
+族 O
+人 O
+民 O
+打 O
+好 O
+疫 O
+情 O
+防 O
+控 O
+的 O
+人 O
+民 O
+战 O
+争 O
+总 O
+体 O
+战 O
+阻 O
+击 O
+战 O
+经 O
+过 O
+艰 O
+苦 O
+卓 O
+绝 O
+的 O
+努 O
+力 O
+武 B_nt
+汉 M_nt
+保 M_nt
+卫 M_nt
+战 M_nt
+湖 B_ns
+北 E_ns
+保 O
+卫 O
+战 O
+取 O
+得 O
+决 O
+定 O
+性 O
+成 O
+果 O
+疫 O
+情 O
+防 O
+控 O
+阻 O
+击 O
+战 O
+取 O
+得 O
+重 O
+大 O
+战 O
+略 O
+成 O
+果 O
+统 O
+筹 O
+推 O
+进 O
+疫 O
+情 O
+防 O
+控 O
+和 O
+经 O
+济 O
+社 O
+会 O
+发 O
+展 O
+工 O
+作 O
+取 O
+得 O
+积 O
+极 O
+成 O
+效 O</code></pre>
+</div><div class="article-licensing box"><div class="licensing-title"><p>基于HMM和Viterbi算法的序列标注</p><p><a href="https://hunlp.com/posts/553.html">https://hunlp.com/posts/553.html</a></p></div><div class="licensing-meta level is-mobile"><div class="level-left"><div class="level-item is-narrow"><div><h6>作者</h6><p>ฅ´ω`ฅ</p></div></div><div class="level-item is-narrow"><div><h6>发布于</h6><p>2021-06-06</p></div></div><div class="level-item is-narrow"><div><h6>更新于</h6><p>2021-06-06</p></div></div><div class="level-item is-narrow"><div><h6>许可协议</h6><p><a class="icons" rel="noopener" target="_blank" title="Creative Commons" href="https://creativecommons.org/"><i class="icon fab fa-creative-commons"></i></a><a class="icons" rel="noopener" target="_blank" title="Attribution" href="https://creativecommons.org/licenses/by/4.0/"><i class="icon fab fa-creative-commons-by"></i></a><a class="icons" rel="noopener" target="_blank" title="Noncommercial" href="https://creativecommons.org/licenses/by-nc/4.0/"><i class="icon fab fa-creative-commons-nc"></i></a></p></div></div></div></div></div><hr style="height:1px;margin:1rem 0"><div class="level is-mobile is-flex"><div class="article-tags is-size-7 is-uppercase"><i class="fas fa-tags has-text-grey"></i> <a class="link-muted" rel="tag" href="/tags/HMM/">HMM, </a><a class="link-muted" rel="tag" href="/tags/Viterbi/">Viterbi </a></div></div><div class="bdsharebuttonbox"><a class="bds_more" href="#" data-cmd="more"></a><a class="bds_qzone" href="#" data-cmd="qzone" title="分享到QQ空间"></a><a class="bds_tsina" href="#" data-cmd="tsina" title="分享到新浪微博"></a><a class="bds_tqq" href="#" data-cmd="tqq" title="分享到腾讯微博"></a><a class="bds_renren" href="#" data-cmd="renren" title="分享到人人网"></a><a class="bds_weixin" href="#" data-cmd="weixin" title="分享到微信"></a></div><script>window._bd_share_config = { "common": { "bdSnsKey": {}, "bdText": "", "bdMini": "2", "bdPic": "", "bdStyle": "0", "bdSize": "16" }, "share": {} }; with (document) 0[(getElementsByTagName('head')[0] || body).appendChild(createElement('script')).src = 'http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion=' + ~(-new Date() / 36e5)];</script></article></div><div class="card"><div class="card-content"><h3 class="menu-label has-text-centered">喜欢这篇文章？打赏一下作者吧</h3><div class="buttons is-centered"><a class="button donate" data-type="alipay"><span class="icon is-small"><i class="fab fa-alipay"></i></span><span>支付宝</span><span class="qrcode"><img src="/img/zfb.jpg" alt="支付宝"></span></a><a class="button donate" data-type="wechat"><span class="icon is-small"><i class="fab fa-weixin"></i></span><span>微信</span><span class="qrcode"><img src="/img/wx.jpg" alt="微信"></span></a></div></div></div><nav class="post-navigation mt-4 level is-mobile"><div class="level-start"><a class="article-nav-prev level level-item link-muted" href="/posts/17970.html"><i class="level-item fas fa-chevron-left"></i><span class="level-item">BERT基本原理及运用</span></a></div><div class="level-end"><a class="article-nav-next level level-item link-muted" href="/posts/52952.html"><span class="level-item">Transformer模型及源代码</span><i class="level-item fas fa-chevron-right"></i></a></div></nav><div class="card"><div class="card-content"><h3 class="title is-5">评论</h3><div id="comment-container"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1.7.2/dist/gitalk.css"><script src="https://cdn.jsdelivr.net/npm/gitalk@1.7.2/dist/gitalk.min.js"></script><script>var gitalk = new Gitalk({
+            id: "01063cf8b7a754d09472769fd193095f",
+            repo: "Cartride.github.io",
+            owner: "Cartride",
+            clientID: "8f4a2426c347380a6ee4",
+            clientSecret: "8dc8cd44b071426b35d0bd60634941371170b798",
+            admin: ["Cartride"],
+            createIssueManually: false,
+            distractionFreeMode: false,
+            perPage: 10,
+            pagerDirection: "last",
+            
+            
+            enableHotKey: true,
+            
+        })
+        gitalk.render('comment-container')</script></div></div></div><div class="column column-left is-4-tablet is-4-desktop is-3-widescreen  order-1 is-sticky"><div class="card widget" id="toc" data-type="toc"><div class="card-content"><div class="menu"><h3 class="menu-label">目录</h3><ul class="menu-list"><li><a class="level is-mobile" href="#hmm生成模型"><span class="level-left"><span class="level-item">1</span><span class="level-item">HMM生成模型</span></span></a></li><li><a class="level is-mobile" href="#实战词性标注"><span class="level-left"><span class="level-item">2</span><span class="level-item">实战：词性标注</span></span></a><ul class="menu-list"><li><a class="level is-mobile" href="#创建词汇表"><span class="level-left"><span class="level-item">2.1</span><span class="level-item">创建词汇表</span></span></a></li><li><a class="level is-mobile" href="#发射矩阵和转移矩阵"><span class="level-left"><span class="level-item">2.2</span><span class="level-item">发射矩阵和转移矩阵</span></span></a></li><li><a class="level is-mobile" href="#维特比算法求解最优标注"><span class="level-left"><span class="level-item">2.3</span><span class="level-item">维特比算法求解最优标注</span></span></a></li></ul></li><li><a class="level is-mobile" href="#实战命名实体识别"><span class="level-left"><span class="level-item">3</span><span class="level-item">实战：命名实体识别</span></span></a><ul class="menu-list"><li><a class="level is-mobile" href="#根据语料获取转移矩阵与发射矩阵"><span class="level-left"><span class="level-item">3.1</span><span class="level-item">根据语料获取转移矩阵与发射矩阵</span></span></a></li><li><a class="level is-mobile" href="#评估性能"><span class="level-left"><span class="level-item">3.2</span><span class="level-item">评估性能</span></span></a></li><li><a class="level is-mobile" href="#进行预测"><span class="level-left"><span class="level-item">3.3</span><span class="level-item">进行预测</span></span></a><ul class="menu-list"><li><a class="level is-mobile" href="#文本向量化"><span class="level-left"><span class="level-item">3.3.1</span><span class="level-item">文本向量化</span></span></a></li><li><a class="level is-mobile" href="#进行预测-1"><span class="level-left"><span class="level-item">3.3.2</span><span class="level-item">进行预测</span></span></a></li><li><a class="level is-mobile" href="#预测向量转标签序列"><span class="level-left"><span class="level-item">3.3.3</span><span class="level-item">预测向量转标签序列</span></span></a></li></ul></li></ul></li></ul></div></div><style>#toc .menu-list > li > a.is-active + .menu-list { display: block; }#toc .menu-list > li > a + .menu-list { display: none; }</style><script src="/js/toc.js" defer></script></div></div><!--!--></div></div></section><footer class="footer"><div class="container"><div class="level"><div class="level-start"><a class="footer-logo is-block mb-2" href="/"><img src="/img/logo.png" alt="MCFON" height="28"></a><p class="is-size-7"><span>&copy; 2022 ฅ´ω`ฅ</span>  Powered by <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a> &amp; <a href="https://github.com/ppoffice/hexo-theme-icarus" target="_blank" rel="noopener">Icarus</a></p></div><div class="level-end"><div class="field has-addons"><p class="control"><a class="button is-transparent is-large" target="_blank" rel="noopener" title="Creative Commons" href="https://creativecommons.org/"><i class="fab fa-creative-commons"></i></a></p><p class="control"><a class="button is-transparent is-large" target="_blank" rel="noopener" title="Attribution 4.0 International" href="https://creativecommons.org/licenses/by/4.0/"><i class="fab fa-creative-commons-by"></i></a></p><p class="control"><a class="button is-transparent is-large" target="_blank" rel="noopener" title="Download on GitHub" href="https://github.com/ppoffice/hexo-theme-icarus"><i class="fab fa-github"></i></a></p></div></div></div></div></footer><script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script><script src="https://cdn.jsdelivr.net/npm/moment@2.22.2/min/moment-with-locales.min.js"></script><script src="https://cdn.jsdelivr.net/npm/clipboard@2.0.4/dist/clipboard.min.js" defer></script><script>moment.locale("zh-CN");</script><script>var IcarusThemeSettings = {
+            article: {
+                highlight: {
+                    clipboard: true,
+                    fold: 'unfolded'
+                }
+            }
+        };</script><script src="/js/column.js"></script><script src="/js/animation.js"></script><a id="back-to-top" title="回到顶端" href="javascript:;"><i class="fas fa-chevron-up"></i></a><script src="/js/back_to_top.js" defer></script><!--!--><!--!--><!--!--><script src="https://cdn.jsdelivr.net/npm/cookieconsent@3.1.1/build/cookieconsent.min.js" defer></script><script>window.addEventListener("load", () => {
+      window.cookieconsent.initialise({
+        type: "info",
+        theme: "edgeless",
+        static: false,
+        position: "bottom-left",
+        content: {
+          message: "此网站使用Cookie来改善您的体验。",
+          dismiss: "知道了！",
+          allow: "允许使用Cookie",
+          deny: "拒绝",
+          link: "了解更多",
+          policy: "Cookie政策",
+          href: "https://www.cookiesandyou.com/",
+        },
+        palette: {
+          popup: {
+            background: "#edeff5",
+            text: "#838391"
+          },
+          button: {
+            background: "#4b81e8"
+          },
+        },
+      });
+    });</script><script src="https://cdn.jsdelivr.net/npm/lightgallery@1.6.8/dist/js/lightgallery.min.js" defer></script><script src="https://cdn.jsdelivr.net/npm/justifiedGallery@3.7.0/dist/js/jquery.justifiedGallery.min.js" defer></script><script>window.addEventListener("load", () => {
+            if (typeof $.fn.lightGallery === 'function') {
+                $('.article').lightGallery({ selector: '.gallery-item' });
+            }
+            if (typeof $.fn.justifiedGallery === 'function') {
+                if ($('.justified-gallery > p > .gallery-item').length) {
+                    $('.justified-gallery > p > .gallery-item').unwrap();
+                }
+                $('.justified-gallery').justifiedGallery();
+            }
+        });</script><!--!--><!--!--><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.css"><script src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.js" defer></script><script src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/contrib/auto-render.min.js" defer></script><script src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/contrib/mhchem.js" defer></script><script>window.addEventListener("load", function() {
+            document.querySelectorAll('[role="article"] > .content').forEach(function(element) {
+                renderMathInElement(element);
+            });
+        });</script><script type="text/x-mathjax-config">MathJax.Hub.Config({
+            'HTML-CSS': {
+                matchFontHeight: false
+            },
+            SVG: {
+                matchFontHeight: false
+            },
+            CommonHTML: {
+                matchFontHeight: false
+            },
+            tex2jax: {
+                inlineMath: [
+                    ['$','$'],
+                    ['\\(','\\)']
+                ]
+            }
+        });</script><script src="https://cdn.jsdelivr.net/npm/mathjax@2.7.5/unpacked/MathJax.js?config=TeX-MML-AM_CHTML" defer></script><!--!--><!--!--><!--!--><script src="/js/main.js" defer></script><div class="searchbox"><div class="searchbox-container"><div class="searchbox-header"><div class="searchbox-input-container"><input class="searchbox-input" type="text" placeholder="想要查找什么..."></div><a class="searchbox-close" href="javascript:;">×</a></div><div class="searchbox-body"></div></div></div><script src="/js/insight.js" defer></script><script>document.addEventListener('DOMContentLoaded', function () {
+            loadInsight({"contentUrl":"/content.json"}, {"hint":"想要查找什么...","untitled":"(无标题)","posts":"文章","pages":"页面","categories":"分类","tags":"标签"});
+        });</script></body></html>

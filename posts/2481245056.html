@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="zh"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"><meta><title>条件随机场CRF(二) 前向后向算法评估标记序列概率 - MCFON</title><link rel="manifest" href="/manifest.json"><meta name="application-name" content="MCFON"><meta name="msapplication-TileImage" content="/img/favicon.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="MCFON"><meta name="apple-mobile-web-app-status-bar-style" content="default"><meta name="description" content="在条件随机场CRF(一)中我们总结了CRF的模型，主要是linear-CRF的模型原理。本文就继续讨论linear-CRF需要解决的三个问题：评估，学习和解码。这三个问题和HMM是非常类似的，本文关注于第一个问题：评估。第二个和第三个问题会在下一篇总结。"><meta property="og:type" content="blog"><meta property="og:title" content="条件随机场CRF(二) 前向后向算法评估标记序列概率"><meta property="og:url" content="https://hunlp.com/posts/2481245056.html"><meta property="og:site_name" content="MCFON"><meta property="og:description" content="在条件随机场CRF(一)中我们总结了CRF的模型，主要是linear-CRF的模型原理。本文就继续讨论linear-CRF需要解决的三个问题：评估，学习和解码。这三个问题和HMM是非常类似的，本文关注于第一个问题：评估。第二个和第三个问题会在下一篇总结。"><meta property="og:locale" content="zh_CN"><meta property="og:image" content="https://tva1.sinaimg.cn/large/00831rSTly1gciyu87lw0j30i404vmxm.jpg"><meta property="og:image" content="https://tva1.sinaimg.cn/large/00831rSTly1gciytlu72tj30kh062aap.jpg"><meta property="article:published_time" content="2020-03-04T08:24:55.000Z"><meta property="article:modified_time" content="2021-05-24T03:44:03.642Z"><meta property="article:author" content="ฅ´ω`ฅ"><meta property="article:tag" content="条件随机场"><meta property="twitter:card" content="summary"><meta property="twitter:image" content="https://tva1.sinaimg.cn/large/00831rSTly1gciyu87lw0j30i404vmxm.jpg"><script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","mainEntityOfPage":{"@type":"WebPage","@id":"https://hunlp.com/posts/2481245056.html"},"headline":"条件随机场CRF(二) 前向后向算法评估标记序列概率","image":["https://tva1.sinaimg.cn/large/00831rSTly1gciyu87lw0j30i404vmxm.jpg","https://tva1.sinaimg.cn/large/00831rSTly1gciytlu72tj30kh062aap.jpg"],"datePublished":"2020-03-04T08:24:55.000Z","dateModified":"2021-05-24T03:44:03.642Z","author":{"@type":"Person","name":"ฅ´ω`ฅ"},"publisher":{"@type":"Organization","name":"MCFON","logo":{"@type":"ImageObject","url":"https://hunlp.com/img/logo.png"}},"description":"在条件随机场CRF(一)中我们总结了CRF的模型，主要是linear-CRF的模型原理。本文就继续讨论linear-CRF需要解决的三个问题：评估，学习和解码。这三个问题和HMM是非常类似的，本文关注于第一个问题：评估。第二个和第三个问题会在下一篇总结。"}</script><link rel="canonical" href="https://hunlp.com/posts/2481245056.html"><link rel="icon" href="/img/favicon.png"><link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.2/css/all.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@9.12.0/styles/atom-one-light.css"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@400;600&amp;family=Source+Code+Pro"><link rel="stylesheet" href="/css/default.css"><style>body>.footer,body>.navbar,body>.section{opacity:0}</style><!--!--><script>var _hmt = _hmt || [];
+        (function() {
+            var hm = document.createElement("script");
+            hm.src = "//hm.baidu.com/hm.js?b99420d7a06d2b3361a8efeaf6e20764";
+            var s = document.getElementsByTagName("script")[0];
+            s.parentNode.insertBefore(hm, s);
+        })();</script><!--!--><!--!--><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/cookieconsent@3.1.1/build/cookieconsent.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lightgallery@1.6.8/dist/css/lightgallery.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/justifiedGallery@3.7.0/dist/css/justifiedGallery.min.css"><script src="https://www.googletagmanager.com/gtag/js?id=UA-131608076-1" async></script><script>window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+    
+        gtag('config', 'UA-131608076-1');</script><!--!--><!--!--><!--!--><script src="https://cdn.jsdelivr.net/npm/pace-js@1.0.2/pace.min.js"></script><!--!--><!--!--><meta name="generator" content="Hexo 5.4.0"></head><body class="is-3-column"><nav class="navbar navbar-main"><div class="container"><div class="navbar-brand justify-content-center"><a class="navbar-item navbar-logo" href="/"><img src="/img/logo.png" alt="MCFON" height="28"></a></div><div class="navbar-menu"><div class="navbar-start"><a class="navbar-item" href="/">主页</a><a class="navbar-item" href="/archives">归档</a><a class="navbar-item" href="/categories">分类</a><a class="navbar-item" href="/tags">标签</a><a class="navbar-item" href="/about">关于</a></div><div class="navbar-end"><a class="navbar-item" target="_blank" rel="noopener" title="Download on GitHub" href="https://github.com/ppoffice/hexo-theme-icarus"><i class="fab fa-github"></i></a><a class="navbar-item is-hidden-tablet catalogue" title="目录" href="javascript:;"><i class="fas fa-list-ul"></i></a><a class="navbar-item search" title="搜索" href="javascript:;"><i class="fas fa-search"></i></a></div></div></div></nav><section class="section"><div class="container"><div class="columns"><div class="column order-2 column-main is-8-tablet is-8-desktop is-9-widescreen"><div class="card"><article class="card-content article" role="article"><h1 class="title is-size-3 is-size-4-mobile has-text-weight-normal"><i class="fas fa-angle-double-right"></i>条件随机场CRF(二) 前向后向算法评估标记序列概率</h1><div class="article-meta is-size-7 is-uppercase level is-mobile"><div class="level-left"><span class="level-item"><i class="far fa-calendar-alt"> </i><time dateTime="${date_xml(page.date)}" title="${date_xml(page.date)}">2020-03-04</time></span><span class="level-item is-hidden-mobile"><i class="far fa-calendar-check"> </i><time dateTime="${date_xml(page.updated)}" title="${date_xml(page.updated)}">2021-05-24</time></span><span class="level-item"><a class="link-muted" href="/categories/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/">深度学习</a><span> / </span><a class="link-muted" href="/categories/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/NLP/">NLP</a></span><span class="level-item">11 分钟读完 (大约1668个字)</span></div></div><div class="content"><p>在条件随机场CRF(一)中我们总结了CRF的模型，主要是linear-CRF的模型原理。本文就继续讨论linear-CRF需要解决的三个问题：评估，学习和解码。这三个问题和HMM是非常类似的，本文关注于第一个问题：评估。第二个和第三个问题会在下一篇总结。 <span id="more"></span></p>
+<h2 id="linear-crf的三个基本问题">linear-CRF的三个基本问题</h2>
+<p>在隐马尔科夫模型HMM中，我们讲到了HMM的三个基本问题，而linear-CRF也有三个类似的的基本问题。不过和HMM不同，在linear-CRF中，我们对于给出的观测序列<span class="math inline">\(x\)</span>是一直作为一个整体看待的，也就是不会拆开看<span class="math inline">\((x_1,x_2,...)\)</span>，因此linear-CRF的问题模型要比HMM简单一些，如果你很熟悉HMM，那么CRF的这三个问题的求解就不难了。</p>
+<p>linear-CRF第一个问题是评估，即给定 linear-CRF的条件概率分布<span class="math inline">\(P(y|x)\)</span>, 在给定输入序列<span class="math inline">\(x\)</span>和输出序列<span class="math inline">\(y\)</span>时，计算条件概率<span class="math inline">\(P(y_i|x)\)</span>和<span class="math inline">\(P(y_{i-1}，y_i|x)\)</span>以及对应的期望. 本文接下来会详细讨论问题一。</p>
+<p>linear-CRF第二个问题是学习，即给定训练数据集<span class="math inline">\(X\)</span>和<span class="math inline">\(Y\)</span>，学习linear-CRF的模型参数<span class="math inline">\(w_k\)</span>和条件概率<span class="math inline">\(P_w(y|x)\)</span>，这个问题的求解比HMM的学习算法简单的多，普通的梯度下降法，拟牛顿法都可以解决。</p>
+<p>linear-CRF第三个问题是解码，即给定 linear-CRF的条件概率分布<span class="math inline">\(P(y|x)\)</span>,和输入序列<span class="math inline">\(x\)</span>, 计算使条件概率最大的输出序列<span class="math inline">\(y\)</span>。类似于HMM，使用维特比算法可以很方便的解决这个问题。</p>
+<h2 id="linear-crf的前向后向概率概述">linear-CRF的前向后向概率概述</h2>
+<p>要计算条件概率<span class="math inline">\(P(y_i|x)\)</span>和<span class="math inline">\(P(y_{i-1}，y_i|x)\)</span>，我们也可以使用和HMM类似的方法，使用前向后向算法来完成。首先我们来看前向概率的计算。</p>
+<p>我们定义<span class="math inline">\(\alpha_i(y_i|x)\)</span>表示序列位置𝑖的标记是<span class="math inline">\(y_i\)</span> 时，在位置<span class="math inline">\(i\)</span>之前的部分标记序列的非规范化概率。之所以是非规范化概率是因为我们不想加入一个不影响结果计算的规范化因子<span class="math inline">\(Z(x)\)</span>在分母里面。</p>
+<p>在条件随机场CRF(一)第八节中，我们定义了下式：　 <span class="math display">\[
+M_i(y_{i-1},y_i |x) = exp(\sum\limits_{k=1}^Kw_kf_k(y_{i-1},y_i, x,i))
+\]</span> 这个式子定义了在给定<span class="math inline">\(y_{i-1}\)</span>时，从<span class="math inline">\(y_{i-1}\)</span>转移到<span class="math inline">\(y_i\)</span>的非规范化概率。</p>
+<p>这样，我们很容易得到序列位置<span class="math inline">\(i+1\)</span>的标记是<span class="math inline">\(y_{i+1}\)</span>时，在位置<span class="math inline">\(i+1\)</span>之前的部分标记序列的非规范化概率<span class="math inline">\(\alpha_{i+1}(y_{i+1}|x)\)</span>的递推公式： <span class="math display">\[
+\alpha_{i+1}(y_{i+1}|x) = \alpha_i(y_i|x)M_{i+1}(y_{i+1},y_i|x) \;\; i=1,2,...,n+1
+\]</span> 在起点处，我们定义： <span class="math display">\[
+\alpha_0(y_0|x)= \begin{cases} 1 &amp; {y_0 =start}\\ 0 &amp; {else} \end{cases}
+\]</span> 假设我们可能的标记总数是<span class="math inline">\(m\)</span>, 则<span class="math inline">\(y_i\)</span>的取值就有<span class="math inline">\(m\)</span>个，我们用<span class="math inline">\(\alpha_i(x)\)</span>表示这<span class="math inline">\(m\)</span>个值组成的前向向量如下： <span class="math display">\[
+\alpha_i(x) = (\alpha_i(y_i=1|x), \alpha_i(y_i=2|x), ... \alpha_i(y_i=m|x))^T
+\]</span> 同时用矩阵<span class="math inline">\(M_i(x)\)</span>表示由$M_i(y_{i-1},y_i |x) <span class="math inline">\(形成的\)</span>m m$阶矩阵： <span class="math display">\[
+M_i(x) = \Big[ M_i(y_{i-1},y_i |x)\Big]
+\]</span> 这样递推公式可以用矩阵乘积表示： <span class="math display">\[
+\alpha_{i+1}^T(x) = \alpha_i^T(x)M_{i+1}(x)
+\]</span> 同样的。我们定义<span class="math inline">\(\beta_i(y_i|x)\)</span>表示序列位置<span class="math inline">\(i\)</span>的标记是<span class="math inline">\(y_i\)</span>时，在位置<span class="math inline">\(i\)</span>之后的从<span class="math inline">\(i+1\)</span>到<span class="math inline">\(n\)</span>的部分标记序列的非规范化概率。</p>
+<p>这样，我们很容易得到序列位置<span class="math inline">\(i+1\)</span>的标记是<span class="math inline">\(y_{i+1}\)</span>时，在位置<span class="math inline">\(i\)</span>之后的部分标记序列的非规范化概率<span class="math inline">\(\beta_{i}(y_{i}|x)\)</span>的递推公式： <span class="math display">\[
+\beta_{i}(y_{i}|x) = M_{i+1}(y_i,y_{i+1}|x)\beta_{i+1}(y_{i+1}|x)
+\]</span> 在终点处，我们定义： <span class="math display">\[
+\beta_{n+1}(y_{n+1}|x)= \begin{cases} 1 &amp; {y_{n+1} =stop}\\ 0 &amp; {else} \end{cases}
+\]</span> 如果用向量表示，则有： <span class="math display">\[
+\beta_i(x) = M_{i+1}(x)\beta_{i+1}(x)
+\]</span> 由于规范化因子<span class="math inline">\(Z(x)\)</span>的表达式是： <span class="math display">\[
+Z(x) = \sum\limits_{c=1}^m\alpha_{n}(y_c|x) = \sum\limits_{c=1}^m\beta_{1}(y_c|x)
+\]</span> 也可以用向量来表示<span class="math inline">\(Z(x)\)</span>: <span class="math display">\[
+Z(x) = \alpha_{n}^T(x) \bullet \mathbf{1} = \mathbf{1}^T \bullet \beta_{1}(x)
+\]</span> 其中，<span class="math inline">\(\mathbf{1}\)</span>是<span class="math inline">\(m\)</span>维全1向量。</p>
+<h2 id="linear-crf的前向后向概率计算">linear-CRF的前向后向概率计算</h2>
+<p>有了前向后向概率的定义和计算方法，我们就很容易计算序列位置<span class="math inline">\(i\)</span>的标记是<span class="math inline">\(y_i\)</span>时的条件概率<span class="math inline">\(P(y_i|x)\)</span>: <span class="math display">\[
+P(y_i|x) = \frac{\alpha_i^T(y_i|x)\beta_i(y_i|x)}{Z(x)} = \frac{\alpha_i^T(y_i|x)\beta_i(y_i|x)}{ \alpha_{n}^T(x) \bullet \mathbf{1}}
+\]</span> 也容易计算序列位置𝑖的标记是<span class="math inline">\(y_i\)</span>，位置<span class="math inline">\(i-1\)</span>的标记是<span class="math inline">\(y_{i-1}\)</span>时的条件概率<span class="math inline">\(P(y_{i-1},y_i|x)\)</span>: <span class="math display">\[
+P(y_{i-1},y_i|x) = \frac{\alpha_{i-1}^T(y_{i-1}|x)M_i(y_{i-1},y_i|x)\beta_i(y_i|x)}{Z(x)} = \frac{\alpha_{i-1}^T(y_{i-1}|x)M_i(y_{i-1},y_i|x)\beta_i(y_i|x)}{ \alpha_{n}^T(x) \bullet \mathbf{1}}
+\]</span></p>
+<h2 id="linear-crf的期望计算">linear-CRF的期望计算</h2>
+<p>有了上一节计算的条件概率，我们也可以很方便的计算联合分布<span class="math inline">\(P(x,y)\)</span>与条件分布<span class="math inline">\(P(y|x)\)</span>的期望。</p>
+<p>特征函数<span class="math inline">\(f_k(x,y)\)</span>关于条件分布<span class="math inline">\(P(y|x)\)</span>的期望表达式是： <img src="https://tva1.sinaimg.cn/large/00831rSTly1gciyu87lw0j30i404vmxm.jpg" /> 同样可以计算联合分布<span class="math inline">\(P(x,y)\)</span>的期望： <img src="https://tva1.sinaimg.cn/large/00831rSTly1gciytlu72tj30kh062aap.jpg" /> 假设一共有<span class="math inline">\(K\)</span>个特征函数，则<span class="math inline">\(k=1,2,...K\)</span></p>
+<h2 id="linear-crf前向后向算法总结">linear-CRF前向后向算法总结</h2>
+<p>以上就是linear-CRF的前向后向算法，个人觉得比HMM简单的多，因此大家如果理解了HMM的前向后向算法，这一篇是很容易理解的。</p>
+<p>注意到我们上面的非规范化概率<span class="math inline">\(M_{i+1}(y_{i+1},y_i|x)\)</span>起的作用和HMM中的隐藏状态转移概率很像。但是这儿的概率是非规范化的，也就是不强制要求所有的状态的概率和为1。而HMM中的隐藏状态转移概率也规范化的。从这一点看，linear-CRF对序列状态转移的处理要比HMM灵活。</p>
+</div><div class="article-licensing box"><div class="licensing-title"><p>条件随机场CRF(二) 前向后向算法评估标记序列概率</p><p><a href="https://hunlp.com/posts/2481245056.html">https://hunlp.com/posts/2481245056.html</a></p></div><div class="licensing-meta level is-mobile"><div class="level-left"><div class="level-item is-narrow"><div><h6>作者</h6><p>ฅ´ω`ฅ</p></div></div><div class="level-item is-narrow"><div><h6>发布于</h6><p>2020-03-04</p></div></div><div class="level-item is-narrow"><div><h6>更新于</h6><p>2021-05-24</p></div></div><div class="level-item is-narrow"><div><h6>许可协议</h6><p><a class="icons" rel="noopener" target="_blank" title="Creative Commons" href="https://creativecommons.org/"><i class="icon fab fa-creative-commons"></i></a><a class="icons" rel="noopener" target="_blank" title="Attribution" href="https://creativecommons.org/licenses/by/4.0/"><i class="icon fab fa-creative-commons-by"></i></a><a class="icons" rel="noopener" target="_blank" title="Noncommercial" href="https://creativecommons.org/licenses/by-nc/4.0/"><i class="icon fab fa-creative-commons-nc"></i></a></p></div></div></div></div></div><hr style="height:1px;margin:1rem 0"><div class="level is-mobile is-flex"><div class="article-tags is-size-7 is-uppercase"><i class="fas fa-tags has-text-grey"></i> <a class="link-muted" rel="tag" href="/tags/%E6%9D%A1%E4%BB%B6%E9%9A%8F%E6%9C%BA%E5%9C%BA/">条件随机场 </a></div></div><div class="bdsharebuttonbox"><a class="bds_more" href="#" data-cmd="more"></a><a class="bds_qzone" href="#" data-cmd="qzone" title="分享到QQ空间"></a><a class="bds_tsina" href="#" data-cmd="tsina" title="分享到新浪微博"></a><a class="bds_tqq" href="#" data-cmd="tqq" title="分享到腾讯微博"></a><a class="bds_renren" href="#" data-cmd="renren" title="分享到人人网"></a><a class="bds_weixin" href="#" data-cmd="weixin" title="分享到微信"></a></div><script>window._bd_share_config = { "common": { "bdSnsKey": {}, "bdText": "", "bdMini": "2", "bdPic": "", "bdStyle": "0", "bdSize": "16" }, "share": {} }; with (document) 0[(getElementsByTagName('head')[0] || body).appendChild(createElement('script')).src = 'http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion=' + ~(-new Date() / 36e5)];</script></article></div><div class="card"><div class="card-content"><h3 class="menu-label has-text-centered">喜欢这篇文章？打赏一下作者吧</h3><div class="buttons is-centered"><a class="button donate" data-type="alipay"><span class="icon is-small"><i class="fab fa-alipay"></i></span><span>支付宝</span><span class="qrcode"><img src="/img/zfb.jpg" alt="支付宝"></span></a><a class="button donate" data-type="wechat"><span class="icon is-small"><i class="fab fa-weixin"></i></span><span>微信</span><span class="qrcode"><img src="/img/wx.jpg" alt="微信"></span></a></div></div></div><nav class="post-navigation mt-4 level is-mobile"><div class="level-start"><a class="article-nav-prev level level-item link-muted" href="/posts/1796031326.html"><i class="level-item fas fa-chevron-left"></i><span class="level-item">条件随机场CRF(三) 模型学习与维特比算法解码</span></a></div><div class="level-end"><a class="article-nav-next level level-item link-muted" href="/posts/2620909474.html"><span class="level-item">条件随机场CRF(一)从随机场到线性链条件随机场</span><i class="level-item fas fa-chevron-right"></i></a></div></nav><div class="card"><div class="card-content"><h3 class="title is-5">评论</h3><div id="comment-container"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1.7.2/dist/gitalk.css"><script src="https://cdn.jsdelivr.net/npm/gitalk@1.7.2/dist/gitalk.min.js"></script><script>var gitalk = new Gitalk({
+            id: "dacba1eaa8667081e6813fa4721b4117",
+            repo: "Cartride.github.io",
+            owner: "Cartride",
+            clientID: "8f4a2426c347380a6ee4",
+            clientSecret: "8dc8cd44b071426b35d0bd60634941371170b798",
+            admin: ["Cartride"],
+            createIssueManually: false,
+            distractionFreeMode: false,
+            perPage: 10,
+            pagerDirection: "last",
+            
+            
+            enableHotKey: true,
+            
+        })
+        gitalk.render('comment-container')</script></div></div></div><div class="column column-left is-4-tablet is-4-desktop is-3-widescreen  order-1 is-sticky"><div class="card widget" id="toc" data-type="toc"><div class="card-content"><div class="menu"><h3 class="menu-label">目录</h3><ul class="menu-list"><li><a class="level is-mobile" href="#linear-crf的三个基本问题"><span class="level-left"><span class="level-item">1</span><span class="level-item">linear-CRF的三个基本问题</span></span></a></li><li><a class="level is-mobile" href="#linear-crf的前向后向概率概述"><span class="level-left"><span class="level-item">2</span><span class="level-item">linear-CRF的前向后向概率概述</span></span></a></li><li><a class="level is-mobile" href="#linear-crf的前向后向概率计算"><span class="level-left"><span class="level-item">3</span><span class="level-item">linear-CRF的前向后向概率计算</span></span></a></li><li><a class="level is-mobile" href="#linear-crf的期望计算"><span class="level-left"><span class="level-item">4</span><span class="level-item">linear-CRF的期望计算</span></span></a></li><li><a class="level is-mobile" href="#linear-crf前向后向算法总结"><span class="level-left"><span class="level-item">5</span><span class="level-item">linear-CRF前向后向算法总结</span></span></a></li></ul></div></div><style>#toc .menu-list > li > a.is-active + .menu-list { display: block; }#toc .menu-list > li > a + .menu-list { display: none; }</style><script src="/js/toc.js" defer></script></div></div><!--!--></div></div></section><footer class="footer"><div class="container"><div class="level"><div class="level-start"><a class="footer-logo is-block mb-2" href="/"><img src="/img/logo.png" alt="MCFON" height="28"></a><p class="is-size-7"><span>&copy; 2022 ฅ´ω`ฅ</span>  Powered by <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a> &amp; <a href="https://github.com/ppoffice/hexo-theme-icarus" target="_blank" rel="noopener">Icarus</a></p></div><div class="level-end"><div class="field has-addons"><p class="control"><a class="button is-transparent is-large" target="_blank" rel="noopener" title="Creative Commons" href="https://creativecommons.org/"><i class="fab fa-creative-commons"></i></a></p><p class="control"><a class="button is-transparent is-large" target="_blank" rel="noopener" title="Attribution 4.0 International" href="https://creativecommons.org/licenses/by/4.0/"><i class="fab fa-creative-commons-by"></i></a></p><p class="control"><a class="button is-transparent is-large" target="_blank" rel="noopener" title="Download on GitHub" href="https://github.com/ppoffice/hexo-theme-icarus"><i class="fab fa-github"></i></a></p></div></div></div></div></footer><script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script><script src="https://cdn.jsdelivr.net/npm/moment@2.22.2/min/moment-with-locales.min.js"></script><script src="https://cdn.jsdelivr.net/npm/clipboard@2.0.4/dist/clipboard.min.js" defer></script><script>moment.locale("zh-CN");</script><script>var IcarusThemeSettings = {
+            article: {
+                highlight: {
+                    clipboard: true,
+                    fold: 'unfolded'
+                }
+            }
+        };</script><script src="/js/column.js"></script><script src="/js/animation.js"></script><a id="back-to-top" title="回到顶端" href="javascript:;"><i class="fas fa-chevron-up"></i></a><script src="/js/back_to_top.js" defer></script><!--!--><!--!--><!--!--><script src="https://cdn.jsdelivr.net/npm/cookieconsent@3.1.1/build/cookieconsent.min.js" defer></script><script>window.addEventListener("load", () => {
+      window.cookieconsent.initialise({
+        type: "info",
+        theme: "edgeless",
+        static: false,
+        position: "bottom-left",
+        content: {
+          message: "此网站使用Cookie来改善您的体验。",
+          dismiss: "知道了！",
+          allow: "允许使用Cookie",
+          deny: "拒绝",
+          link: "了解更多",
+          policy: "Cookie政策",
+          href: "https://www.cookiesandyou.com/",
+        },
+        palette: {
+          popup: {
+            background: "#edeff5",
+            text: "#838391"
+          },
+          button: {
+            background: "#4b81e8"
+          },
+        },
+      });
+    });</script><script src="https://cdn.jsdelivr.net/npm/lightgallery@1.6.8/dist/js/lightgallery.min.js" defer></script><script src="https://cdn.jsdelivr.net/npm/justifiedGallery@3.7.0/dist/js/jquery.justifiedGallery.min.js" defer></script><script>window.addEventListener("load", () => {
+            if (typeof $.fn.lightGallery === 'function') {
+                $('.article').lightGallery({ selector: '.gallery-item' });
+            }
+            if (typeof $.fn.justifiedGallery === 'function') {
+                if ($('.justified-gallery > p > .gallery-item').length) {
+                    $('.justified-gallery > p > .gallery-item').unwrap();
+                }
+                $('.justified-gallery').justifiedGallery();
+            }
+        });</script><!--!--><!--!--><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.css"><script src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.js" defer></script><script src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/contrib/auto-render.min.js" defer></script><script src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/contrib/mhchem.js" defer></script><script>window.addEventListener("load", function() {
+            document.querySelectorAll('[role="article"] > .content').forEach(function(element) {
+                renderMathInElement(element);
+            });
+        });</script><script type="text/x-mathjax-config">MathJax.Hub.Config({
+            'HTML-CSS': {
+                matchFontHeight: false
+            },
+            SVG: {
+                matchFontHeight: false
+            },
+            CommonHTML: {
+                matchFontHeight: false
+            },
+            tex2jax: {
+                inlineMath: [
+                    ['$','$'],
+                    ['\\(','\\)']
+                ]
+            }
+        });</script><script src="https://cdn.jsdelivr.net/npm/mathjax@2.7.5/unpacked/MathJax.js?config=TeX-MML-AM_CHTML" defer></script><!--!--><!--!--><!--!--><script src="/js/main.js" defer></script><div class="searchbox"><div class="searchbox-container"><div class="searchbox-header"><div class="searchbox-input-container"><input class="searchbox-input" type="text" placeholder="想要查找什么..."></div><a class="searchbox-close" href="javascript:;">×</a></div><div class="searchbox-body"></div></div></div><script src="/js/insight.js" defer></script><script>document.addEventListener('DOMContentLoaded', function () {
+            loadInsight({"contentUrl":"/content.json"}, {"hint":"想要查找什么...","untitled":"(无标题)","posts":"文章","pages":"页面","categories":"分类","tags":"标签"});
+        });</script></body></html>

@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="zh"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"><meta><title>包 - MCFON</title><link rel="manifest" href="/manifest.json"><meta name="application-name" content="MCFON"><meta name="msapplication-TileImage" content="/img/favicon.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="MCFON"><meta name="apple-mobile-web-app-status-bar-style" content="default"><meta name="description" content="package与import 在实际的开发中，我们往往需要在不同的文件中，去调用其它文件的定义的函数，比如 main.go 中，需要使用&amp;quot;fmt&amp;quot;包中的Println()函数： 12package mainimport &amp;quot;fmt&amp;quot;"><meta property="og:type" content="blog"><meta property="og:title" content="包"><meta property="og:url" content="https://hunlp.com/posts/38068.html"><meta property="og:site_name" content="MCFON"><meta property="og:description" content="package与import 在实际的开发中，我们往往需要在不同的文件中，去调用其它文件的定义的函数，比如 main.go 中，需要使用&amp;quot;fmt&amp;quot;包中的Println()函数： 12package mainimport &amp;quot;fmt&amp;quot;"><meta property="og:locale" content="zh_CN"><meta property="og:image" content="https://hunlp.com/img/og_image.png"><meta property="article:published_time" content="2021-06-10T06:35:34.000Z"><meta property="article:modified_time" content="2021-06-10T12:20:10.891Z"><meta property="article:author" content="ฅ´ω`ฅ"><meta property="article:tag" content="笔记"><meta property="twitter:card" content="summary"><meta property="twitter:image" content="/img/og_image.png"><script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","mainEntityOfPage":{"@type":"WebPage","@id":"https://hunlp.com/posts/38068.html"},"headline":"包","image":["https://hunlp.com/img/og_image.png"],"datePublished":"2021-06-10T06:35:34.000Z","dateModified":"2021-06-10T12:20:10.891Z","author":{"@type":"Person","name":"ฅ´ω`ฅ"},"publisher":{"@type":"Organization","name":"MCFON","logo":{"@type":"ImageObject","url":"https://hunlp.com/img/logo.png"}},"description":"package与import 在实际的开发中，我们往往需要在不同的文件中，去调用其它文件的定义的函数，比如 main.go 中，需要使用&quot;fmt&quot;包中的Println()函数： 12package mainimport &quot;fmt&quot;"}</script><link rel="canonical" href="https://hunlp.com/posts/38068.html"><link rel="icon" href="/img/favicon.png"><link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.2/css/all.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@9.12.0/styles/atom-one-light.css"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@400;600&amp;family=Source+Code+Pro"><link rel="stylesheet" href="/css/default.css"><style>body>.footer,body>.navbar,body>.section{opacity:0}</style><!--!--><script>var _hmt = _hmt || [];
+        (function() {
+            var hm = document.createElement("script");
+            hm.src = "//hm.baidu.com/hm.js?b99420d7a06d2b3361a8efeaf6e20764";
+            var s = document.getElementsByTagName("script")[0];
+            s.parentNode.insertBefore(hm, s);
+        })();</script><!--!--><!--!--><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/cookieconsent@3.1.1/build/cookieconsent.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lightgallery@1.6.8/dist/css/lightgallery.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/justifiedGallery@3.7.0/dist/css/justifiedGallery.min.css"><script src="https://www.googletagmanager.com/gtag/js?id=UA-131608076-1" async></script><script>window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+    
+        gtag('config', 'UA-131608076-1');</script><!--!--><!--!--><!--!--><script src="https://cdn.jsdelivr.net/npm/pace-js@1.0.2/pace.min.js"></script><!--!--><!--!--><meta name="generator" content="Hexo 5.4.0"></head><body class="is-3-column"><nav class="navbar navbar-main"><div class="container"><div class="navbar-brand justify-content-center"><a class="navbar-item navbar-logo" href="/"><img src="/img/logo.png" alt="MCFON" height="28"></a></div><div class="navbar-menu"><div class="navbar-start"><a class="navbar-item" href="/">主页</a><a class="navbar-item" href="/archives">归档</a><a class="navbar-item" href="/categories">分类</a><a class="navbar-item" href="/tags">标签</a><a class="navbar-item" href="/about">关于</a></div><div class="navbar-end"><a class="navbar-item" target="_blank" rel="noopener" title="Download on GitHub" href="https://github.com/ppoffice/hexo-theme-icarus"><i class="fab fa-github"></i></a><a class="navbar-item is-hidden-tablet catalogue" title="目录" href="javascript:;"><i class="fas fa-list-ul"></i></a><a class="navbar-item search" title="搜索" href="javascript:;"><i class="fas fa-search"></i></a></div></div></div></nav><section class="section"><div class="container"><div class="columns"><div class="column order-2 column-main is-8-tablet is-8-desktop is-9-widescreen"><div class="card"><article class="card-content article" role="article"><h1 class="title is-size-3 is-size-4-mobile has-text-weight-normal"><i class="fas fa-angle-double-right"></i>包</h1><div class="article-meta is-size-7 is-uppercase level is-mobile"><div class="level-left"><span class="level-item"><i class="far fa-calendar-alt"> </i><time dateTime="${date_xml(page.date)}" title="${date_xml(page.date)}">2021-06-10</time></span><span class="level-item is-hidden-mobile"><i class="far fa-calendar-check"> </i><time dateTime="${date_xml(page.updated)}" title="${date_xml(page.updated)}">2021-06-10</time></span><span class="level-item"><a class="link-muted" href="/categories/Golang/">Golang</a></span><span class="level-item">10 分钟读完 (大约1535个字)</span></div></div><div class="content"><h3 id="package与import">package与import</h3>
+<p>在实际的开发中，我们往往需要在不同的文件中，去调用其它文件的定义的函数，比如 main.go 中，需要使用"fmt"包中的Println()函数： <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"><span class="keyword">import</span> <span class="string">&quot;fmt&quot;</span></span><br></pre></td></tr></table></figure> <span id="more"></span> 在Go中，Go的每一个文件都是属于一个包的，也就是说Go是以包的形式来管理文件和项目目录结构。所以如果要导入某些第三方包，直接输入包所在地址即可。文件的包名通常和文件所在的文件夹名一致，一般为小写字母。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">引入方式 1:import &quot;包名&quot;</span><br><span class="line">引入方式 2:</span><br><span class="line">import (</span><br><span class="line">	&quot;包名&quot;</span><br><span class="line">	&quot;包名&quot; </span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+<ul>
+<li>package 指令在 文件第一行，然后是 import 指令</li>
+<li>在 import 包时，路径从 $GOPATH 的 src 下开始，不用带 src , 编译器会自动从 src 下开始引入</li>
+<li>为了让其它包的文件，可以访问到本包的函数，则该函数名的首字母需要大写，类似其它语言 的 public ,这样才能跨包访问</li>
+<li>在访问其它包函数，变量时，其语法是 <code>包名.函数名</code></li>
+</ul>
+<h3 id="gopath">GoPath</h3>
+<p>GoPath目录用来存放代码文件、可运行文件、编译后的包文件。</p>
+<p>从1.1版本到1.7必须设置这个变量，而且不能和Go的安装目录一样，1.8版本后会有默认值： <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Unix:$HOME/go</span><br><span class="line">Windows:%USERPROFILE%/go。</span><br></pre></td></tr></table></figure></p>
+<p>GOPATH允许多个目录，多个目录的时候Windows是分号，Linux系统是冒号隔开。当有多个GOPATH时，默认会将go get的内容放在第一个目录下，<span class="math inline">\(GOPATH 目录约定有三个子目录： - src:存放源代码，一般一个项目分配一个子目录; - pkg:编译后生成的文件，如.a文件 - bin:编译后生成的可执行文件,可以加入\)</span>PATH中 &gt;注意：一般建议package的名称和目录名保持一致</p>
+<h4 id="包中的函数调用方式">1.3 包中的函数调用方式</h4>
+<p>函数调用的方式： - 同包下：直接调用即可 - 不同包下：包名.函数名</p>
+<h2 id="go-mod">go mod</h2>
+<h3 id="go-mod-的使用">go mod 的使用</h3>
+<p>go的项目依赖管理一直饱受诟病，在go1.11后正式引入了<code>go mod</code>功能，类似nodejs的npm。在go1.13版本中将会默认启用。</p>
+<p>使用Gomod可以让项目完全摆脱GOPATH的困扰。</p>
+<p><code>go mod</code> 初步使用： <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"># 开启go mod</span><br><span class="line">export GO111MODULE=on</span><br><span class="line"></span><br><span class="line"># 在新建的项目根目录下（src）下使用该命令</span><br><span class="line">go mod init 项目名                      # 此时会生成一个go.mod文件</span><br><span class="line"></span><br><span class="line"># 使用</span><br><span class="line">在项目中可以随时import依赖，当 go run 时候，会自动安装依赖，比如：</span><br><span class="line">import (</span><br><span class="line">	&quot;github.com/gin-gonic/gin&quot;</span><br><span class="line">)</span><br><span class="line"></span><br></pre></td></tr></table></figure></p>
+<p>go run 后的 go.mod: <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">module api_server</span><br><span class="line"></span><br><span class="line">go 1.12</span><br><span class="line"></span><br><span class="line">require (</span><br><span class="line">	github.com/gin-contrib/sse v0.0.0-20190301062529-5545eab6dad3 // indirect</span><br><span class="line">	github.com/gin-gonic/gin v1.3.0 // indirect</span><br><span class="line">	github.com/golang/protobuf v1.3.1 // indirect</span><br><span class="line">	github.com/mattn/go-isatty v0.0.7 // indirect</span><br><span class="line">	github.com/ugorji/go/codec v0.0.0-20190320090025-2dc34c0b8780 // indirect</span><br><span class="line">	gopkg.in/go-playground/validator.v8 v8.18.2 // indirect</span><br><span class="line">	gopkg.in/yaml.v2 v2.2.2 // indirect</span><br><span class="line">)</span><br></pre></td></tr></table></figure></p>
+<p>使用<code>go mod</code>后，run产生的依赖源码不会安装在当前项目中，而是安装在：<code>$GOPATH/pkg/mod</code></p>
+<h2 id="详细使用">详细使用</h2>
+<p>详细使用地址：https://zhuanlan.zhihu.com/p/59687626</p>
+<h2 id="翻墙问题解决">翻墙问题解决</h2>
+<h3 id="推荐方式-goproxy">推荐方式 GOPROXY</h3>
+<p>从 Go 1.11 版本开始，还新增了 GOPROXY 环境变量，如果设置了该变量，下载源代码时将会通过这个环境变量设置的代理地址，而不再是以前的直接从代码库下载。goproxy.io 这个开源项目帮我们实现好了我们想要的。该项目允许开发者一键构建自己的 GOPROXY 代理服务。同时，也提供了公用的代理服务 https://goproxy.io，我们只需设置该环境变量即可正常下载被墙的源码包了：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"># 开发时设置Goland的Prefrence-Go-proxy即可</span><br><span class="line"></span><br><span class="line"># linux开启代理</span><br><span class="line">export GOPROXY=https://goproxy.io			# 注意：必须开启go mod才能使用</span><br><span class="line"></span><br><span class="line"># win开启代理</span><br><span class="line">$env:GOPROXY = &quot;https://goproxy.io&quot;</span><br><span class="line"></span><br><span class="line"># 关闭代理</span><br><span class="line">export GOPROXY=</span><br></pre></td></tr></table></figure>
+<h3 id="replace方式">replace方式</h3>
+<p>从 Go 1.11 版本开始，新增支持了 go modules 用于解决包依赖管理问题。该工具提供了 replace，就是为了解决包的别名问题，也能替我们解决 golang.org/x 无法下载的的问题。</p>
+<p>go module 被集成到原生的 go mod 命令中，但是如果你的代码库在 $GOPATH 中，module 功能是默认不会开启的，想要开启也非常简单，通过一个环境变量即可开启 export GO111MODULE=on。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">module example.com/hello</span><br><span class="line"></span><br><span class="line">require (</span><br><span class="line">    golang.org/x/text v0<span class="number">.3</span><span class="number">.0</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line">replace (</span><br><span class="line">    golang.org/x/text =&gt; github.com/golang/text v0<span class="number">.3</span><span class="number">.0</span></span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+<h3 id="手动下载-旧版go的解决">手动下载 旧版go的解决</h3>
+<p>我们常见的 golang.org/x/... 包，一般在 GitHub 上都有官方的镜像仓库对应。比如 golang.org/x/text 对应 github.com/golang/text。所以，我们可以手动下载或 clone 对应的 GitHub 仓库到指定的目录下。</p>
+<p>mkdir $GOPATH/src/golang.org/x cd $GOPATH/src/golang.org/x git clone git@github.com:golang/text.git rm -rf text/.git 当如果需要指定版本的时候，该方法就无解了，因为 GitHub 上的镜像仓库多数都没有 tag。并且，手动嘛，程序员怎么能干呢，尤其是依赖的依赖，太多了。</p>
+<h2 id="go-mod引起的变化">go mod引起的变化</h2>
+<p>引包方式变化： - 不使用go mod 引包："./test" 引入test文件夹 - 使用go mod 引包："projectmodlue/test" 使用go.mod中的modlue名/包名</p>
+<p>因为在go1.11后如果开启了<code>go mod</code>，需要在src目录下存在go.mod文件，并书写主module名（一般为项目名），否则无法build。</p>
+<p>开启<code>go mod</code>编译运行变化： - 使用vscode开发，必须在src目录下使用 <code>go build</code>命令执行，不要使用code runner插件 - 使用IDEA开发，项目本身配置go.mod文件扔不能支持，开发工具本身也要开启<code>go mod</code>支持（位于配置的go设置中）</p>
+</div><div class="article-licensing box"><div class="licensing-title"><p>包</p><p><a href="https://hunlp.com/posts/38068.html">https://hunlp.com/posts/38068.html</a></p></div><div class="licensing-meta level is-mobile"><div class="level-left"><div class="level-item is-narrow"><div><h6>作者</h6><p>ฅ´ω`ฅ</p></div></div><div class="level-item is-narrow"><div><h6>发布于</h6><p>2021-06-10</p></div></div><div class="level-item is-narrow"><div><h6>更新于</h6><p>2021-06-10</p></div></div><div class="level-item is-narrow"><div><h6>许可协议</h6><p><a class="icons" rel="noopener" target="_blank" title="Creative Commons" href="https://creativecommons.org/"><i class="icon fab fa-creative-commons"></i></a><a class="icons" rel="noopener" target="_blank" title="Attribution" href="https://creativecommons.org/licenses/by/4.0/"><i class="icon fab fa-creative-commons-by"></i></a><a class="icons" rel="noopener" target="_blank" title="Noncommercial" href="https://creativecommons.org/licenses/by-nc/4.0/"><i class="icon fab fa-creative-commons-nc"></i></a></p></div></div></div></div></div><hr style="height:1px;margin:1rem 0"><div class="level is-mobile is-flex"><div class="article-tags is-size-7 is-uppercase"><i class="fas fa-tags has-text-grey"></i> <a class="link-muted" rel="tag" href="/tags/%E7%AC%94%E8%AE%B0/">笔记 </a></div></div><div class="bdsharebuttonbox"><a class="bds_more" href="#" data-cmd="more"></a><a class="bds_qzone" href="#" data-cmd="qzone" title="分享到QQ空间"></a><a class="bds_tsina" href="#" data-cmd="tsina" title="分享到新浪微博"></a><a class="bds_tqq" href="#" data-cmd="tqq" title="分享到腾讯微博"></a><a class="bds_renren" href="#" data-cmd="renren" title="分享到人人网"></a><a class="bds_weixin" href="#" data-cmd="weixin" title="分享到微信"></a></div><script>window._bd_share_config = { "common": { "bdSnsKey": {}, "bdText": "", "bdMini": "2", "bdPic": "", "bdStyle": "0", "bdSize": "16" }, "share": {} }; with (document) 0[(getElementsByTagName('head')[0] || body).appendChild(createElement('script')).src = 'http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion=' + ~(-new Date() / 36e5)];</script></article></div><div class="card"><div class="card-content"><h3 class="menu-label has-text-centered">喜欢这篇文章？打赏一下作者吧</h3><div class="buttons is-centered"><a class="button donate" data-type="alipay"><span class="icon is-small"><i class="fab fa-alipay"></i></span><span>支付宝</span><span class="qrcode"><img src="/img/zfb.jpg" alt="支付宝"></span></a><a class="button donate" data-type="wechat"><span class="icon is-small"><i class="fab fa-weixin"></i></span><span>微信</span><span class="qrcode"><img src="/img/wx.jpg" alt="微信"></span></a></div></div></div><nav class="post-navigation mt-4 level is-mobile"><div class="level-start"><a class="article-nav-prev level level-item link-muted" href="/posts/4154.html"><i class="level-item fas fa-chevron-left"></i><span class="level-item">defer延迟执行</span></a></div><div class="level-end"><a class="article-nav-next level level-item link-muted" href="/posts/6880.html"><span class="level-item">结构体</span><i class="level-item fas fa-chevron-right"></i></a></div></nav><div class="card"><div class="card-content"><h3 class="title is-5">评论</h3><div id="comment-container"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1.7.2/dist/gitalk.css"><script src="https://cdn.jsdelivr.net/npm/gitalk@1.7.2/dist/gitalk.min.js"></script><script>var gitalk = new Gitalk({
+            id: "3d3c91b185b0737a462aadfd87f0d1cd",
+            repo: "Cartride.github.io",
+            owner: "Cartride",
+            clientID: "8f4a2426c347380a6ee4",
+            clientSecret: "8dc8cd44b071426b35d0bd60634941371170b798",
+            admin: ["Cartride"],
+            createIssueManually: false,
+            distractionFreeMode: false,
+            perPage: 10,
+            pagerDirection: "last",
+            
+            
+            enableHotKey: true,
+            
+        })
+        gitalk.render('comment-container')</script></div></div></div><div class="column column-left is-4-tablet is-4-desktop is-3-widescreen  order-1 is-sticky"><div class="card widget" id="toc" data-type="toc"><div class="card-content"><div class="menu"><h3 class="menu-label">目录</h3><ul class="menu-list"><ul class="menu-list"><li><a class="level is-mobile" href="#package与import"><span class="level-left"><span class="level-item">1.1</span><span class="level-item">package与import</span></span></a></li><li><a class="level is-mobile" href="#gopath"><span class="level-left"><span class="level-item">1.2</span><span class="level-item">GoPath</span></span></a><ul class="menu-list"><li><a class="level is-mobile" href="#包中的函数调用方式"><span class="level-left"><span class="level-item">1.2.1</span><span class="level-item">1.3 包中的函数调用方式</span></span></a></li></ul></li></ul><li><a class="level is-mobile" href="#go-mod"><span class="level-left"><span class="level-item">2</span><span class="level-item">go mod</span></span></a><ul class="menu-list"><li><a class="level is-mobile" href="#go-mod-的使用"><span class="level-left"><span class="level-item">2.1</span><span class="level-item">go mod 的使用</span></span></a></li></ul></li><li><a class="level is-mobile" href="#详细使用"><span class="level-left"><span class="level-item">3</span><span class="level-item">详细使用</span></span></a></li><li><a class="level is-mobile" href="#翻墙问题解决"><span class="level-left"><span class="level-item">4</span><span class="level-item">翻墙问题解决</span></span></a><ul class="menu-list"><li><a class="level is-mobile" href="#推荐方式-goproxy"><span class="level-left"><span class="level-item">4.1</span><span class="level-item">推荐方式 GOPROXY</span></span></a></li><li><a class="level is-mobile" href="#replace方式"><span class="level-left"><span class="level-item">4.2</span><span class="level-item">replace方式</span></span></a></li><li><a class="level is-mobile" href="#手动下载-旧版go的解决"><span class="level-left"><span class="level-item">4.3</span><span class="level-item">手动下载 旧版go的解决</span></span></a></li></ul></li><li><a class="level is-mobile" href="#go-mod引起的变化"><span class="level-left"><span class="level-item">5</span><span class="level-item">go mod引起的变化</span></span></a></li></ul></div></div><style>#toc .menu-list > li > a.is-active + .menu-list { display: block; }#toc .menu-list > li > a + .menu-list { display: none; }</style><script src="/js/toc.js" defer></script></div></div><!--!--></div></div></section><footer class="footer"><div class="container"><div class="level"><div class="level-start"><a class="footer-logo is-block mb-2" href="/"><img src="/img/logo.png" alt="MCFON" height="28"></a><p class="is-size-7"><span>&copy; 2022 ฅ´ω`ฅ</span>  Powered by <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a> &amp; <a href="https://github.com/ppoffice/hexo-theme-icarus" target="_blank" rel="noopener">Icarus</a></p></div><div class="level-end"><div class="field has-addons"><p class="control"><a class="button is-transparent is-large" target="_blank" rel="noopener" title="Creative Commons" href="https://creativecommons.org/"><i class="fab fa-creative-commons"></i></a></p><p class="control"><a class="button is-transparent is-large" target="_blank" rel="noopener" title="Attribution 4.0 International" href="https://creativecommons.org/licenses/by/4.0/"><i class="fab fa-creative-commons-by"></i></a></p><p class="control"><a class="button is-transparent is-large" target="_blank" rel="noopener" title="Download on GitHub" href="https://github.com/ppoffice/hexo-theme-icarus"><i class="fab fa-github"></i></a></p></div></div></div></div></footer><script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script><script src="https://cdn.jsdelivr.net/npm/moment@2.22.2/min/moment-with-locales.min.js"></script><script src="https://cdn.jsdelivr.net/npm/clipboard@2.0.4/dist/clipboard.min.js" defer></script><script>moment.locale("zh-CN");</script><script>var IcarusThemeSettings = {
+            article: {
+                highlight: {
+                    clipboard: true,
+                    fold: 'unfolded'
+                }
+            }
+        };</script><script src="/js/column.js"></script><script src="/js/animation.js"></script><a id="back-to-top" title="回到顶端" href="javascript:;"><i class="fas fa-chevron-up"></i></a><script src="/js/back_to_top.js" defer></script><!--!--><!--!--><!--!--><script src="https://cdn.jsdelivr.net/npm/cookieconsent@3.1.1/build/cookieconsent.min.js" defer></script><script>window.addEventListener("load", () => {
+      window.cookieconsent.initialise({
+        type: "info",
+        theme: "edgeless",
+        static: false,
+        position: "bottom-left",
+        content: {
+          message: "此网站使用Cookie来改善您的体验。",
+          dismiss: "知道了！",
+          allow: "允许使用Cookie",
+          deny: "拒绝",
+          link: "了解更多",
+          policy: "Cookie政策",
+          href: "https://www.cookiesandyou.com/",
+        },
+        palette: {
+          popup: {
+            background: "#edeff5",
+            text: "#838391"
+          },
+          button: {
+            background: "#4b81e8"
+          },
+        },
+      });
+    });</script><script src="https://cdn.jsdelivr.net/npm/lightgallery@1.6.8/dist/js/lightgallery.min.js" defer></script><script src="https://cdn.jsdelivr.net/npm/justifiedGallery@3.7.0/dist/js/jquery.justifiedGallery.min.js" defer></script><script>window.addEventListener("load", () => {
+            if (typeof $.fn.lightGallery === 'function') {
+                $('.article').lightGallery({ selector: '.gallery-item' });
+            }
+            if (typeof $.fn.justifiedGallery === 'function') {
+                if ($('.justified-gallery > p > .gallery-item').length) {
+                    $('.justified-gallery > p > .gallery-item').unwrap();
+                }
+                $('.justified-gallery').justifiedGallery();
+            }
+        });</script><!--!--><!--!--><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.css"><script src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.js" defer></script><script src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/contrib/auto-render.min.js" defer></script><script src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/contrib/mhchem.js" defer></script><script>window.addEventListener("load", function() {
+            document.querySelectorAll('[role="article"] > .content').forEach(function(element) {
+                renderMathInElement(element);
+            });
+        });</script><script type="text/x-mathjax-config">MathJax.Hub.Config({
+            'HTML-CSS': {
+                matchFontHeight: false
+            },
+            SVG: {
+                matchFontHeight: false
+            },
+            CommonHTML: {
+                matchFontHeight: false
+            },
+            tex2jax: {
+                inlineMath: [
+                    ['$','$'],
+                    ['\\(','\\)']
+                ]
+            }
+        });</script><script src="https://cdn.jsdelivr.net/npm/mathjax@2.7.5/unpacked/MathJax.js?config=TeX-MML-AM_CHTML" defer></script><!--!--><!--!--><!--!--><script src="/js/main.js" defer></script><div class="searchbox"><div class="searchbox-container"><div class="searchbox-header"><div class="searchbox-input-container"><input class="searchbox-input" type="text" placeholder="想要查找什么..."></div><a class="searchbox-close" href="javascript:;">×</a></div><div class="searchbox-body"></div></div></div><script src="/js/insight.js" defer></script><script>document.addEventListener('DOMContentLoaded', function () {
+            loadInsight({"contentUrl":"/content.json"}, {"hint":"想要查找什么...","untitled":"(无标题)","posts":"文章","pages":"页面","categories":"分类","tags":"标签"});
+        });</script></body></html>

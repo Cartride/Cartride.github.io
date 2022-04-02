@@ -1,0 +1,198 @@
+<!doctype html>
+<html lang="zh"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"><meta><title>You Only Look Once Unified Real-Time Object Detection - MCFON</title><link rel="manifest" href="/manifest.json"><meta name="application-name" content="MCFON"><meta name="msapplication-TileImage" content="/img/favicon.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="MCFON"><meta name="apple-mobile-web-app-status-bar-style" content="default"><meta name="description" content="本文提出了一个新的物体检测的方法：You Only Look Once（YOLO）。之前的物体检测方法通常都转变为了一个分类问题，如 R-CNN、Fast R-CNN 等等。YOLO将检测看作一个 regression problem，YOLO 从输入的图像，仅仅经过一个 neural network，直接预测 bounding boxes 以及每个 bounding box 所属类别的概率"><meta property="og:type" content="blog"><meta property="og:title" content="You Only Look Once Unified Real-Time Object Detection"><meta property="og:url" content="https://hunlp.com/posts/21373.html"><meta property="og:site_name" content="MCFON"><meta property="og:description" content="本文提出了一个新的物体检测的方法：You Only Look Once（YOLO）。之前的物体检测方法通常都转变为了一个分类问题，如 R-CNN、Fast R-CNN 等等。YOLO将检测看作一个 regression problem，YOLO 从输入的图像，仅仅经过一个 neural network，直接预测 bounding boxes 以及每个 bounding box 所属类别的概率"><meta property="og:locale" content="zh_CN"><meta property="og:image" content="https://tva1.sinaimg.cn/large/008i3skNly1gttctjii5gj60hc0g90ue02.jpg"><meta property="og:image" content="https://tva1.sinaimg.cn/large/008i3skNly1gttctwobvbj61cw0jotbt02.jpg"><meta property="og:image" content="https://tva1.sinaimg.cn/large/008i3skNly1gttcuhsf2hj60hc0adjsa02.jpg"><meta property="og:image" content="https://tva1.sinaimg.cn/large/008i3skNly1gttcuurppmj30hc0gf0uu.jpg"><meta property="og:image" content="https://tva1.sinaimg.cn/large/008i3skNly1gttcva6zz9j60hc0cpjsf02.jpg"><meta property="og:image" content="https://tva1.sinaimg.cn/large/008i3skNly1gttcviixatj30hc0avwfi.jpg"><meta property="og:image" content="https://tva1.sinaimg.cn/large/008i3skNly1gttcvr8199j612b0g60v102.jpg"><meta property="article:published_time" content="2021-08-02T13:25:34.000Z"><meta property="article:modified_time" content="2021-08-25T13:35:34.751Z"><meta property="article:author" content="ฅ´ω`ฅ"><meta property="article:tag" content="CV"><meta property="article:tag" content="YOLO"><meta property="twitter:card" content="summary"><meta property="twitter:image" content="https://tva1.sinaimg.cn/large/008i3skNly1gttctjii5gj60hc0g90ue02.jpg"><script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","mainEntityOfPage":{"@type":"WebPage","@id":"https://hunlp.com/posts/21373.html"},"headline":"You Only Look Once Unified Real-Time Object Detection","image":["https://tva1.sinaimg.cn/large/008i3skNly1gttctjii5gj60hc0g90ue02.jpg","https://tva1.sinaimg.cn/large/008i3skNly1gttctwobvbj61cw0jotbt02.jpg","https://tva1.sinaimg.cn/large/008i3skNly1gttcuhsf2hj60hc0adjsa02.jpg","https://tva1.sinaimg.cn/large/008i3skNly1gttcuurppmj30hc0gf0uu.jpg","https://tva1.sinaimg.cn/large/008i3skNly1gttcva6zz9j60hc0cpjsf02.jpg","https://tva1.sinaimg.cn/large/008i3skNly1gttcviixatj30hc0avwfi.jpg","https://tva1.sinaimg.cn/large/008i3skNly1gttcvr8199j612b0g60v102.jpg"],"datePublished":"2021-08-02T13:25:34.000Z","dateModified":"2021-08-25T13:35:34.751Z","author":{"@type":"Person","name":"ฅ´ω`ฅ"},"publisher":{"@type":"Organization","name":"MCFON","logo":{"@type":"ImageObject","url":"https://hunlp.com/img/logo.png"}},"description":"本文提出了一个新的物体检测的方法：You Only Look Once（YOLO）。之前的物体检测方法通常都转变为了一个分类问题，如 R-CNN、Fast R-CNN 等等。YOLO将检测看作一个 regression problem，YOLO 从输入的图像，仅仅经过一个 neural network，直接预测 bounding boxes 以及每个 bounding box 所属类别的概率"}</script><link rel="canonical" href="https://hunlp.com/posts/21373.html"><link rel="icon" href="/img/favicon.png"><link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.2/css/all.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@9.12.0/styles/atom-one-light.css"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@400;600&amp;family=Source+Code+Pro"><link rel="stylesheet" href="/css/default.css"><style>body>.footer,body>.navbar,body>.section{opacity:0}</style><!--!--><script>var _hmt = _hmt || [];
+        (function() {
+            var hm = document.createElement("script");
+            hm.src = "//hm.baidu.com/hm.js?b99420d7a06d2b3361a8efeaf6e20764";
+            var s = document.getElementsByTagName("script")[0];
+            s.parentNode.insertBefore(hm, s);
+        })();</script><!--!--><!--!--><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/cookieconsent@3.1.1/build/cookieconsent.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lightgallery@1.6.8/dist/css/lightgallery.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/justifiedGallery@3.7.0/dist/css/justifiedGallery.min.css"><script src="https://www.googletagmanager.com/gtag/js?id=UA-131608076-1" async></script><script>window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+    
+        gtag('config', 'UA-131608076-1');</script><!--!--><!--!--><!--!--><script src="https://cdn.jsdelivr.net/npm/pace-js@1.0.2/pace.min.js"></script><!--!--><!--!--><meta name="generator" content="Hexo 5.4.0"></head><body class="is-3-column"><nav class="navbar navbar-main"><div class="container"><div class="navbar-brand justify-content-center"><a class="navbar-item navbar-logo" href="/"><img src="/img/logo.png" alt="MCFON" height="28"></a></div><div class="navbar-menu"><div class="navbar-start"><a class="navbar-item" href="/">主页</a><a class="navbar-item" href="/archives">归档</a><a class="navbar-item" href="/categories">分类</a><a class="navbar-item" href="/tags">标签</a><a class="navbar-item" href="/about">关于</a></div><div class="navbar-end"><a class="navbar-item" target="_blank" rel="noopener" title="Download on GitHub" href="https://github.com/ppoffice/hexo-theme-icarus"><i class="fab fa-github"></i></a><a class="navbar-item is-hidden-tablet catalogue" title="目录" href="javascript:;"><i class="fas fa-list-ul"></i></a><a class="navbar-item search" title="搜索" href="javascript:;"><i class="fas fa-search"></i></a></div></div></div></nav><section class="section"><div class="container"><div class="columns"><div class="column order-2 column-main is-8-tablet is-8-desktop is-9-widescreen"><div class="card"><article class="card-content article" role="article"><h1 class="title is-size-3 is-size-4-mobile has-text-weight-normal"><i class="fas fa-angle-double-right"></i>You Only Look Once Unified Real-Time Object Detection</h1><div class="article-meta is-size-7 is-uppercase level is-mobile"><div class="level-left"><span class="level-item"><i class="far fa-calendar-alt"> </i><time dateTime="${date_xml(page.date)}" title="${date_xml(page.date)}">2021-08-02</time></span><span class="level-item is-hidden-mobile"><i class="far fa-calendar-check"> </i><time dateTime="${date_xml(page.updated)}" title="${date_xml(page.updated)}">2021-08-25</time></span><span class="level-item"><a class="link-muted" href="/categories/%E8%AE%BA%E6%96%87%E7%AC%94%E8%AE%B0/">论文笔记</a></span><span class="level-item">18 分钟读完 (大约2671个字)</span></div></div><div class="content"><pre><code>   本文提出了一个新的物体检测的方法：You Only Look</code></pre>
+<p>Once（YOLO）。之前的物体检测方法通常都转变为了一个分类问题，如 R-CNN、Fast R-CNN 等等。YOLO将检测看作一个 regression problem，YOLO 从输入的图像，仅仅经过一个 neural network，直接预测 bounding boxes 以及每个 bounding box 所属类别的概率。正因为整个的检测过程仅仅有一个网络，所以它可以直接 end-to-end 的优化。 <span id="more"></span> YOLO 结构十分的快，标准的 YOLO 版本每秒可以实时地处理 45 帧图像。一个较小版本：Fast YOLO，可以每秒处理 155 帧图像，它的 mAP（mean Average Precision） 依然可以达到其他实时检测算法的两倍。同时相比较于其他的 state-of-art detection systems。尽管 YOLO 的定位更容易出错，这里的 定位出错，即是指 coordinate errors。但是 YOLO 在背景预测上有更少的 false-positive(即是背景而预测为某种对象的错误情况较少)。</p>
+<pre><code>    最后，YOLO可以学习到物体的更加泛化的特征，在将 YOLO</code></pre>
+<p>用到其他领域的图像时（如 artwork 的图像上），其检测效果要优于 DPM、R-CNN 这类方法。</p>
+<p>论文地址：<a target="_blank" rel="noopener" href="https://arxiv.org/abs/1506.02640" class="uri">https://arxiv.org/abs/1506.02640</a></p>
+<p>参考：<a target="_blank" rel="noopener" href="http://blog.csdn.net/tangwei2014/article/details/50915317">论文阅读笔记：You Only Look Once: Unified, Real-Time Object Detection</a></p>
+<h2 id="依赖条件">依赖条件</h2>
+<p>1：熟悉目标检测技术Faster R-CNN</p>
+<h2 id="网络结构">网络结构</h2>
+<h3 id="unified-detection-统一检测">Unified Detection-统一检测</h3>
+<p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gttctjii5gj60hc0g90ue02.jpg" /></p>
+<pre><code>   YOLO的核心思想就是利用整张图作为网络的输入，直接在输出层回归bounding</code></pre>
+<p>box的位置和bounding box所属的类别。</p>
+<ol type="a">
+<li><p>将一幅图像分成SxS个网格(grid cell)，如果某个object的中心 落在这个网格中，则这个网格就负责预测这个object。</p></li>
+<li><p>每个网格要预测B个bounding box，每个bounding box除了要回归自身的位置之外，还要附带预测一个Confidence值。</p></li>
+<li><p>Confidence代表了所预测的box中含有object的置信度和这个box预测的有多准两重信息；计算公式Confidence=<span class="math inline">\(P_r(Object) * IOU^{truth}_{pred}​\)</span></p></li>
+</ol>
+<p>; 所以在gird cell中没有对象,那么Confidence为0；如果有对象就是与GT的IOU值。(注：Confidence代表bounding box与任意的GT box的IOU)。</p>
+<ol start="4" type="a">
+<li><p>每个bounding box要预测(x, y, w, h)和confidence共5个值。</p></li>
+<li><p>每个网格还要预测一个class类别信息<span class="math inline">\(P_r(Class_i|Object)\)</span></p></li>
+</ol>
+<p>；这是一个条件概率，在包含对象情况下，属于某类对象的概率。(注：class信息是针对每个网格的，confidence信息是针对每个bounding box的）</p>
+<pre><code>    对于SxS个网格，每个网格要预测B个bounding</code></pre>
+<p>box还要预测C个categories。输出就是S x S x (5*B+C)的一个tensor。</p>
+<h3 id="网络设计">网络设计</h3>
+<p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gttctwobvbj61cw0jotbt02.jpg" /></p>
+<pre><code>    YOLO 仍是 CNN 的经典形式，开始是 convolutional layers 提取特征，再是</code></pre>
+<p>fully connected layers 进行 predict 结果：probabilities 以及 coordinates。</p>
+<pre><code>    YOLO 的 CNN 结构受GoogLeNet图像分类的启发. YOLO 有24</code></pre>
+<p>个卷积层，随后就是全连接层。不像 GoogLeNet 中使用的 inception modules，YOLO 类似Network in Network，在3×3 卷积层之后，跟着一个 1×1 的卷积层。这个 YOLO 先在 ImageNet classification 任务上进行预训练（以一半的图像尺寸： 224×224 ），然后再将图像尺寸变为 448×448 ，用于 detection 任务。</p>
+<pre><code>    还有一个 Fast YOLO 版本。Fast YOLO</code></pre>
+<p>的网络结构中，只有 9 个卷积层，filters 也更少。</p>
+<h3 id="training-训练">training-训练</h3>
+<p><strong>预训练</strong></p>
+<pre><code>    YOLO 在 ImageNet 1000-class 的分类任务数据集 上进行</code></pre>
+<p>pretraining。预训练的网络是 Figure 3 中网络的前 20 层卷积层，加上一个 average-pooling layer，最后是一个 fully connected layer。</p>
+<pre><code>    这个预训练的网络，本文训练了大约一个星期，在 ImageNet 2012 的 validation</code></pre>
+<p>dataset 上的 top-5 精度为88%，本文的 training 以及 inference 都是用 Darknet 卷积网络框架完成的。</p>
+<p><strong>精调 </strong></p>
+<pre><code>  之后就把预训练的 model 用于 detection，《Object Detection Networks on</code></pre>
+<p>Convolutional Feature Maps》论文指出了在预训练的 model 上增加 convolution layer 以及 connected layer 可以增加 model 的 performance。因此，在预训练的 model 上，本文增加了 4 个 convolutional layers 以及 2 个 connected layers，这新加的层的参数是随机初始化的。因为要用于 detection，本文在 detection 的 fine-grained 阶段，将图像的输入分辨率从 224×224 调整至 448×448。</p>
+<pre><code>   最后输出的为 class probabilities 以及 bounding box</code></pre>
+<p>coordinates。但在输出时，根据图像的 width、height 将 bounding box 的 width、height 进行归一化，将值归一化到 0~1 的区间。同样将 bounding box 中的坐标 (x ,y) 通过 grid cells 的 offset 归一化到 0~1 之间。</p>
+<p><strong>损失函数</strong></p>
+<p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gttcuhsf2hj60hc0adjsa02.jpg" /></p>
+<pre><code>a) YOLO使用 sum-squared error 来作为优化目标，因为sum-squared error</code></pre>
+<p>较容易优化，但是对于本问题，直接使用 sum-squared error 却不是那么合适。主要有两个问题</p>
+<ul>
+<li><p>localization error和classification error的权重一样，不是理想结果。</p></li>
+<li><p>每一张图像中，很多 grid cells 并没不包含物体，使得这些 cells 的 confidence 置为 0，这些不包含物体的 grid cells 的梯度更新，将会以压倒性的优势，覆盖掉包含物体的 grid cells 进行的梯度更新。这些问题会使得模型不稳定，甚至造成网络的发散。</p>
+<p>为了避免上述的问题，将 localization error 以及 classification error 的 loss 重新用权重衡量。以平衡上述的失衡问题。简单的说，就是增加 bounding box coordinate 的 loss，减少不包含物体 grid cells 的 confidence 的 loss；增加两个参数λcoord = 5 和λnoobj = 0.5。</p>
+<ol start="2" type="a">
+<li><p>Sum-squared error loss 中还将 large box 与 small box 的 loss 同等对待。因为 box 与 groundtruth 的小的偏离， 对于较大的box，结果的影响较小；对小的box影响较大。为了解决这个问题，用了一个很巧妙的 trick，即最后并不是直接输出 bounding box 的 width、height，而是 width、height 的square root，平方根。</p></li>
+<li><p>每个 grid cell 预测多个 bounding box，但在网络模型的训练中，每一个物体，只想要一个 bounding box predictor 来负责预测。因此， 当前哪一个 predictor 预测的 prediction 与 groundtruth 的 IoU 最大 ，这个 predictor 就负责 predict object。因此只有在当 bounding box predictor 对 groundtruth box 负责的时候，才会对 bounding box coordinate error 进行惩罚。</p></li>
+</ol>
+<pre><code>d) loss function 在只有当一个 grid cell 中存在 object 时，才会对</code></pre>
+<p>classification error 进行惩罚。</p></li>
+</ul>
+<p><strong>参数及其它设置</strong></p>
+<p>** **a) 学习率：在最初的epochs中，learning rate 逐渐从 10−3 增加到 10−2。如果训练时从一个较大的 learning rate 开始，通常因为不稳定的梯度，而使得模型发散。之后，保持 learning rate 为 10−2 75 轮epoch; 再接下的 30 轮 epoch，learning rate 为 10−3；最后 30 轮 epoch，learning rate 为 10−4。</p>
+<ol start="2" type="a">
+<li><p>为了避免 overfitting，使用了 dropout 技术，在第一层全连接层后面增加了一个 dropout layer，随机置零的 rate=0.5。</p></li>
+<li><p>数据增广：最多图片尺寸20%的缩放和翻转；最多1.5的factor因子随机调整图片的曝光度和饱和度。</p></li>
+</ol>
+<h3 id="inference-预测">inference-预测</h3>
+<p><span class="math inline">\(Pr(Class_i|Object) * Pr(Object) *IOU^{truth}_{pred} = P_r(Class_i) * IOU^{truth}_{pred}\)</span></p>
+<pre><code> 在预测的时候将类别条件概率和bounding box</code></pre>
+<p>的置信度confidence评分相乘；即一个类别相关的置信度。这样就同时enconding了 bounding box 中预测的 class 的 probability，以及 bounding box 与 object 契合的有多好。</p>
+<pre><code> 每一张图像得到 98 个 bounding boxes，以及每个 bounding box 的所属类别概率。
+
+ 当图像中的物体较大，或者处于 grid cells 边界的物体，可能在多个 cells</code></pre>
+<p>中被定位出来。可以用Non-Maximal Suppression（NMS，非极大值抑制） 进行去除重复检测的物体，可以使最终的 mAP 提高2−3%，相比较于 NMS 对于 DPM、R-CNN 的提高，不算大。</p>
+<h3 id="yolo的缺陷">YOLO的缺陷</h3>
+<pre><code>  a)  因为每个 grid cell 中只能预测两个</code></pre>
+<p>boxes，以及有一个类别。这种太强的空间约束，限制了 YOLO 对于相邻物体的检测能力，一旦相邻的物体数量过多，YOLO 就检测不好了。如对于一群鸟儿，这种相邻数量很多，而且又太小的物体，YOLO 难以进行很好的检测。</p>
+<pre><code>  b)  对于图像中，同一类物体出现新的、不常见的长宽比时，YOLO</code></pre>
+<p>的泛化能力较弱。</p>
+<pre><code>  c) 最后，loss functions 中对于 small bounding boxes，以及 large bounding</code></pre>
+<p>boxes 的误差，均等对待。尽管正如前面提到的，大尺寸 bounding box 的 error 与小尺寸 bounding box 的 error，其影响是不同的。即使用了平方根的技巧优化了这个问题，但是这个问题还得得到更好的解决。YOLO 中最主要的误差仍是定位不准造成的误差。</p>
+<h2 id="实验结果">实验结果</h2>
+<h3 id="与其它实时系统比较">与其它实时系统比较</h3>
+<pre><code>   Faster YOLO更快，同时mAP好两倍</code></pre>
+<p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gttcuurppmj30hc0gf0uu.jpg" /></p>
+<h3 id="voc-2007错误分析">VOC 2007错误分析</h3>
+<p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gttcva6zz9j60hc0cpjsf02.jpg" /></p>
+<p><strong>分类说明：</strong></p>
+<ul>
+<li><p>Correct: 分类正确 ， IOU &gt; 0.5</p></li>
+<li><p>Localization: 分类正确, 0.1 &lt; IOU &lt; 0.5</p></li>
+<li><p>Similar: 分类接近, IOU &gt; 0.1</p></li>
+<li><p>Other: 分类错误, IOU &gt; 0.1</p></li>
+<li><p>Background: 对任何对象IOU &lt; 0.1</p></li>
+</ul>
+<p><strong>结果分析：</strong></p>
+<p>** ** a) YOLO在定位准确做的不好</p>
+<pre><code>    b) Fast R-CNN对背景的预测不好；相比YOLO背景的错误率有接近3倍。</code></pre>
+<h3 id="组合fast-r-cnn-和-yolo">组合Fast R-CNN 和 YOLO</h3>
+<pre><code>   由于YOLO在背景的错误率较低，因子组合Fast R-CNN和YOLO，在Fast</code></pre>
+<p>R-CNN上使用YOLO预测背景。对Fast R-CNN预测的bounding boxes，看YOLO是否有预测类似的bounding boxes;如果有组合两种预测来boost结果。</p>
+<p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gttcviixatj30hc0avwfi.jpg" /></p>
+<h3 id="更加泛化的特征">更加泛化的特征</h3>
+<pre><code>    YOLO在艺术画的测试中表现要更佳</code></pre>
+<p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gttcvr8199j612b0g60v102.jpg" /></p>
+<h2 id="疑问点">疑问点</h2>
+</div><div class="article-licensing box"><div class="licensing-title"><p>You Only Look Once Unified Real-Time Object Detection</p><p><a href="https://hunlp.com/posts/21373.html">https://hunlp.com/posts/21373.html</a></p></div><div class="licensing-meta level is-mobile"><div class="level-left"><div class="level-item is-narrow"><div><h6>作者</h6><p>ฅ´ω`ฅ</p></div></div><div class="level-item is-narrow"><div><h6>发布于</h6><p>2021-08-02</p></div></div><div class="level-item is-narrow"><div><h6>更新于</h6><p>2021-08-25</p></div></div><div class="level-item is-narrow"><div><h6>许可协议</h6><p><a class="icons" rel="noopener" target="_blank" title="Creative Commons" href="https://creativecommons.org/"><i class="icon fab fa-creative-commons"></i></a><a class="icons" rel="noopener" target="_blank" title="Attribution" href="https://creativecommons.org/licenses/by/4.0/"><i class="icon fab fa-creative-commons-by"></i></a><a class="icons" rel="noopener" target="_blank" title="Noncommercial" href="https://creativecommons.org/licenses/by-nc/4.0/"><i class="icon fab fa-creative-commons-nc"></i></a></p></div></div></div></div></div><hr style="height:1px;margin:1rem 0"><div class="level is-mobile is-flex"><div class="article-tags is-size-7 is-uppercase"><i class="fas fa-tags has-text-grey"></i> <a class="link-muted" rel="tag" href="/tags/CV/">CV, </a><a class="link-muted" rel="tag" href="/tags/YOLO/">YOLO </a></div></div><div class="bdsharebuttonbox"><a class="bds_more" href="#" data-cmd="more"></a><a class="bds_qzone" href="#" data-cmd="qzone" title="分享到QQ空间"></a><a class="bds_tsina" href="#" data-cmd="tsina" title="分享到新浪微博"></a><a class="bds_tqq" href="#" data-cmd="tqq" title="分享到腾讯微博"></a><a class="bds_renren" href="#" data-cmd="renren" title="分享到人人网"></a><a class="bds_weixin" href="#" data-cmd="weixin" title="分享到微信"></a></div><script>window._bd_share_config = { "common": { "bdSnsKey": {}, "bdText": "", "bdMini": "2", "bdPic": "", "bdStyle": "0", "bdSize": "16" }, "share": {} }; with (document) 0[(getElementsByTagName('head')[0] || body).appendChild(createElement('script')).src = 'http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion=' + ~(-new Date() / 36e5)];</script></article></div><div class="card"><div class="card-content"><h3 class="menu-label has-text-centered">喜欢这篇文章？打赏一下作者吧</h3><div class="buttons is-centered"><a class="button donate" data-type="alipay"><span class="icon is-small"><i class="fab fa-alipay"></i></span><span>支付宝</span><span class="qrcode"><img src="/img/zfb.jpg" alt="支付宝"></span></a><a class="button donate" data-type="wechat"><span class="icon is-small"><i class="fab fa-weixin"></i></span><span>微信</span><span class="qrcode"><img src="/img/wx.jpg" alt="微信"></span></a></div></div></div><nav class="post-navigation mt-4 level is-mobile"><div class="level-start"><a class="article-nav-prev level level-item link-muted" href="/posts/47418.html"><i class="level-item fas fa-chevron-left"></i><span class="level-item">SSD-Single Shot MultiBox Detector</span></a></div><div class="level-end"><a class="article-nav-next level level-item link-muted" href="/posts/1101.html"><span class="level-item">Proof of Hammersley-Clifford Theorem</span><i class="level-item fas fa-chevron-right"></i></a></div></nav><div class="card"><div class="card-content"><h3 class="title is-5">评论</h3><div id="comment-container"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1.7.2/dist/gitalk.css"><script src="https://cdn.jsdelivr.net/npm/gitalk@1.7.2/dist/gitalk.min.js"></script><script>var gitalk = new Gitalk({
+            id: "829c4c0943dc55d4a8cbd4b2414174d1",
+            repo: "Cartride.github.io",
+            owner: "Cartride",
+            clientID: "8f4a2426c347380a6ee4",
+            clientSecret: "8dc8cd44b071426b35d0bd60634941371170b798",
+            admin: ["Cartride"],
+            createIssueManually: false,
+            distractionFreeMode: false,
+            perPage: 10,
+            pagerDirection: "last",
+            
+            
+            enableHotKey: true,
+            
+        })
+        gitalk.render('comment-container')</script></div></div></div><div class="column column-left is-4-tablet is-4-desktop is-3-widescreen  order-1 is-sticky"><div class="card widget" id="toc" data-type="toc"><div class="card-content"><div class="menu"><h3 class="menu-label">目录</h3><ul class="menu-list"><li><a class="level is-mobile" href="#依赖条件"><span class="level-left"><span class="level-item">1</span><span class="level-item">依赖条件</span></span></a></li><li><a class="level is-mobile" href="#网络结构"><span class="level-left"><span class="level-item">2</span><span class="level-item">网络结构</span></span></a><ul class="menu-list"><li><a class="level is-mobile" href="#unified-detection-统一检测"><span class="level-left"><span class="level-item">2.1</span><span class="level-item">Unified Detection-统一检测</span></span></a></li><li><a class="level is-mobile" href="#网络设计"><span class="level-left"><span class="level-item">2.2</span><span class="level-item">网络设计</span></span></a></li><li><a class="level is-mobile" href="#training-训练"><span class="level-left"><span class="level-item">2.3</span><span class="level-item">training-训练</span></span></a></li><li><a class="level is-mobile" href="#inference-预测"><span class="level-left"><span class="level-item">2.4</span><span class="level-item">inference-预测</span></span></a></li><li><a class="level is-mobile" href="#yolo的缺陷"><span class="level-left"><span class="level-item">2.5</span><span class="level-item">YOLO的缺陷</span></span></a></li></ul></li><li><a class="level is-mobile" href="#实验结果"><span class="level-left"><span class="level-item">3</span><span class="level-item">实验结果</span></span></a><ul class="menu-list"><li><a class="level is-mobile" href="#与其它实时系统比较"><span class="level-left"><span class="level-item">3.1</span><span class="level-item">与其它实时系统比较</span></span></a></li><li><a class="level is-mobile" href="#voc-2007错误分析"><span class="level-left"><span class="level-item">3.2</span><span class="level-item">VOC 2007错误分析</span></span></a></li><li><a class="level is-mobile" href="#组合fast-r-cnn-和-yolo"><span class="level-left"><span class="level-item">3.3</span><span class="level-item">组合Fast R-CNN 和 YOLO</span></span></a></li><li><a class="level is-mobile" href="#更加泛化的特征"><span class="level-left"><span class="level-item">3.4</span><span class="level-item">更加泛化的特征</span></span></a></li></ul></li><li><a class="level is-mobile" href="#疑问点"><span class="level-left"><span class="level-item">4</span><span class="level-item">疑问点</span></span></a></li></ul></div></div><style>#toc .menu-list > li > a.is-active + .menu-list { display: block; }#toc .menu-list > li > a + .menu-list { display: none; }</style><script src="/js/toc.js" defer></script></div></div><!--!--></div></div></section><footer class="footer"><div class="container"><div class="level"><div class="level-start"><a class="footer-logo is-block mb-2" href="/"><img src="/img/logo.png" alt="MCFON" height="28"></a><p class="is-size-7"><span>&copy; 2022 ฅ´ω`ฅ</span>  Powered by <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a> &amp; <a href="https://github.com/ppoffice/hexo-theme-icarus" target="_blank" rel="noopener">Icarus</a></p></div><div class="level-end"><div class="field has-addons"><p class="control"><a class="button is-transparent is-large" target="_blank" rel="noopener" title="Creative Commons" href="https://creativecommons.org/"><i class="fab fa-creative-commons"></i></a></p><p class="control"><a class="button is-transparent is-large" target="_blank" rel="noopener" title="Attribution 4.0 International" href="https://creativecommons.org/licenses/by/4.0/"><i class="fab fa-creative-commons-by"></i></a></p><p class="control"><a class="button is-transparent is-large" target="_blank" rel="noopener" title="Download on GitHub" href="https://github.com/ppoffice/hexo-theme-icarus"><i class="fab fa-github"></i></a></p></div></div></div></div></footer><script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script><script src="https://cdn.jsdelivr.net/npm/moment@2.22.2/min/moment-with-locales.min.js"></script><script src="https://cdn.jsdelivr.net/npm/clipboard@2.0.4/dist/clipboard.min.js" defer></script><script>moment.locale("zh-CN");</script><script>var IcarusThemeSettings = {
+            article: {
+                highlight: {
+                    clipboard: true,
+                    fold: 'unfolded'
+                }
+            }
+        };</script><script src="/js/column.js"></script><script src="/js/animation.js"></script><a id="back-to-top" title="回到顶端" href="javascript:;"><i class="fas fa-chevron-up"></i></a><script src="/js/back_to_top.js" defer></script><!--!--><!--!--><!--!--><script src="https://cdn.jsdelivr.net/npm/cookieconsent@3.1.1/build/cookieconsent.min.js" defer></script><script>window.addEventListener("load", () => {
+      window.cookieconsent.initialise({
+        type: "info",
+        theme: "edgeless",
+        static: false,
+        position: "bottom-left",
+        content: {
+          message: "此网站使用Cookie来改善您的体验。",
+          dismiss: "知道了！",
+          allow: "允许使用Cookie",
+          deny: "拒绝",
+          link: "了解更多",
+          policy: "Cookie政策",
+          href: "https://www.cookiesandyou.com/",
+        },
+        palette: {
+          popup: {
+            background: "#edeff5",
+            text: "#838391"
+          },
+          button: {
+            background: "#4b81e8"
+          },
+        },
+      });
+    });</script><script src="https://cdn.jsdelivr.net/npm/lightgallery@1.6.8/dist/js/lightgallery.min.js" defer></script><script src="https://cdn.jsdelivr.net/npm/justifiedGallery@3.7.0/dist/js/jquery.justifiedGallery.min.js" defer></script><script>window.addEventListener("load", () => {
+            if (typeof $.fn.lightGallery === 'function') {
+                $('.article').lightGallery({ selector: '.gallery-item' });
+            }
+            if (typeof $.fn.justifiedGallery === 'function') {
+                if ($('.justified-gallery > p > .gallery-item').length) {
+                    $('.justified-gallery > p > .gallery-item').unwrap();
+                }
+                $('.justified-gallery').justifiedGallery();
+            }
+        });</script><!--!--><!--!--><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.css"><script src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.js" defer></script><script src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/contrib/auto-render.min.js" defer></script><script src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/contrib/mhchem.js" defer></script><script>window.addEventListener("load", function() {
+            document.querySelectorAll('[role="article"] > .content').forEach(function(element) {
+                renderMathInElement(element);
+            });
+        });</script><script type="text/x-mathjax-config">MathJax.Hub.Config({
+            'HTML-CSS': {
+                matchFontHeight: false
+            },
+            SVG: {
+                matchFontHeight: false
+            },
+            CommonHTML: {
+                matchFontHeight: false
+            },
+            tex2jax: {
+                inlineMath: [
+                    ['$','$'],
+                    ['\\(','\\)']
+                ]
+            }
+        });</script><script src="https://cdn.jsdelivr.net/npm/mathjax@2.7.5/unpacked/MathJax.js?config=TeX-MML-AM_CHTML" defer></script><!--!--><!--!--><!--!--><script src="/js/main.js" defer></script><div class="searchbox"><div class="searchbox-container"><div class="searchbox-header"><div class="searchbox-input-container"><input class="searchbox-input" type="text" placeholder="想要查找什么..."></div><a class="searchbox-close" href="javascript:;">×</a></div><div class="searchbox-body"></div></div></div><script src="/js/insight.js" defer></script><script>document.addEventListener('DOMContentLoaded', function () {
+            loadInsight({"contentUrl":"/content.json"}, {"hint":"想要查找什么...","untitled":"(无标题)","posts":"文章","pages":"页面","categories":"分类","tags":"标签"});
+        });</script></body></html>

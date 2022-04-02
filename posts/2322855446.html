@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="zh"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"><meta><title>Log-Linear Models - MCFON</title><link rel="manifest" href="/manifest.json"><meta name="application-name" content="MCFON"><meta name="msapplication-TileImage" content="/img/favicon.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="MCFON"><meta name="apple-mobile-web-app-status-bar-style" content="default"><meta name="description" content="Introduction log-linear 模型在自然语言处理上使用非常广泛，其最主要的原因在于其灵活性，允许很多特征被使用在该模型上，相比于之前的简单估计技术(比如HMMs的标记问题，PCFGs的解析问题)。"><meta property="og:type" content="blog"><meta property="og:title" content="Log-Linear Models"><meta property="og:url" content="https://hunlp.com/posts/2322855446.html"><meta property="og:site_name" content="MCFON"><meta property="og:description" content="Introduction log-linear 模型在自然语言处理上使用非常广泛，其最主要的原因在于其灵活性，允许很多特征被使用在该模型上，相比于之前的简单估计技术(比如HMMs的标记问题，PCFGs的解析问题)。"><meta property="og:locale" content="zh_CN"><meta property="og:image" content="https://tva1.sinaimg.cn/large/006y8mN6gy1g92ebajpd0j30u30d2q4x.jpg"><meta property="article:published_time" content="2018-08-18T10:50:56.000Z"><meta property="article:modified_time" content="2019-11-18T12:13:58.721Z"><meta property="article:author" content="ฅ´ω`ฅ"><meta property="article:tag" content="数学原理"><meta property="article:tag" content="Log-Linear Models"><meta property="twitter:card" content="summary"><meta property="twitter:image" content="https://tva1.sinaimg.cn/large/006y8mN6gy1g92ebajpd0j30u30d2q4x.jpg"><script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","mainEntityOfPage":{"@type":"WebPage","@id":"https://hunlp.com/posts/2322855446.html"},"headline":"Log-Linear Models","image":["https://tva1.sinaimg.cn/large/006y8mN6gy1g92ebajpd0j30u30d2q4x.jpg"],"datePublished":"2018-08-18T10:50:56.000Z","dateModified":"2019-11-18T12:13:58.721Z","author":{"@type":"Person","name":"ฅ´ω`ฅ"},"publisher":{"@type":"Organization","name":"MCFON","logo":{"@type":"ImageObject","url":"https://hunlp.com/img/logo.png"}},"description":"Introduction log-linear 模型在自然语言处理上使用非常广泛，其最主要的原因在于其灵活性，允许很多特征被使用在该模型上，相比于之前的简单估计技术(比如HMMs的标记问题，PCFGs的解析问题)。"}</script><link rel="canonical" href="https://hunlp.com/posts/2322855446.html"><link rel="icon" href="/img/favicon.png"><link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.2/css/all.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@9.12.0/styles/atom-one-light.css"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@400;600&amp;family=Source+Code+Pro"><link rel="stylesheet" href="/css/default.css"><style>body>.footer,body>.navbar,body>.section{opacity:0}</style><!--!--><script>var _hmt = _hmt || [];
+        (function() {
+            var hm = document.createElement("script");
+            hm.src = "//hm.baidu.com/hm.js?b99420d7a06d2b3361a8efeaf6e20764";
+            var s = document.getElementsByTagName("script")[0];
+            s.parentNode.insertBefore(hm, s);
+        })();</script><!--!--><!--!--><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/cookieconsent@3.1.1/build/cookieconsent.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lightgallery@1.6.8/dist/css/lightgallery.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/justifiedGallery@3.7.0/dist/css/justifiedGallery.min.css"><script src="https://www.googletagmanager.com/gtag/js?id=UA-131608076-1" async></script><script>window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+    
+        gtag('config', 'UA-131608076-1');</script><!--!--><!--!--><!--!--><script src="https://cdn.jsdelivr.net/npm/pace-js@1.0.2/pace.min.js"></script><!--!--><!--!--><meta name="generator" content="Hexo 5.4.0"></head><body class="is-3-column"><nav class="navbar navbar-main"><div class="container"><div class="navbar-brand justify-content-center"><a class="navbar-item navbar-logo" href="/"><img src="/img/logo.png" alt="MCFON" height="28"></a></div><div class="navbar-menu"><div class="navbar-start"><a class="navbar-item" href="/">主页</a><a class="navbar-item" href="/archives">归档</a><a class="navbar-item" href="/categories">分类</a><a class="navbar-item" href="/tags">标签</a><a class="navbar-item" href="/about">关于</a></div><div class="navbar-end"><a class="navbar-item" target="_blank" rel="noopener" title="Download on GitHub" href="https://github.com/ppoffice/hexo-theme-icarus"><i class="fab fa-github"></i></a><a class="navbar-item search" title="搜索" href="javascript:;"><i class="fas fa-search"></i></a></div></div></div></nav><section class="section"><div class="container"><div class="columns"><div class="column order-2 column-main is-8-tablet is-8-desktop is-9-widescreen"><div class="card"><article class="card-content article" role="article"><h1 class="title is-size-3 is-size-4-mobile has-text-weight-normal"><i class="fas fa-angle-double-right"></i>Log-Linear Models</h1><div class="article-meta is-size-7 is-uppercase level is-mobile"><div class="level-left"><span class="level-item"><i class="far fa-calendar-alt"> </i><time dateTime="${date_xml(page.date)}" title="${date_xml(page.date)}">2018-08-18</time></span><span class="level-item is-hidden-mobile"><i class="far fa-calendar-check"> </i><time dateTime="${date_xml(page.updated)}" title="${date_xml(page.updated)}">2019-11-18</time></span><span class="level-item"><a class="link-muted" href="/categories/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/">深度学习</a><span> / </span><a class="link-muted" href="/categories/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/NLP/">NLP</a></span><span class="level-item">11 分钟读完 (大约1622个字)</span></div></div><div class="content"><h2 id="introduction">Introduction</h2>
+<p>log-linear 模型在自然语言处理上使用非常广泛，其最主要的原因在于其灵活性，允许很多特征被使用在该模型上，相比于之前的简单估计技术(比如HMMs的标记问题，PCFGs的解析问题)。 <span id="more"></span></p>
+<h2 id="motivation">Motivation</h2>
+<p>再次思考语言模型问题，其任务是得出下面条件概率的估计： <span class="math display">\[
+P(W_i=w_i|W_1=w_1...W_{i-1}=w_{i-1})=p(w_i|w_1...w_{i-1})
+\]</span> 对于任一序列<span class="math inline">\(w_1...w_i\)</span>，得出在序列<span class="math inline">\(w_1...w_{i-1}\)</span>条件下，出现单词<span class="math inline">\(w_i\)</span>的概率。在trigram语言模型中，我们有如下假设： <span class="math display">\[
+p(w_i|w_1...w_{i-1})=q(w_i|w_{i-2},w_{i-1})
+\]</span> 对于上面的概率求解，我们前面提到过使用一种平滑技术： <span class="math display">\[
+q(w|u,v)=\lambda_1q_{ML}(w|u,v)+\lambda_2q_{ML}(w|v)+\lambda_3q_{ML}(w)
+\]</span> Trigram语言模型十分有效，但是在使用上下文 对于任一序列<span class="math inline">\(w_1...w_i\)</span>，得出在序列上相对狭窄了，比如我们想去估计单词model出现的概率在 对于任一序列<span class="math inline">\(w_1...w_i\)</span>，得出在序列条件下： <span class="math display">\[
+P(W_i=model|W_1=w_1...W_{i-1}=w_{i-1})
+\]</span></p>
+<p>我们可以思考在单词<span class="math inline">\(w_{i-2}\)</span>下的概率，而忽略<span class="math inline">\(w_{i-1}\)</span>：<span class="math inline">\(P(W_i=model|W_{i-2}=any)\)</span>；我们也可以考虑前一个单词的词性来对当前单词的概率：<span class="math inline">\(P(W_i=model|pos(W_{i-1})=adj)\)</span>；实考前一个单词后缀对当前单词的影响：<span class="math inline">\(P(W_i=model|suff4(W_{i-1})=ical)\)</span>等等很多，这样我们给每一个赋予权重参数，就可以写成如下形式： <span class="math display">\[
+p(model|w_1...w_{i-1})=\\
+\lambda_1q_{ML}(model|w_{i-2}=any,w_{i-1}=statistical)+\\
+\lambda_2q_{ML}(model|w_{i-1}=statistical)+\\
+\lambda_3q_{ML}(model)+\\
+\lambda_4q_{ML}(model|w_{i-2}=any)+\\
+\lambda_5q_{ML}(model|w_{i-1}\,\,is\,\,an\,\,adj)+\\
+\lambda_6q_{ML}(model|w_{i-1}\,\,ends\,\,in\,\,&quot;ical&quot;)+\\
+...
+\]</span></p>
+<p>显然如果这样做的话，会非常的麻烦，那么如何做呢，见下面部分。</p>
+<h2 id="log-linear-models">Log-Linear Models</h2>
+<p>基本定义：<span class="math inline">\(X\)</span>作为输入集，<span class="math inline">\(Y\)</span>作为输出集(标签集，假设是一个有限集)。d表示模型特征和参数的个数，函数f表示任意一个<span class="math inline">\((x,y)\)</span>对匹配的特征向量<span class="math inline">\(f(x,y)\)</span>，参数向量<span class="math inline">\(v \in R^d\)</span>. 将模型<span class="math inline">\(p(y|x)\)</span>加上参数后定义的条件概率模型如下： <span class="math display">\[
+p(y|x;v)=\frac{e^{v\cdot f(x,y)}}{\sum_{y&#39; \in Y}e^{v \cdot f(x,y&#39;)}}
+\]</span> 其中<span class="math inline">\(v\cdot f(x,y)=\sum_{k=1}^{d}v_kf_k(x,y)\)</span>，<span class="math inline">\(p(y|x;v)\)</span>读作在参数<span class="math inline">\(v\)</span>下，基于x的y的条件概率。</p>
+<h2 id="features">Features</h2>
+<p>关于上面提到的特征向量<span class="math inline">\(f\)</span>的计算如下图所示： <img src="https://tva1.sinaimg.cn/large/006y8mN6gy1g92ebajpd0j30u30d2q4x.jpg" /></p>
+<p>这里提到了<code>trigram</code>模型的例子，如上面所示，如果词汇表的大小为<span class="math inline">\(V\)</span>，那么对trigram模型来说将会有<span class="math inline">\(V^3\)</span>个特征，这里用<span class="math inline">\(N(u,v,w)\)</span>表示将每一个trigram对应到一个独一无二的整数。同理bigram模型，Unigram模型也是如此，而且这三个模型对应的整数不重叠。 从上面来说，特征会非常的稀疏，这里我们只取值为1的特征： <span class="math display">\[
+Z(x,y)=\{k:f_k(x,y)=1\}
+\]</span> 这样就将特征的复杂度从<span class="math inline">\(O(d)\)</span>降到<span class="math inline">\(O(|Z(x,y)|)\)</span>，且<span class="math inline">\(|Z(x,y)| \ll d\)</span>，这样特征向量的求解就变成如下： <span class="math display">\[
+v\cdot f(x,y)=\sum_{k=1}^{d}v_kf_k(x,y)=\sum_{k \in Z(x,y)}v_k
+\]</span></p>
+<h2 id="parameter-estimation-in-log-linear-models">Parameter Estimation in Log-Linear Models</h2>
+<p>这里对上面的条件概率取对数就是我们的对数线性模型，假设我们有训练集<span class="math inline">\((x^{(i)},y^{(i)}), \,\,i \in \{1...n\},\,\,x^{(i)} \in X,\,\,y^{(i)} \in Y\)</span>，给定一个参数<span class="math inline">\(v\)</span>，对于任意的例子i，其对数条件概率如下： <span class="math display">\[
+log \,p(y^{(i)}|x^{(i)};v)
+\]</span> 那么全部训练集中最大似然的对数条件概率和如下： <span class="math display">\[
+L(v)=\sum_{i=1}^{n}log\,p(y^{(i)}|x^{(i)};v)
+\]</span> 我们要找到使<span class="math inline">\(L(v)\)</span>最大的<span class="math inline">\(v\)</span>，即： <span class="math display">\[
+v_{ML}=arg\,\,\max_{v \in R^d} L(v)
+\]</span> 这里举个例子，假设在训练集中的第100个例子中的trigram有: <span class="math display">\[
+f_{N(any,statistical,model)}(x^{(100)},y^{(100)})=1
+\]</span> 在其它例子中都没有，我们的目的是希望<span class="math inline">\(L(v)\)</span>最大，这样在<span class="math inline">\(v_100\)</span>就会取无穷大，那么对应例子的对数条件概率就会最大： <span class="math display">\[
+p(y^{(100)}|x^{(100)};v)=1
+\]</span> 由于其它例子没有该特征，<span class="math inline">\(v_100\)</span>不会对其它例子产生影响，但是显然这样是不合理的，模型只会对当前的训练集起到很好的作用，即过拟合，泛化能力变差，我们需要模型的泛化能力变强，需要对参数v进行约束，即加上惩罚项： <span class="math display">\[
+L&#39;(v)=\sum_{i=1}^{n}log\,p(y^{(i)}|x^{(i)};v)-\frac{\lambda}{2}\sum_{k}v_k^2
+\]</span> 上面这个式子就是机器学习中的损失函数，使用梯度下降就可以找到最优解。 对<span class="math inline">\(L&#39;(v)\)</span>求导： <span class="math display">\[
+\frac{dL&#39;(v)}{dv_k}=\sum_{i=1}^{n}f_k(x^{(i)},y^{(i)})-\sum_{i=1}^{n}\sum_{y \in Y}p(y|x^{(i)};v)f_k(x^{(i)},y)-\lambda v_k
+\]</span> 关于上面的证明如下： 取其中的一部分分析 <span class="math display">\[
+log\,p(y^{(i)}|x^{(i)};v)=v\cdot f(x^{(i)},y^{(i)})-log\sum_{y&#39; \in Y}e^{v\cdot f(x^{(i)},y&#39;)}
+\]</span> 对上面的第一部分求导： <span class="math display">\[
+\frac{d}{dv_k}\bigg(v\cdot f(x^{(i)},y^{(i)})\bigg)=\frac{d}{dv_k}\bigg(\sum_kv_k\cdot f_k(x^{(i)},y^{(i)})\bigg)=f_k(x^{(i)},y^{(i)})
+\]</span> 对上面第二部分(应该是看成以e为底，不过常数不影响)： <span class="math display">\[
+记 g(v)=\sum_{y&#39; \in Y}e^{v\cdot f(x^{(i)},y&#39;)}\\
+\frac{d}{dv_k}log\,g(v)=\frac{\frac{d}{dv_k}(g(v))}{g(v)}\\
+=\frac{\sum_{y&#39; \in Y}f_k(x^{(i)},y&#39;)e^{v\cdot f(x^{(i)},y&#39;)}}{\sum_{y&#39; \in Y}e^{v\cdot f(x^{(i)},y&#39;)}}\\
+=\sum_{y&#39; \in Y}\bigg(f_k(x^{(i)},y&#39;)\frac{e^{v\cdot f(x^{(i)},y&#39;)}}{\sum_{y&#39; \in Y e^{(v\cdot f(x^{(i)},y&#39;))}}}\bigg)\\
+=\sum_{y&#39; \in Y}f_k(x^{(i)},y&#39;)p(y&#39;|x;v)
+\]</span> 这样就完了，后面两部分比较简单，都是在讲前面的模型用现在的对数线性模型替换后的结果及其对比，就不再做笔记了，此部分完结。。。</p>
+</div><div class="article-licensing box"><div class="licensing-title"><p>Log-Linear Models</p><p><a href="https://hunlp.com/posts/2322855446.html">https://hunlp.com/posts/2322855446.html</a></p></div><div class="licensing-meta level is-mobile"><div class="level-left"><div class="level-item is-narrow"><div><h6>作者</h6><p>ฅ´ω`ฅ</p></div></div><div class="level-item is-narrow"><div><h6>发布于</h6><p>2018-08-18</p></div></div><div class="level-item is-narrow"><div><h6>更新于</h6><p>2019-11-18</p></div></div><div class="level-item is-narrow"><div><h6>许可协议</h6><p><a class="icons" rel="noopener" target="_blank" title="Creative Commons" href="https://creativecommons.org/"><i class="icon fab fa-creative-commons"></i></a><a class="icons" rel="noopener" target="_blank" title="Attribution" href="https://creativecommons.org/licenses/by/4.0/"><i class="icon fab fa-creative-commons-by"></i></a><a class="icons" rel="noopener" target="_blank" title="Noncommercial" href="https://creativecommons.org/licenses/by-nc/4.0/"><i class="icon fab fa-creative-commons-nc"></i></a></p></div></div></div></div></div><hr style="height:1px;margin:1rem 0"><div class="level is-mobile is-flex"><div class="article-tags is-size-7 is-uppercase"><i class="fas fa-tags has-text-grey"></i> <a class="link-muted" rel="tag" href="/tags/%E6%95%B0%E5%AD%A6%E5%8E%9F%E7%90%86/">数学原理, </a><a class="link-muted" rel="tag" href="/tags/Log-Linear-Models/">Log-Linear Models </a></div></div><div class="bdsharebuttonbox"><a class="bds_more" href="#" data-cmd="more"></a><a class="bds_qzone" href="#" data-cmd="qzone" title="分享到QQ空间"></a><a class="bds_tsina" href="#" data-cmd="tsina" title="分享到新浪微博"></a><a class="bds_tqq" href="#" data-cmd="tqq" title="分享到腾讯微博"></a><a class="bds_renren" href="#" data-cmd="renren" title="分享到人人网"></a><a class="bds_weixin" href="#" data-cmd="weixin" title="分享到微信"></a></div><script>window._bd_share_config = { "common": { "bdSnsKey": {}, "bdText": "", "bdMini": "2", "bdPic": "", "bdStyle": "0", "bdSize": "16" }, "share": {} }; with (document) 0[(getElementsByTagName('head')[0] || body).appendChild(createElement('script')).src = 'http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion=' + ~(-new Date() / 36e5)];</script></article></div><div class="card"><div class="card-content"><h3 class="menu-label has-text-centered">喜欢这篇文章？打赏一下作者吧</h3><div class="buttons is-centered"><a class="button donate" data-type="alipay"><span class="icon is-small"><i class="fab fa-alipay"></i></span><span>支付宝</span><span class="qrcode"><img src="/img/zfb.jpg" alt="支付宝"></span></a><a class="button donate" data-type="wechat"><span class="icon is-small"><i class="fab fa-weixin"></i></span><span>微信</span><span class="qrcode"><img src="/img/wx.jpg" alt="微信"></span></a></div></div></div><nav class="post-navigation mt-4 level is-mobile"><div class="level-start"><a class="article-nav-prev level level-item link-muted" href="/posts/1237613955.html"><i class="level-item fas fa-chevron-left"></i><span class="level-item">Wide and Deep Learning for Recommender Systems</span></a></div><div class="level-end"><a class="article-nav-next level level-item link-muted" href="/posts/2242938984.html"><span class="level-item">CYK算法详解与代码实现</span><i class="level-item fas fa-chevron-right"></i></a></div></nav><div class="card"><div class="card-content"><h3 class="title is-5">评论</h3><div id="comment-container"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1.7.2/dist/gitalk.css"><script src="https://cdn.jsdelivr.net/npm/gitalk@1.7.2/dist/gitalk.min.js"></script><script>var gitalk = new Gitalk({
+            id: "0f9e58cc25593ebefab036829ae46d7e",
+            repo: "Cartride.github.io",
+            owner: "Cartride",
+            clientID: "8f4a2426c347380a6ee4",
+            clientSecret: "8dc8cd44b071426b35d0bd60634941371170b798",
+            admin: ["Cartride"],
+            createIssueManually: false,
+            distractionFreeMode: false,
+            perPage: 10,
+            pagerDirection: "last",
+            
+            
+            enableHotKey: true,
+            
+        })
+        gitalk.render('comment-container')</script></div></div></div><div class="column column-left is-4-tablet is-4-desktop is-3-widescreen  order-1 is-sticky"><!--!--></div><!--!--></div></div></section><footer class="footer"><div class="container"><div class="level"><div class="level-start"><a class="footer-logo is-block mb-2" href="/"><img src="/img/logo.png" alt="MCFON" height="28"></a><p class="is-size-7"><span>&copy; 2022 ฅ´ω`ฅ</span>  Powered by <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a> &amp; <a href="https://github.com/ppoffice/hexo-theme-icarus" target="_blank" rel="noopener">Icarus</a></p></div><div class="level-end"><div class="field has-addons"><p class="control"><a class="button is-transparent is-large" target="_blank" rel="noopener" title="Creative Commons" href="https://creativecommons.org/"><i class="fab fa-creative-commons"></i></a></p><p class="control"><a class="button is-transparent is-large" target="_blank" rel="noopener" title="Attribution 4.0 International" href="https://creativecommons.org/licenses/by/4.0/"><i class="fab fa-creative-commons-by"></i></a></p><p class="control"><a class="button is-transparent is-large" target="_blank" rel="noopener" title="Download on GitHub" href="https://github.com/ppoffice/hexo-theme-icarus"><i class="fab fa-github"></i></a></p></div></div></div></div></footer><script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script><script src="https://cdn.jsdelivr.net/npm/moment@2.22.2/min/moment-with-locales.min.js"></script><script src="https://cdn.jsdelivr.net/npm/clipboard@2.0.4/dist/clipboard.min.js" defer></script><script>moment.locale("zh-CN");</script><script>var IcarusThemeSettings = {
+            article: {
+                highlight: {
+                    clipboard: true,
+                    fold: 'unfolded'
+                }
+            }
+        };</script><script src="/js/column.js"></script><script src="/js/animation.js"></script><a id="back-to-top" title="回到顶端" href="javascript:;"><i class="fas fa-chevron-up"></i></a><script src="/js/back_to_top.js" defer></script><!--!--><!--!--><!--!--><script src="https://cdn.jsdelivr.net/npm/cookieconsent@3.1.1/build/cookieconsent.min.js" defer></script><script>window.addEventListener("load", () => {
+      window.cookieconsent.initialise({
+        type: "info",
+        theme: "edgeless",
+        static: false,
+        position: "bottom-left",
+        content: {
+          message: "此网站使用Cookie来改善您的体验。",
+          dismiss: "知道了！",
+          allow: "允许使用Cookie",
+          deny: "拒绝",
+          link: "了解更多",
+          policy: "Cookie政策",
+          href: "https://www.cookiesandyou.com/",
+        },
+        palette: {
+          popup: {
+            background: "#edeff5",
+            text: "#838391"
+          },
+          button: {
+            background: "#4b81e8"
+          },
+        },
+      });
+    });</script><script src="https://cdn.jsdelivr.net/npm/lightgallery@1.6.8/dist/js/lightgallery.min.js" defer></script><script src="https://cdn.jsdelivr.net/npm/justifiedGallery@3.7.0/dist/js/jquery.justifiedGallery.min.js" defer></script><script>window.addEventListener("load", () => {
+            if (typeof $.fn.lightGallery === 'function') {
+                $('.article').lightGallery({ selector: '.gallery-item' });
+            }
+            if (typeof $.fn.justifiedGallery === 'function') {
+                if ($('.justified-gallery > p > .gallery-item').length) {
+                    $('.justified-gallery > p > .gallery-item').unwrap();
+                }
+                $('.justified-gallery').justifiedGallery();
+            }
+        });</script><!--!--><!--!--><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.css"><script src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.js" defer></script><script src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/contrib/auto-render.min.js" defer></script><script src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/contrib/mhchem.js" defer></script><script>window.addEventListener("load", function() {
+            document.querySelectorAll('[role="article"] > .content').forEach(function(element) {
+                renderMathInElement(element);
+            });
+        });</script><script type="text/x-mathjax-config">MathJax.Hub.Config({
+            'HTML-CSS': {
+                matchFontHeight: false
+            },
+            SVG: {
+                matchFontHeight: false
+            },
+            CommonHTML: {
+                matchFontHeight: false
+            },
+            tex2jax: {
+                inlineMath: [
+                    ['$','$'],
+                    ['\\(','\\)']
+                ]
+            }
+        });</script><script src="https://cdn.jsdelivr.net/npm/mathjax@2.7.5/unpacked/MathJax.js?config=TeX-MML-AM_CHTML" defer></script><!--!--><!--!--><!--!--><script src="/js/main.js" defer></script><div class="searchbox"><div class="searchbox-container"><div class="searchbox-header"><div class="searchbox-input-container"><input class="searchbox-input" type="text" placeholder="想要查找什么..."></div><a class="searchbox-close" href="javascript:;">×</a></div><div class="searchbox-body"></div></div></div><script src="/js/insight.js" defer></script><script>document.addEventListener('DOMContentLoaded', function () {
+            loadInsight({"contentUrl":"/content.json"}, {"hint":"想要查找什么...","untitled":"(无标题)","posts":"文章","pages":"页面","categories":"分类","tags":"标签"});
+        });</script></body></html>

@@ -1,0 +1,396 @@
+<!doctype html>
+<html lang="zh"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"><meta><title>L-BFGS - MCFON</title><link rel="manifest" href="/manifest.json"><meta name="application-name" content="MCFON"><meta name="msapplication-TileImage" content="/img/favicon.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="MCFON"><meta name="apple-mobile-web-app-status-bar-style" content="default"><meta name="description" content="牛顿法   设f(x)是二次可微实函数，又设\(x^{(k)}\)是f(x)一个极小点的估计，我们把f(x)在\(x^{(k)}\)处展开成Taylor级数， 并取二阶近似。"><meta property="og:type" content="blog"><meta property="og:title" content="L-BFGS"><meta property="og:url" content="https://hunlp.com/posts/4166596681.html"><meta property="og:site_name" content="MCFON"><meta property="og:description" content="牛顿法   设f(x)是二次可微实函数，又设\(x^{(k)}\)是f(x)一个极小点的估计，我们把f(x)在\(x^{(k)}\)处展开成Taylor级数， 并取二阶近似。"><meta property="og:locale" content="zh_CN"><meta property="og:image" content="https://hunlp.com/gallery/13.jpg"><meta property="article:published_time" content="2019-07-23T08:00:26.000Z"><meta property="article:modified_time" content="2019-07-23T17:13:54.144Z"><meta property="article:author" content="ฅ´ω`ฅ"><meta property="article:tag" content="spark"><meta property="article:tag" content="优化算法"><meta property="twitter:card" content="summary"><meta property="twitter:image" content="/gallery/13.jpg"><script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","mainEntityOfPage":{"@type":"WebPage","@id":"https://hunlp.com/posts/4166596681.html"},"headline":"L-BFGS","image":["https://hunlp.com/gallery/13.jpg"],"datePublished":"2019-07-23T08:00:26.000Z","dateModified":"2019-07-23T17:13:54.144Z","author":{"@type":"Person","name":"ฅ´ω`ฅ"},"publisher":{"@type":"Organization","name":"MCFON","logo":{"@type":"ImageObject","url":"https://hunlp.com/img/logo.png"}},"description":"牛顿法   设f(x)是二次可微实函数，又设\\(x^{(k)}\\)是f(x)一个极小点的估计，我们把f(x)在\\(x^{(k)}\\)处展开成Taylor级数， 并取二阶近似。"}</script><link rel="canonical" href="https://hunlp.com/posts/4166596681.html"><link rel="icon" href="/img/favicon.png"><link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.2/css/all.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@9.12.0/styles/atom-one-light.css"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@400;600&amp;family=Source+Code+Pro"><link rel="stylesheet" href="/css/default.css"><style>body>.footer,body>.navbar,body>.section{opacity:0}</style><!--!--><script>var _hmt = _hmt || [];
+        (function() {
+            var hm = document.createElement("script");
+            hm.src = "//hm.baidu.com/hm.js?b99420d7a06d2b3361a8efeaf6e20764";
+            var s = document.getElementsByTagName("script")[0];
+            s.parentNode.insertBefore(hm, s);
+        })();</script><!--!--><!--!--><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/cookieconsent@3.1.1/build/cookieconsent.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lightgallery@1.6.8/dist/css/lightgallery.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/justifiedGallery@3.7.0/dist/css/justifiedGallery.min.css"><script src="https://www.googletagmanager.com/gtag/js?id=UA-131608076-1" async></script><script>window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+    
+        gtag('config', 'UA-131608076-1');</script><!--!--><!--!--><!--!--><script src="https://cdn.jsdelivr.net/npm/pace-js@1.0.2/pace.min.js"></script><!--!--><!--!--><meta name="generator" content="Hexo 5.4.0"></head><body class="is-3-column"><nav class="navbar navbar-main"><div class="container"><div class="navbar-brand justify-content-center"><a class="navbar-item navbar-logo" href="/"><img src="/img/logo.png" alt="MCFON" height="28"></a></div><div class="navbar-menu"><div class="navbar-start"><a class="navbar-item" href="/">主页</a><a class="navbar-item" href="/archives">归档</a><a class="navbar-item" href="/categories">分类</a><a class="navbar-item" href="/tags">标签</a><a class="navbar-item" href="/about">关于</a></div><div class="navbar-end"><a class="navbar-item" target="_blank" rel="noopener" title="Download on GitHub" href="https://github.com/ppoffice/hexo-theme-icarus"><i class="fab fa-github"></i></a><a class="navbar-item search" title="搜索" href="javascript:;"><i class="fas fa-search"></i></a></div></div></div></nav><section class="section"><div class="container"><div class="columns"><div class="column order-2 column-main is-8-tablet is-8-desktop is-9-widescreen"><div class="card"><article class="card-content article" role="article"><h1 class="title is-size-3 is-size-4-mobile has-text-weight-normal"><i class="fas fa-angle-double-right"></i>L-BFGS</h1><div class="article-meta is-size-7 is-uppercase level is-mobile"><div class="level-left"><span class="level-item"><i class="far fa-calendar-alt"> </i><time dateTime="${date_xml(page.date)}" title="${date_xml(page.date)}">2019-07-23</time></span><span class="level-item is-hidden-mobile"><i class="far fa-calendar-check"> </i><time dateTime="${date_xml(page.updated)}" title="${date_xml(page.updated)}">2019-07-24</time></span><span class="level-item"><a class="link-muted" href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/">机器学习</a></span><span class="level-item">29 分钟读完 (大约4402个字)</span></div></div><div class="content"><h1 id="牛顿法">牛顿法</h1>
+  设<code>f(x)</code>是二次可微实函数，又设<span class="math inline">\(x^{(k)}\)</span>是<code>f(x)</code>一个极小点的估计，我们把<code>f(x)</code>在<span class="math inline">\(x^{(k)}\)</span>处展开成<code>Taylor</code>级数， 并取二阶近似。 <span id="more"></span>
+<div data-align="center">
+<img src="../images/imgs6/1.1.png" width = "615" height = "45" alt="1.1" align="center" />
+</div>
+<p><br></p>
+<p>  上式中最后一项的中间部分表示<code>f(x)</code>在<span class="math inline">\(x^{(k)}\)</span>处的<code>Hesse</code>矩阵。对上式求导并令其等于0，可以的到下式：</p>
+<div data-align="center">
+<img src="../images/imgs6/1.2.png" width = "280" height = "40" alt="1.2" align="center" />
+</div>
+<p><br></p>
+<p>  设<code>Hesse</code>矩阵可逆，由上式可以得到牛顿法的迭代公式如下 <strong>(1.1)</strong></p>
+<div data-align="center">
+<img src="../images/imgs6/1.3.png" width = "280" height = "40" alt="1.3" align="center" />
+</div>
+<p><br></p>
+<p>  值得注意 ， 当初始点远离极小点时，牛顿法可能不收敛。原因之一是牛顿方向不一定是下降方向，经迭代，目标函数可能上升。此外，即使目标函数下降，得到的点也不一定是沿牛顿方向最好的点或极小点。 因此，我们在牛顿方向上增加一维搜索，提出阻尼牛顿法。其迭代公式是 <strong>(1.2)</strong>：</p>
+<div data-align="center">
+<img src="../images/imgs6/1.4.png" width = "240" height = "60" alt="1.4" align="center" />
+</div>
+<p><br></p>
+<p>  其中，<code>lambda</code>是由一维搜索（参考文献【1】了解一维搜索）得到的步长，即满足</p>
+<div data-align="center">
+<img src="../images/imgs6/1.5.png" width = "320" height = "40" alt="1.5" align="center" />
+</div>
+<p><br></p>
+<h1 id="拟牛顿法">拟牛顿法</h1>
+<h2 id="拟牛顿条件">拟牛顿条件</h2>
+<p>  前面介绍了牛顿法，它的突出优点是收敛很快，但是运用牛顿法需要计算二阶偏导数，而且目标函数的<code>Hesse</code>矩阵可能非正定。为了克服牛顿法的缺点，人们提出了拟牛顿法，它的基本思想是用不包含二阶导数的矩阵近似牛顿法中的<code>Hesse</code>矩阵的逆矩阵。 由于构造近似矩阵的方法不同，因而出现不同的拟牛顿法。</p>
+<p>  下面分析怎样构造近似矩阵并用它取代牛顿法中的<code>Hesse</code>矩阵的逆。上文 <strong>(1.2)</strong> 已经给出了牛顿法的迭代公式，为了构造<code>Hesse</code>矩阵逆矩阵的近似矩阵<span class="math inline">\(H_{(k)}\)</span> ，需要先分析该逆矩阵与一阶导数的关系。</p>
+<p>  设在第<code>k</code>次迭代之后，得到<span class="math inline">\(x^{(k+1)}\)</span> ，我们将目标函数<code>f(x)</code>在点<span class="math inline">\(x^{(k+1)}\)</span>展开成<code>Taylor</code>级数， 并取二阶近似，得到</p>
+<div data-align="center">
+<img src="../images/imgs6/2.1.png" width = "630" height = "50" alt="2.1" align="center" />
+</div>
+<p><br></p>
+<p>  由此可知，在<span class="math inline">\(x^{(k+1)}\)</span>附近有，</p>
+<div data-align="center">
+<img src="../images/imgs6/2.2.png" width = "420" height = "60" alt="2.2" align="center" />
+</div>
+<p><br></p>
+<p>  记</p>
+<div data-align="center">
+<img src="../images/imgs6/2.3.png" width = "240" height = "60" alt="2.3" align="center" />
+</div>
+<p><br></p>
+<p>  则有</p>
+<div data-align="center">
+<img src="../images/imgs6/2.4.png" width = "200" height = "30" alt="2.4" align="center" />
+</div>
+<p><br></p>
+<p>  又设<code>Hesse</code>矩阵可逆，那么上式可以写为如下形式。</p>
+<div data-align="center">
+<img src="../images/imgs6/2.5.png" width = "215" height = "35" alt="2.5" align="center" />
+</div>
+<p><br></p>
+<p>  这样，计算出<code>p</code>和<code>q</code>之后，就可以通过上面的式子估计<code>Hesse</code>矩阵的逆矩阵。因此，为了用不包含二阶导数的矩阵<span class="math inline">\(H_{(k+1)}\)</span>取代牛顿法中<code>Hesse</code>矩阵的逆矩阵，有理由令<span class="math inline">\(H_{(k+1)}\)</span>满足公式 <strong>(2.1)</strong> ：</p>
+<div data-align="center">
+<img src="../images/imgs6/2.6.png" width = "140" height = "35" alt="2.6" align="center" />
+</div>
+<p><br></p>
+<p>  公式<strong>(2.1)</strong>称为拟牛顿条件。</p>
+<h2 id="秩1校正">秩1校正</h2>
+<p>  当<code>Hesse</code>矩阵的逆矩阵是对称正定矩阵时，满足拟牛顿条件的矩阵<span class="math inline">\(H_{(k)}\)</span>也应该是对称正定矩阵。构造这样近似矩阵的一般策略是，<span class="math inline">\(H_{(1)}\)</span>取为任意一个<code>n</code>阶对称正定矩阵，通常选择<code>n</code>阶单位矩阵<code>I</code>，然后通过修正<span class="math inline">\(H_{(k)}\)</span>给定<span class="math inline">\(H_{(k+1)}\)</span>。 令，</p>
+<div data-align="center">
+<img src="../images/imgs6/2.7.png" width = "150" height = "30" alt="2.7" align="center" />
+</div>
+<p><br></p>
+<p>  秩1校正公式写为如下公式<strong>(2.2)</strong>形式。</p>
+<div data-align="center">
+<img src="../images/imgs6/2.8.png" width = "360" height = "70" alt="2.8" align="center" />
+</div>
+<p><br></p>
+<h2 id="dfp算法">DFP算法</h2>
+<p>  著名的<code>DFP</code>方法是<code>Davidon</code>首先提出，后来又被<code>Feltcher</code>和<code>Powell</code>改进的算法，又称为变尺度法。在这种方法中，定义校正矩阵为公式 <strong>(2.3)</strong></p>
+<div data-align="center">
+<img src="../images/imgs6/2.9.png" width = "280" height = "60" alt="2.9" align="center" />
+</div>
+<p><br></p>
+<p>  那么得到的满足拟牛顿条件的<code>DFP</code>公式如下 <strong>(2.4)</strong></p>
+<div data-align="center">
+<img src="../images/imgs6/2.10.png" width = "320" height = "70" alt="2.10" align="center" />
+</div>
+<p><br></p>
+<p>  查看文献【1】，了解<code>DFP</code>算法的计算步骤。</p>
+<h2 id="bfgs算法">BFGS算法</h2>
+<p>  前面利用拟牛顿条件 <strong>(2.1)</strong> 推导出了<code>DFP</code>公式 <strong>(2.4)</strong> 。下面我们用不含二阶导数的矩阵<span class="math inline">\(B_{(k+1)}\)</span>近似<code>Hesse</code>矩阵，从而给出另一种形式的拟牛顿条件 <strong>(2.5)</strong> :</p>
+<div data-align="center">
+<img src="../images/imgs6/2.11.png" width = "140" height = "35" alt="2.11" align="center" />
+</div>
+<p><br></p>
+<p>  将公式 <strong>(2.1)</strong> 的<code>H</code>换为<code>B</code>，<code>p</code>和<code>q</code>互换正好可以得到公式 <strong>(2.5)</strong> 。所以我们可以得到<code>B</code>的修正公式 <strong>(2.6)</strong> :</p>
+<div data-align="center">
+<img src="../images/imgs6/2.12.png" width = "320" height = "65" alt="2.12" align="center" />
+</div>
+<p><br></p>
+<p>  这个公式称关于矩阵<code>B</code>的<code>BFGS</code>修正公式，也称为<code>DFP</code>公式的对偶公式。设<span class="math inline">\(B_{(k+1)}\)</span>可逆，由公式 <strong>(2.1)</strong> 以及 <strong>(2.5)</strong> 可以推出：</p>
+<div data-align="center">
+<img src="../images/imgs6/2.13.png" width = "110" height = "35" alt="2.13" align="center" />
+</div>
+<p><br></p>
+<p>  这样可以得到关于<code>H</code>的<code>BFGS</code>公式为下面的公式 <strong>(2.7)</strong>:</p>
+<div data-align="center">
+<img src="../images/imgs6/2.14.png" width = "570" height = "60" alt="2.14" align="center" />
+</div>
+<p><br></p>
+<p>  这个重要公式是由<code>Broyden</code>,<code>Fletcher</code>,<code>Goldfard</code>和<code>Shanno</code>于1970年提出的，所以简称为<code>BFGS</code>。数值计算经验表明，它比<code>DFP</code>公式还好，因此目前得到广泛应用。</p>
+<h2 id="l-bfgs限制内存bfgs算法">L-BFGS（限制内存BFGS）算法</h2>
+<p>  在<code>BFGS</code>算法中，仍然有缺陷，比如当优化问题规模很大时，矩阵的存储和计算将变得不可行。为了解决这个问题，就有了<code>L-BFGS</code>算法。<code>L-BFGS</code>即<code>Limited-memory BFGS</code>。 <code>L-BFGS</code>的基本思想是只保存最近的<code>m</code>次迭代信息，从而大大减少数据的存储空间。对照<code>BFGS</code>，重新整理一下公式：</p>
+<div data-align="center">
+<img src="../images/imgs6/2.15.png" width = "200" height = "130" alt="2.15" align="center" />
+</div>
+<p><br></p>
+<p>  之前的<code>BFGS</code>算法有如下公式<strong>(2.8)</strong></p>
+<div data-align="center">
+<img src="../images/imgs6/2.16.png" width = "550" height = "55" alt="2.16" align="center" />
+</div>
+<p><br></p>
+<p>  那么同样有</p>
+<div data-align="center">
+<img src="../images/imgs6/2.17.png" width = "320" height = "30" alt="2.17" align="center" />
+</div>
+<p><br></p>
+<p>  将该式子带入到公式<strong>(2.8)</strong>中，可以推导出如下公式</p>
+<div data-align="center">
+<img src="../images/imgs6/2.18.png" width = "480" height = "150" alt="2.18" align="center" />
+</div>
+<p><br></p>
+<p>  假设当前迭代为<code>k</code>，只保存最近的<code>m</code>次迭代信息，按照上面的方式迭代<code>m</code>次，可以得到如下的公式<strong>(2.9)</strong></p>
+<div data-align="center">
+<img src="../images/imgs6/2.19.png" width = "500" height = "250" alt="2.19" align="center" />
+</div>
+<p><br></p>
+<p>  上面迭代的最终目的就是找到<code>k</code>次迭代的可行方向，即</p>
+<div data-align="center">
+<img src="../images/imgs6/2.20.png" width = "145" height = "30" alt="2.20" align="center" />
+</div>
+<p><br></p>
+<p>  为了求可行方向<code>r</code>，可以使用<code>two-loop recursion</code>算法来求。该算法的计算过程如下，算法中出现的<code>y</code>即上文中提到的<code>t</code>：</p>
+<div data-align="center">
+<img src="../images/imgs6/2.21.png" width = "500" height = "350" alt="2.21" align="center" />
+</div>
+<p><br></p>
+<p>  算法<code>L-BFGS</code>的步骤如下所示。</p>
+<div data-align="center">
+<img src="../images/imgs6/2.22.png" width = "500" height = "350" alt="2.22" align="center" />
+</div>
+<p><br></p>
+<h2 id="owl-qn算法">OWL-QN算法</h2>
+<h3 id="l1-正则化">L1 正则化</h3>
+<p>  在机器学习算法中，使用损失函数作为最小化误差，而最小化误差是为了让我们的模型拟合我们的训练数据，此时， 若参数过分拟合我们的训练数据就会有过拟合的问题。正则化参数的目的就是为了防止我们的模型过分拟合训练数据。此时，我们会在损失项之后加上正则化项以约束模型中的参数：</p>
+<p><span class="math display">\[J(x) = l(x) + r(x)\]</span></p>
+<p>  公式右边的第一项是损失函数，用来衡量当训练出现偏差时的损失，可以是任意可微凸函数（如果是非凸函数该算法只保证找到局部最优解）。 第二项是正则化项。用来对模型空间进行限制，从而得到一个更“简单”的模型。</p>
+<p>  根据对模型参数所服从的概率分布的假设的不同，常用的正则化一般有<code>L2</code>正则化（模型参数服从<code>Gaussian</code>分布）、<code>L1</code>正则化（模型参数服从<code>Laplace</code>分布）以及它们的组合形式。</p>
+<p>  <code>L1</code>正则化的形式如下</p>
+<p><span class="math display">\[J(x) = l(x) + C ||x||_{1}\]</span></p>
+<p>  <code>L2</code>正则化的形式如下</p>
+<p><span class="math display">\[J(x) = l(x) + C ||x||_{2}\]</span></p>
+<p>  <code>L1</code>正则化和<code>L2</code>正则化之间的一个最大区别在于前者可以产生稀疏解，这使它同时具有了特征选择的能力，此外，稀疏的特征权重更具有解释意义。如下图：</p>
+<div data-align="center">
+<img src="../images/imgs6/2.23.jpeg" width = "600" height = "400" alt="2.23" align="center" />
+</div>
+<p><br></p>
+<p>  图左侧是<code>L2</code>正则，右侧为<code>L1</code>正则。当模型中只有两个参数，即<span class="math inline">\(w_1\)</span>和<span class="math inline">\(w_2\)</span>时，<code>L2</code>正则的约束空间是一个圆，而<code>L1</code>正则的约束空间为一个正方形，这样，基于<code>L1</code>正则的约束会产生稀疏解，即图中某一维(<span class="math inline">\(w_2\)</span>)为0。 而<code>L2</code>正则只是将参数约束在接近0的很小的区间里，而不会正好为0(不排除有0的情况)。对于<code>L1</code>正则产生的稀疏解有很多的好处，如可以起到特征选择的作用，因为有些维的系数为0，说明这些维对于模型的作用很小。</p>
+<p>  这里有一个问题是，<code>L1</code>正则化项不可微，所以无法像求<code>L-BFGS</code>那样去求。微软提出了<code>OWL-QN</code>(<code>Orthant-Wise Limited-Memory Quasi-Newton</code>)算法，该算法是基于<code>L-BFGS</code>算法的可用于求解<code>L1</code>正则的算法。 简单来讲，<code>OWL-QN</code>算法是指假定变量的象限确定的条件下使用<code>L-BFGS</code>算法来更新，同时，使得更新前后变量在同一个象限中(使用映射来满足条件)。</p>
+<h3 id="owl-qn算法的具体过程">OWL-QN算法的具体过程</h3>
+<ul>
+<li><b>1 次微分</b></li>
+</ul>
+<p>  设<span class="math inline">\(f:I\rightarrow R\)</span>是一个实变量凸函数，定义在实数轴上的开区间内。这种函数不一定是处处可导的，例如绝对值函数<span class="math inline">\(f(x)=|x|\)</span>。但是，从下面的图中可以看出（也可以严格地证明），对于定义域中的任何<span class="math inline">\(x_0\)</span>，我们总可以作出一条直线，它通过点(<span class="math inline">\(x_0\)</span>, <span class="math inline">\(f(x_0)\)</span>)，并且要么接触f的图像，要么在它的下方。 这条直线的斜率称为函数的次导数。推广到多元函数就叫做次梯度。</p>
+<div data-align="center">
+<img src="../images/imgs6/2.24.png" width = "500" height = "400" alt="2.24" align="center" />
+</div>
+<p><br></p>
+<p>  凸函数<span class="math inline">\(f:I\rightarrow R\)</span>在点<span class="math inline">\(x_0\)</span>的次导数，是实数<code>c</code>使得：</p>
+<div data-align="center">
+<img src="../images/imgs6/2.25.png" width = "200" height = "20" alt="2.25" align="center" />
+</div>
+<p><br></p>
+<p>  对于所有<code>I</code>内的<code>x</code>。我们可以证明，在点<span class="math inline">\(x_0\)</span>的次导数的集合是一个非空闭区间<span class="math inline">\([a, b]\)</span>，其中<code>a</code>和<code>b</code>是单侧极限。</p>
+<div data-align="center">
+<img src="../images/imgs6/2.26.png" width = "200" height = "50" alt="2.26" align="center" />
+</div>
+<p><br></p>
+<div data-align="center">
+<img src="../images/imgs6/2.27.png" width = "200" height = "50" alt="2.27" align="center" />
+</div>
+<p><br></p>
+<p>  它们一定存在，且满足<span class="math inline">\(a \leqslant b\)</span>。所有次导数的集合<span class="math inline">\([a, b]\)</span>称为函数<code>f</code>在<span class="math inline">\(x_0\)</span>的次微分。</p>
+<ul>
+<li><b>2 伪梯度</b></li>
+</ul>
+<p>  利用次梯度的概念推广了梯度，定义了一个符合上述原则的伪梯度，求一维搜索的可行方向时用伪梯度来代替<code>L-BFGS</code>中的梯度。</p>
+<div data-align="center">
+<img src="../images/imgs6/2.28.png" width = "320" height = "80" alt="2.28" align="center" />
+</div>
+<p><br></p>
+<p>  其中</p>
+<div data-align="center">
+<img src="../images/imgs6/2.29.png" width = "350" height = "50" alt="2.29" align="center" />
+</div>
+<p><br></p>
+<div data-align="center">
+<img src="../images/imgs6/2.30.jpg" width = "160" height = "30" alt="2.30" align="center" />
+</div>
+<p><br></p>
+<p>  我们要如何理解这个伪梯度呢？对于不是处处可导的凸函数，可以分为下图所示的三种情况。</p>
+<p>  左侧极限小于0：</p>
+<div data-align="center">
+<img src="../images/imgs6/2.31.png" width = "350" height = "310" alt="2.31" align="center" />
+</div>
+<p><br></p>
+<p>  右侧极限大于0：</p>
+<div data-align="center">
+<img src="../images/imgs6/2.32.png" width = "350" height = "300" alt="2.32" align="center" />
+</div>
+<p><br></p>
+<p>  其它情况：</p>
+<div data-align="center">
+<img src="../images/imgs6/2.33.png" width = "330" height = "290" alt="2.33" align="center" />
+</div>
+<p><br></p>
+<p>  结合上面的三幅图表示的三种情况以及伪梯度函数公式，我们可以知道，伪梯度函数保证了在<span class="math inline">\(x_0\)</span>处取得的方向导数是最小的。</p>
+<ul>
+<li><b>3 映射</b></li>
+</ul>
+<p>  有了函数的下降的方向，接下来必须对变量的所属象限进行限制，目的是使得更新前后变量在同一个象限中，定义函数：<span class="math inline">\(\pi: \mathbb{R}^{n} \rightarrow \mathbb{R}^{n}\)</span></p>
+<div data-align="center">
+<img src="../images/imgs6/2.34.png" width = "270" height = "50" alt="2.34" align="center" />
+</div>
+<p><br></p>
+<p>  上述函数<span class="math inline">\(\pi\)</span>直观的解释是若<span class="math inline">\(x\)</span>和<span class="math inline">\(y\)</span>在同一象限则取<span class="math inline">\(x\)</span>，若两者不在同一象限中，则取0。</p>
+<ul>
+<li><b>4 线搜索</b></li>
+</ul>
+<p>  上述的映射是防止更新后的变量的坐标超出象限，而对坐标进行的一个约束，具体的约束的形式如下：</p>
+<div data-align="center">
+<img src="../images/imgs6/2.35.gif" width = "180" height = "25" alt="2.35" align="center" />
+</div>
+<p><br></p>
+<p>  其中<span class="math inline">\(x^{k} + \alpha p _{k}\)</span>是更新公式，<span class="math inline">\(\zeta\)</span>表示<span class="math inline">\(x^k\)</span>所在的象限，<span class="math inline">\(p^k\)</span>表示伪梯度下降的方向，它们具体的形式如下：</p>
+<div data-align="center">
+<img src="../images/imgs6/2.36.gif" width = "250" height = "55" alt="2.36" align="center" />
+</div>
+<p><br></p>
+<div data-align="center">
+<img src="../images/imgs6/2.37.gif" width = "118" height = "24" alt="2.37" align="center" />
+</div>
+<p><br></p>
+<p>  上面的公式中，<span class="math inline">\(v^k\)</span>为负伪梯度方向，<span class="math inline">\(d^k = H_{k}v^{k}\)</span>。</p>
+<p>  选择<span class="math inline">\(\alpha\)</span>的方式有很多种，在<code>OWL-QN</code>中，使用了<code>backtracking line search</code>的一种变种。选择常数<span class="math inline">\(\beta, \gamma \subset (0,1)\)</span>，对于<span class="math inline">\(n=0,1,2,...\)</span>，使得 <span class="math inline">\(\alpha = \beta^{n}\)</span>满足：</p>
+<div data-align="center">
+<img src="../images/imgs6/2.38.gif" width = "450" height = "24" alt="2.38" align="center" />
+</div>
+<p><br></p>
+<ul>
+<li><b>5 算法流程</b></li>
+</ul>
+<div data-align="center">
+<img src="../images/imgs6/2.39.png" width = "400" height = "300" alt="2.38" align="center" />
+</div>
+<p><br></p>
+<p>  与<code>L-BFGS</code>相比，第一步用伪梯度代替梯度，第二、三步要求一维搜索不跨象限，也就是迭代前的点与迭代后的点处于同一象限，第四步要求估计<code>Hessian</code>矩阵时依然使用损失函数的梯度。</p>
+<h1 id="源码解析">源码解析</h1>
+<h2 id="breezelbfgs">BreezeLBFGS</h2>
+<p>  <code>spark Ml</code>调用<code>breeze</code>中实现的<code>BreezeLBFGS</code>来解最优化问题。</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">val</span> optimizer = <span class="keyword">new</span> <span class="type">BreezeLBFGS</span>[<span class="type">BDV</span>[<span class="type">Double</span>]]($(maxIter), <span class="number">10</span>, $(tol))</span><br><span class="line"><span class="keyword">val</span> states =</span><br><span class="line">      optimizer.iterations(<span class="keyword">new</span> <span class="type">CachedDiffFunction</span>(costFun), initialWeights.toBreeze.toDenseVector)</span><br></pre></td></tr></table></figure>
+<p>  下面重点分析<code>lbfgs.iterations</code>的实现。</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">iterations</span></span>(f: <span class="type">DF</span>, init: <span class="type">T</span>): <span class="type">Iterator</span>[<span class="type">State</span>] = &#123;</span><br><span class="line">    <span class="keyword">val</span> adjustedFun = adjustFunction(f)</span><br><span class="line">    infiniteIterations(f, initialState(adjustedFun, init)).takeUpToWhere(_.converged)</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//调用infiniteIterations，其中State是一个样本类</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">infiniteIterations</span></span>(f: <span class="type">DF</span>, state: <span class="type">State</span>): <span class="type">Iterator</span>[<span class="type">State</span>] = &#123;</span><br><span class="line">    <span class="keyword">var</span> failedOnce = <span class="literal">false</span></span><br><span class="line">    <span class="keyword">val</span> adjustedFun = adjustFunction(f)</span><br><span class="line">    <span class="comment">//无限迭代</span></span><br><span class="line">    <span class="type">Iterator</span>.iterate(state) &#123; state =&gt; <span class="keyword">try</span> &#123;</span><br><span class="line">        <span class="comment">//1 选择梯度下降方向</span></span><br><span class="line">        <span class="keyword">val</span> dir = chooseDescentDirection(state, adjustedFun)</span><br><span class="line">        <span class="comment">//2 计算步长</span></span><br><span class="line">        <span class="keyword">val</span> stepSize = determineStepSize(state, adjustedFun, dir)</span><br><span class="line">        <span class="comment">//3 更新权重</span></span><br><span class="line">        <span class="keyword">val</span> x = takeStep(state,dir,stepSize)</span><br><span class="line">        <span class="comment">//4 利用CostFun.calculate计算损失值和梯度</span></span><br><span class="line">        <span class="keyword">val</span> (value,grad) = calculateObjective(adjustedFun, x, state.history)</span><br><span class="line">        <span class="keyword">val</span> (adjValue,adjGrad) = adjust(x,grad,value)</span><br><span class="line">        <span class="keyword">val</span> oneOffImprovement = (state.adjustedValue - adjValue)/(state.adjustedValue.abs max adjValue.abs max <span class="number">1E-6</span> * state.initialAdjVal.abs)</span><br><span class="line">        <span class="comment">//5 计算s和t</span></span><br><span class="line">        <span class="keyword">val</span> history = updateHistory(x,grad,value, adjustedFun, state)</span><br><span class="line">        <span class="comment">//6 只保存m个需要的s和t</span></span><br><span class="line">        <span class="keyword">val</span> newAverage = updateFValWindow(state, adjValue)</span><br><span class="line">        failedOnce = <span class="literal">false</span></span><br><span class="line">        <span class="keyword">var</span> s = <span class="type">State</span>(x,value,grad,adjValue,adjGrad,state.iter + <span class="number">1</span>, state.initialAdjVal, history, newAverage, <span class="number">0</span>)</span><br><span class="line">        <span class="keyword">val</span> improvementFailure = (state.fVals.length &gt;= minImprovementWindow &amp;&amp; state.fVals.nonEmpty &amp;&amp; state.fVals.last &gt; state.fVals.head * (<span class="number">1</span>-improvementTol))</span><br><span class="line">        <span class="keyword">if</span>(improvementFailure)</span><br><span class="line">          s = s.copy(fVals = <span class="type">IndexedSeq</span>.empty, numImprovementFailures = state.numImprovementFailures + <span class="number">1</span>)</span><br><span class="line">        s</span><br><span class="line">      &#125; <span class="keyword">catch</span> &#123;</span><br><span class="line">        <span class="keyword">case</span> x: <span class="type">FirstOrderException</span> <span class="keyword">if</span> !failedOnce =&gt;</span><br><span class="line">          failedOnce = <span class="literal">true</span></span><br><span class="line">          logger.error(<span class="string">&quot;Failure! Resetting history: &quot;</span> + x)</span><br><span class="line">          state.copy(history = initialHistory(adjustedFun, state.x))</span><br><span class="line">        <span class="keyword">case</span> x: <span class="type">FirstOrderException</span> =&gt;</span><br><span class="line">          logger.error(<span class="string">&quot;Failure again! Giving up and returning. Maybe the objective is just poorly behaved?&quot;</span>)</span><br><span class="line">          state.copy(searchFailed = <span class="literal">true</span>)</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+<p>  看上面的代码注释，它的流程可以分五步来分析。</p>
+<h3 id="选择梯度下降方向">选择梯度下降方向</h3>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">protected</span> <span class="function"><span class="keyword">def</span> <span class="title">chooseDescentDirection</span></span>(state: <span class="type">State</span>, fn: <span class="type">DiffFunction</span>[<span class="type">T</span>]):<span class="type">T</span> = &#123;</span><br><span class="line">    state.history * state.grad</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>  这里的<code>*</code>是重写的方法，它的实现如下：</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">*</span></span>(grad: <span class="type">T</span>) = &#123;</span><br><span class="line">     <span class="keyword">val</span> diag = <span class="keyword">if</span>(historyLength &gt; <span class="number">0</span>) &#123;</span><br><span class="line">       <span class="keyword">val</span> prevStep = memStep.head</span><br><span class="line">       <span class="keyword">val</span> prevGradStep = memGradDelta.head</span><br><span class="line">       <span class="keyword">val</span> sy = prevStep dot prevGradStep</span><br><span class="line">       <span class="keyword">val</span> yy = prevGradStep dot prevGradStep</span><br><span class="line">       <span class="keyword">if</span>(sy &lt; <span class="number">0</span> || sy.isNaN) <span class="keyword">throw</span> <span class="keyword">new</span> <span class="type">NaNHistory</span></span><br><span class="line">       sy/yy</span><br><span class="line">     &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">       <span class="number">1.0</span></span><br><span class="line">     &#125;</span><br><span class="line">     <span class="keyword">val</span> dir = space.copy(grad)</span><br><span class="line">     <span class="keyword">val</span> as = <span class="keyword">new</span> <span class="type">Array</span>[<span class="type">Double</span>](m)</span><br><span class="line">     <span class="keyword">val</span> rho = <span class="keyword">new</span> <span class="type">Array</span>[<span class="type">Double</span>](m)</span><br><span class="line">     <span class="comment">//第一次递归</span></span><br><span class="line">     <span class="keyword">for</span>(i &lt;- <span class="number">0</span> until historyLength) &#123;</span><br><span class="line">       rho(i) = (memStep(i) dot memGradDelta(i))</span><br><span class="line">       as(i) = (memStep(i) dot dir)/rho(i)</span><br><span class="line">       <span class="keyword">if</span>(as(i).isNaN) &#123;</span><br><span class="line">         <span class="keyword">throw</span> <span class="keyword">new</span> <span class="type">NaNHistory</span></span><br><span class="line">       &#125;</span><br><span class="line">       axpy(-as(i), memGradDelta(i), dir)</span><br><span class="line">     &#125;</span><br><span class="line">     dir *= diag</span><br><span class="line">     <span class="comment">//第二次递归</span></span><br><span class="line">     <span class="keyword">for</span>(i &lt;- (historyLength - <span class="number">1</span>) to <span class="number">0</span> by (<span class="number">-1</span>)) &#123;</span><br><span class="line">       <span class="keyword">val</span> beta = (memGradDelta(i) dot dir)/rho(i)</span><br><span class="line">       axpy(as(i) - beta, memStep(i), dir)</span><br><span class="line">     &#125;</span><br><span class="line">     dir *= <span class="number">-1.0</span></span><br><span class="line">     dir</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+<p>  非常明显，该方法就是实现了上文提到的<code>two-loop recursion</code>算法。</p>
+<h3 id="计算步长">计算步长</h3>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">protected</span> <span class="function"><span class="keyword">def</span> <span class="title">determineStepSize</span></span>(state: <span class="type">State</span>, f: <span class="type">DiffFunction</span>[<span class="type">T</span>], dir: <span class="type">T</span>) = &#123;</span><br><span class="line">    <span class="keyword">val</span> x = state.x</span><br><span class="line">    <span class="keyword">val</span> grad = state.grad</span><br><span class="line">    <span class="keyword">val</span> ff = <span class="type">LineSearch</span>.functionFromSearchDirection(f, x, dir)</span><br><span class="line">    <span class="keyword">val</span> search = <span class="keyword">new</span> <span class="type">StrongWolfeLineSearch</span>(maxZoomIter = <span class="number">10</span>, maxLineSearchIter = <span class="number">10</span>) <span class="comment">// <span class="doctag">TODO:</span> Need good default values here.</span></span><br><span class="line">    <span class="keyword">val</span> alpha = search.minimize(ff, <span class="keyword">if</span>(state.iter == <span class="number">0.0</span>) <span class="number">1.0</span>/norm(dir) <span class="keyword">else</span> <span class="number">1.0</span>)</span><br><span class="line">    <span class="keyword">if</span>(alpha * norm(grad) &lt; <span class="number">1E-10</span>)</span><br><span class="line">      <span class="keyword">throw</span> <span class="keyword">new</span> <span class="type">StepSizeUnderflow</span></span><br><span class="line">    alpha</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+<p>  这一步对应<code>L-BFGS</code>的步骤的<code>Step 5</code>，通过一维搜索计算步长。</p>
+<h3 id="更新权重">更新权重</h3>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">protected</span> <span class="function"><span class="keyword">def</span> <span class="title">takeStep</span></span>(state: <span class="type">State</span>, dir: <span class="type">T</span>, stepSize: <span class="type">Double</span>) = state.x + dir * stepSize</span><br></pre></td></tr></table></figure>
+<p>  这一步对应<code>L-BFGS</code>的步骤的<code>Step 5</code>，更新权重。</p>
+<h3 id="计算损失值和梯度">计算损失值和梯度</h3>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">protected</span> <span class="function"><span class="keyword">def</span> <span class="title">calculateObjective</span></span>(f: <span class="type">DF</span>, x: <span class="type">T</span>, history: <span class="type">History</span>): (<span class="type">Double</span>, <span class="type">T</span>) = &#123;</span><br><span class="line">    f.calculate(x)</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure>
+<p>  这一步对应<code>L-BFGS</code>的步骤的<code>Step 7</code>，使用传人的<code>CostFun.calculate</code>方法计算梯度和损失值。并计算出<code>s</code>和<code>t</code>。</p>
+<h3 id="计算s和t并更新history">计算s和t，并更新history</h3>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//计算s和t</span></span><br><span class="line"><span class="keyword">protected</span> <span class="function"><span class="keyword">def</span> <span class="title">updateHistory</span></span>(newX: <span class="type">T</span>, newGrad: <span class="type">T</span>, newVal: <span class="type">Double</span>,  f: <span class="type">DiffFunction</span>[<span class="type">T</span>], oldState: <span class="type">State</span>): <span class="type">History</span> = &#123;</span><br><span class="line">    oldState.history.updated(newX - oldState.x, newGrad :- oldState.grad)</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//添加新的s和t，并删除过期的s和t</span></span><br><span class="line"><span class="keyword">protected</span> <span class="function"><span class="keyword">def</span> <span class="title">updateFValWindow</span></span>(oldState: <span class="type">State</span>, newAdjVal: <span class="type">Double</span>):<span class="type">IndexedSeq</span>[<span class="type">Double</span>] = &#123;</span><br><span class="line">    <span class="keyword">val</span> interm = oldState.fVals :+ newAdjVal</span><br><span class="line">    <span class="keyword">if</span>(interm.length &gt; minImprovementWindow) interm.drop(<span class="number">1</span>)</span><br><span class="line">    <span class="keyword">else</span> interm</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+<h2 id="breezeowlqn">BreezeOWLQN</h2>
+<p>  <code>BreezeOWLQN</code>的实现与<code>BreezeLBFGS</code>的实现主要有下面一些不同点。</p>
+<h3 id="选择梯度下降方向-1">选择梯度下降方向</h3>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">override</span> <span class="keyword">protected</span> <span class="function"><span class="keyword">def</span> <span class="title">chooseDescentDirection</span></span>(state: <span class="type">State</span>, fn: <span class="type">DiffFunction</span>[<span class="type">T</span>]) = &#123;</span><br><span class="line">    <span class="keyword">val</span> descentDir = <span class="keyword">super</span>.chooseDescentDirection(state.copy(grad = state.adjustedGradient), fn)</span><br><span class="line"></span><br><span class="line">    <span class="comment">// The original paper requires that the descent direction be corrected to be</span></span><br><span class="line">    <span class="comment">// in the same directional (within the same hypercube) as the adjusted gradient for proof.</span></span><br><span class="line">    <span class="comment">// Although this doesn&#x27;t seem to affect the outcome that much in most of cases, there are some cases</span></span><br><span class="line">    <span class="comment">// where the algorithm won&#x27;t converge (confirmed with the author, Galen Andrew).</span></span><br><span class="line">    <span class="keyword">val</span> correctedDir = space.zipMapValues.map(descentDir, state.adjustedGradient, &#123; <span class="keyword">case</span> (d, g) =&gt; <span class="keyword">if</span> (d * g &lt; <span class="number">0</span>) d <span class="keyword">else</span> <span class="number">0.0</span> &#125;)</span><br><span class="line"></span><br><span class="line">    correctedDir</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+<p>  此处调用了<code>BreezeLBFGS</code>的<code>chooseDescentDirection</code>方法选择梯度下降的方向，然后调整该下降方向为正确的方向（方向必须一致）。</p>
+<h3 id="计算步长alpha">计算步长<span class="math inline">\(\alpha\)</span></h3>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">override</span> <span class="keyword">protected</span> <span class="function"><span class="keyword">def</span> <span class="title">determineStepSize</span></span>(state: <span class="type">State</span>, f: <span class="type">DiffFunction</span>[<span class="type">T</span>], dir: <span class="type">T</span>) = &#123;</span><br><span class="line">    <span class="keyword">val</span> iter = state.iter</span><br><span class="line"></span><br><span class="line">    <span class="keyword">val</span> normGradInDir = &#123;</span><br><span class="line">      <span class="keyword">val</span> possibleNorm = dir dot state.grad</span><br><span class="line">      possibleNorm</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">val</span> ff = <span class="keyword">new</span> <span class="type">DiffFunction</span>[<span class="type">Double</span>] &#123;</span><br><span class="line">       <span class="function"><span class="keyword">def</span> <span class="title">calculate</span></span>(alpha: <span class="type">Double</span>) = &#123;</span><br><span class="line">         <span class="keyword">val</span> newX = takeStep(state, dir, alpha)</span><br><span class="line">         <span class="keyword">val</span> (v, newG) =  f.calculate(newX)  <span class="comment">// 计算梯度</span></span><br><span class="line">         <span class="keyword">val</span> (adjv, adjgrad) = adjust(newX, newG, v) <span class="comment">// 调整梯度</span></span><br><span class="line">         adjv -&gt; (adjgrad dot dir)</span><br><span class="line">       &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">val</span> search = <span class="keyword">new</span> <span class="type">BacktrackingLineSearch</span>(state.value, shrinkStep= <span class="keyword">if</span>(iter &lt; <span class="number">1</span>) <span class="number">0.1</span> <span class="keyword">else</span> <span class="number">0.5</span>)</span><br><span class="line">    <span class="keyword">val</span> alpha = search.minimize(ff, <span class="keyword">if</span>(iter &lt; <span class="number">1</span>) <span class="number">.5</span>/norm(state.grad) <span class="keyword">else</span> <span class="number">1.0</span>)</span><br><span class="line"></span><br><span class="line">    alpha</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+<p>  <code>takeStep</code>方法用于更新参数。</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// projects x to be on the same orthant as y</span></span><br><span class="line"><span class="comment">// this basically requires that x&#x27;_i = x_i if sign(x_i) == sign(y_i), and 0 otherwise.</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">override</span> <span class="keyword">protected</span> <span class="function"><span class="keyword">def</span> <span class="title">takeStep</span></span>(state: <span class="type">State</span>, dir: <span class="type">T</span>, stepSize: <span class="type">Double</span>) = &#123;</span><br><span class="line">  <span class="keyword">val</span> stepped = state.x + dir * stepSize</span><br><span class="line">  <span class="keyword">val</span> orthant = computeOrthant(state.x, state.adjustedGradient)</span><br><span class="line">  space.zipMapValues.map(stepped, orthant, &#123; <span class="keyword">case</span> (v, ov) =&gt;</span><br><span class="line">    v * <span class="type">I</span>(math.signum(v) == math.signum(ov))</span><br><span class="line">  &#125;)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>  <code>calculate</code>方法用于计算梯度，<code>adjust</code>方法用于调整梯度。</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Adds in the regularization stuff to the gradient</span></span><br><span class="line">  <span class="keyword">override</span> <span class="keyword">protected</span> <span class="function"><span class="keyword">def</span> <span class="title">adjust</span></span>(newX: <span class="type">T</span>, newGrad: <span class="type">T</span>, newVal: <span class="type">Double</span>): (<span class="type">Double</span>, <span class="type">T</span>) = &#123;</span><br><span class="line">    <span class="keyword">var</span> adjValue = newVal</span><br><span class="line">    <span class="keyword">val</span> res = space.zipMapKeyValues.mapActive(newX, newGrad, &#123;<span class="keyword">case</span> (i, xv, v) =&gt;</span><br><span class="line">      <span class="keyword">val</span> l1regValue = l1reg(i)</span><br><span class="line">      require(l1regValue &gt;= <span class="number">0.0</span>)</span><br><span class="line"></span><br><span class="line">      <span class="keyword">if</span>(l1regValue == <span class="number">0.0</span>) &#123;</span><br><span class="line">        v</span><br><span class="line">      &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        adjValue += <span class="type">Math</span>.abs(l1regValue * xv)</span><br><span class="line">        xv <span class="keyword">match</span> &#123;</span><br><span class="line">          <span class="keyword">case</span> <span class="number">0.0</span> =&gt; &#123;</span><br><span class="line">            <span class="keyword">val</span> delta_+ = v + l1regValue   <span class="comment">//计算左导数</span></span><br><span class="line">            <span class="keyword">val</span> delta_- = v - l1regValue   <span class="comment">//计算右导数</span></span><br><span class="line">            <span class="keyword">if</span> (delta_- &gt; <span class="number">0</span>) delta_- <span class="keyword">else</span> <span class="keyword">if</span> (delta_+ &lt; <span class="number">0</span>) delta_+ <span class="keyword">else</span> <span class="number">0.0</span></span><br><span class="line">          &#125;</span><br><span class="line">          <span class="keyword">case</span> _ =&gt; v + math.signum(xv) * l1regValue</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;)</span><br><span class="line">    adjValue -&gt; res</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+<h1 id="参考文献">参考文献</h1>
+<p>【1】陈宝林，最优化理论和算法</p>
+<p>【2】<a href="../docs/Updating%20Quasi-Newton%20Matrices%20with%20Limited%20Storage.pdf">Updating Quasi-Newton Matrices with Limited Storage</a></p>
+<p>【3】<a href="../docs/On%20the%20Limited%20Memory%20BFGS%20Method%20for%20Large%20Scale%20Optimization.pdf">On the Limited Memory BFGS Method for Large Scale Optimization</a></p>
+<p>【4】<a target="_blank" rel="noopener" href="http://blog.csdn.net/acdreamers/article/details/44728041">L-BFGS算法</a></p>
+<p>【5】<a target="_blank" rel="noopener" href="http://wenku.baidu.com/link?url=xyN5e-LMR2Ztq90-J95oKHUFBLP8gkLzlbFI6ptbgXMWYt5xTZHgXexWcbjQUmGahQpr39AIc0AomDeFqyY7mn7VqLoQj6gcDHDOccJGln3">BFGS算法</a></p>
+<p>【6】<a target="_blank" rel="noopener" href="http://blog.csdn.net/zhirom/article/details/38332111">逻辑回归模型及LBFGS的Sherman Morrison(SM) 公式推导</a></p>
+<p>【7】<a target="_blank" rel="noopener" href="http://research.microsoft.com/en-us/um/people/jfgao/paper/icml07scalable.pdf">Scalable Training of L1-Regularized Log-Linear Models</a></p>
+</div><div class="article-licensing box"><div class="licensing-title"><p>L-BFGS</p><p><a href="https://hunlp.com/posts/4166596681.html">https://hunlp.com/posts/4166596681.html</a></p></div><div class="licensing-meta level is-mobile"><div class="level-left"><div class="level-item is-narrow"><div><h6>作者</h6><p>ฅ´ω`ฅ</p></div></div><div class="level-item is-narrow"><div><h6>发布于</h6><p>2019-07-23</p></div></div><div class="level-item is-narrow"><div><h6>更新于</h6><p>2019-07-24</p></div></div><div class="level-item is-narrow"><div><h6>许可协议</h6><p><a class="icons" rel="noopener" target="_blank" title="Creative Commons" href="https://creativecommons.org/"><i class="icon fab fa-creative-commons"></i></a><a class="icons" rel="noopener" target="_blank" title="Attribution" href="https://creativecommons.org/licenses/by/4.0/"><i class="icon fab fa-creative-commons-by"></i></a><a class="icons" rel="noopener" target="_blank" title="Noncommercial" href="https://creativecommons.org/licenses/by-nc/4.0/"><i class="icon fab fa-creative-commons-nc"></i></a></p></div></div></div></div></div><hr style="height:1px;margin:1rem 0"><div class="level is-mobile is-flex"><div class="article-tags is-size-7 is-uppercase"><i class="fas fa-tags has-text-grey"></i> <a class="link-muted" rel="tag" href="/tags/spark/">spark, </a><a class="link-muted" rel="tag" href="/tags/%E4%BC%98%E5%8C%96%E7%AE%97%E6%B3%95/">优化算法 </a></div></div><div class="bdsharebuttonbox"><a class="bds_more" href="#" data-cmd="more"></a><a class="bds_qzone" href="#" data-cmd="qzone" title="分享到QQ空间"></a><a class="bds_tsina" href="#" data-cmd="tsina" title="分享到新浪微博"></a><a class="bds_tqq" href="#" data-cmd="tqq" title="分享到腾讯微博"></a><a class="bds_renren" href="#" data-cmd="renren" title="分享到人人网"></a><a class="bds_weixin" href="#" data-cmd="weixin" title="分享到微信"></a></div><script>window._bd_share_config = { "common": { "bdSnsKey": {}, "bdText": "", "bdMini": "2", "bdPic": "", "bdStyle": "0", "bdSize": "16" }, "share": {} }; with (document) 0[(getElementsByTagName('head')[0] || body).appendChild(createElement('script')).src = 'http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion=' + ~(-new Date() / 36e5)];</script></article></div><div class="card"><div class="card-content"><h3 class="menu-label has-text-centered">喜欢这篇文章？打赏一下作者吧</h3><div class="buttons is-centered"><a class="button donate" data-type="alipay"><span class="icon is-small"><i class="fab fa-alipay"></i></span><span>支付宝</span><span class="qrcode"><img src="/img/zfb.jpg" alt="支付宝"></span></a><a class="button donate" data-type="wechat"><span class="icon is-small"><i class="fab fa-weixin"></i></span><span>微信</span><span class="qrcode"><img src="/img/wx.jpg" alt="微信"></span></a></div></div></div><nav class="post-navigation mt-4 level is-mobile"><div class="level-start"><a class="article-nav-prev level level-item link-muted" href="/posts/1102132214.html"><i class="level-item fas fa-chevron-left"></i><span class="level-item">随机森林</span></a></div><div class="level-end"><a class="article-nav-next level level-item link-muted" href="/posts/2300094874.html"><span class="level-item">带权最小二乘</span><i class="level-item fas fa-chevron-right"></i></a></div></nav><div class="card"><div class="card-content"><h3 class="title is-5">评论</h3><div id="comment-container"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1.7.2/dist/gitalk.css"><script src="https://cdn.jsdelivr.net/npm/gitalk@1.7.2/dist/gitalk.min.js"></script><script>var gitalk = new Gitalk({
+            id: "69996ba638a5ce7b6564cdd96274a5d6",
+            repo: "Cartride.github.io",
+            owner: "Cartride",
+            clientID: "8f4a2426c347380a6ee4",
+            clientSecret: "8dc8cd44b071426b35d0bd60634941371170b798",
+            admin: ["Cartride"],
+            createIssueManually: false,
+            distractionFreeMode: false,
+            perPage: 10,
+            pagerDirection: "last",
+            
+            
+            enableHotKey: true,
+            
+        })
+        gitalk.render('comment-container')</script></div></div></div><div class="column column-left is-4-tablet is-4-desktop is-3-widescreen  order-1 is-sticky"><!--!--></div><!--!--></div></div></section><footer class="footer"><div class="container"><div class="level"><div class="level-start"><a class="footer-logo is-block mb-2" href="/"><img src="/img/logo.png" alt="MCFON" height="28"></a><p class="is-size-7"><span>&copy; 2022 ฅ´ω`ฅ</span>  Powered by <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a> &amp; <a href="https://github.com/ppoffice/hexo-theme-icarus" target="_blank" rel="noopener">Icarus</a></p></div><div class="level-end"><div class="field has-addons"><p class="control"><a class="button is-transparent is-large" target="_blank" rel="noopener" title="Creative Commons" href="https://creativecommons.org/"><i class="fab fa-creative-commons"></i></a></p><p class="control"><a class="button is-transparent is-large" target="_blank" rel="noopener" title="Attribution 4.0 International" href="https://creativecommons.org/licenses/by/4.0/"><i class="fab fa-creative-commons-by"></i></a></p><p class="control"><a class="button is-transparent is-large" target="_blank" rel="noopener" title="Download on GitHub" href="https://github.com/ppoffice/hexo-theme-icarus"><i class="fab fa-github"></i></a></p></div></div></div></div></footer><script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script><script src="https://cdn.jsdelivr.net/npm/moment@2.22.2/min/moment-with-locales.min.js"></script><script src="https://cdn.jsdelivr.net/npm/clipboard@2.0.4/dist/clipboard.min.js" defer></script><script>moment.locale("zh-CN");</script><script>var IcarusThemeSettings = {
+            article: {
+                highlight: {
+                    clipboard: true,
+                    fold: 'unfolded'
+                }
+            }
+        };</script><script src="/js/column.js"></script><script src="/js/animation.js"></script><a id="back-to-top" title="回到顶端" href="javascript:;"><i class="fas fa-chevron-up"></i></a><script src="/js/back_to_top.js" defer></script><!--!--><!--!--><!--!--><script src="https://cdn.jsdelivr.net/npm/cookieconsent@3.1.1/build/cookieconsent.min.js" defer></script><script>window.addEventListener("load", () => {
+      window.cookieconsent.initialise({
+        type: "info",
+        theme: "edgeless",
+        static: false,
+        position: "bottom-left",
+        content: {
+          message: "此网站使用Cookie来改善您的体验。",
+          dismiss: "知道了！",
+          allow: "允许使用Cookie",
+          deny: "拒绝",
+          link: "了解更多",
+          policy: "Cookie政策",
+          href: "https://www.cookiesandyou.com/",
+        },
+        palette: {
+          popup: {
+            background: "#edeff5",
+            text: "#838391"
+          },
+          button: {
+            background: "#4b81e8"
+          },
+        },
+      });
+    });</script><script src="https://cdn.jsdelivr.net/npm/lightgallery@1.6.8/dist/js/lightgallery.min.js" defer></script><script src="https://cdn.jsdelivr.net/npm/justifiedGallery@3.7.0/dist/js/jquery.justifiedGallery.min.js" defer></script><script>window.addEventListener("load", () => {
+            if (typeof $.fn.lightGallery === 'function') {
+                $('.article').lightGallery({ selector: '.gallery-item' });
+            }
+            if (typeof $.fn.justifiedGallery === 'function') {
+                if ($('.justified-gallery > p > .gallery-item').length) {
+                    $('.justified-gallery > p > .gallery-item').unwrap();
+                }
+                $('.justified-gallery').justifiedGallery();
+            }
+        });</script><!--!--><!--!--><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.css"><script src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.js" defer></script><script src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/contrib/auto-render.min.js" defer></script><script src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/contrib/mhchem.js" defer></script><script>window.addEventListener("load", function() {
+            document.querySelectorAll('[role="article"] > .content').forEach(function(element) {
+                renderMathInElement(element);
+            });
+        });</script><script type="text/x-mathjax-config">MathJax.Hub.Config({
+            'HTML-CSS': {
+                matchFontHeight: false
+            },
+            SVG: {
+                matchFontHeight: false
+            },
+            CommonHTML: {
+                matchFontHeight: false
+            },
+            tex2jax: {
+                inlineMath: [
+                    ['$','$'],
+                    ['\\(','\\)']
+                ]
+            }
+        });</script><script src="https://cdn.jsdelivr.net/npm/mathjax@2.7.5/unpacked/MathJax.js?config=TeX-MML-AM_CHTML" defer></script><!--!--><!--!--><!--!--><script src="/js/main.js" defer></script><div class="searchbox"><div class="searchbox-container"><div class="searchbox-header"><div class="searchbox-input-container"><input class="searchbox-input" type="text" placeholder="想要查找什么..."></div><a class="searchbox-close" href="javascript:;">×</a></div><div class="searchbox-body"></div></div></div><script src="/js/insight.js" defer></script><script>document.addEventListener('DOMContentLoaded', function () {
+            loadInsight({"contentUrl":"/content.json"}, {"hint":"想要查找什么...","untitled":"(无标题)","posts":"文章","pages":"页面","categories":"分类","tags":"标签"});
+        });</script></body></html>

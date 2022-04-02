@@ -1,0 +1,240 @@
+<!doctype html>
+<html lang="zh"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"><meta><title>主成分分析 - MCFON</title><link rel="manifest" href="/manifest.json"><meta name="application-name" content="MCFON"><meta name="msapplication-TileImage" content="/img/favicon.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="MCFON"><meta name="apple-mobile-web-app-status-bar-style" content="default"><meta name="description" content="1.假设\(x\)为\(m\) 维随机变量，其均值为\(\mu\)，协方差矩阵为\(\Sigma\)。 考虑由\(m\)维随机变量\(x\)到\(m\)维随机变量\(y\)的线性变换 \[y _ { i } &amp;#x3D; \alpha _ { i } ^ { T } x &amp;#x3D; \sum _ { k &amp;#x3D; 1 } ^ { m } \alpha _ { k i } x _ { k } , \quad i &amp;#x3D; 1,2"><meta property="og:type" content="blog"><meta property="og:title" content="主成分分析"><meta property="og:url" content="https://hunlp.com/posts/25529.html"><meta property="og:site_name" content="MCFON"><meta property="og:description" content="1.假设\(x\)为\(m\) 维随机变量，其均值为\(\mu\)，协方差矩阵为\(\Sigma\)。 考虑由\(m\)维随机变量\(x\)到\(m\)维随机变量\(y\)的线性变换 \[y _ { i } &amp;#x3D; \alpha _ { i } ^ { T } x &amp;#x3D; \sum _ { k &amp;#x3D; 1 } ^ { m } \alpha _ { k i } x _ { k } , \quad i &amp;#x3D; 1,2"><meta property="og:locale" content="zh_CN"><meta property="og:image" content="https://tva1.sinaimg.cn/large/008i3skNly1gto99ssk0yj60jd0cymx902.jpg"><meta property="og:image" content="https://tva1.sinaimg.cn/large/008i3skNly1gto97op486j60jm0cyq3002.jpg"><meta property="article:published_time" content="2021-07-24T13:45:40.000Z"><meta property="article:modified_time" content="2021-08-21T03:42:24.273Z"><meta property="article:author" content="ฅ´ω`ฅ"><meta property="article:tag" content="笔记"><meta property="article:tag" content="PCA"><meta property="twitter:card" content="summary"><meta property="twitter:image" content="https://tva1.sinaimg.cn/large/008i3skNly1gto99ssk0yj60jd0cymx902.jpg"><script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","mainEntityOfPage":{"@type":"WebPage","@id":"https://hunlp.com/posts/25529.html"},"headline":"主成分分析","image":["https://tva1.sinaimg.cn/large/008i3skNly1gto99ssk0yj60jd0cymx902.jpg","https://tva1.sinaimg.cn/large/008i3skNly1gto97op486j60jm0cyq3002.jpg"],"datePublished":"2021-07-24T13:45:40.000Z","dateModified":"2021-08-21T03:42:24.273Z","author":{"@type":"Person","name":"ฅ´ω`ฅ"},"publisher":{"@type":"Organization","name":"MCFON","logo":{"@type":"ImageObject","url":"https://hunlp.com/img/logo.png"}},"description":"1.假设\\(x\\)为\\(m\\) 维随机变量，其均值为\\(\\mu\\)，协方差矩阵为\\(\\Sigma\\)。 考虑由\\(m\\)维随机变量\\(x\\)到\\(m\\)维随机变量\\(y\\)的线性变换 \\[y _ { i } &#x3D; \\alpha _ { i } ^ { T } x &#x3D; \\sum _ { k &#x3D; 1 } ^ { m } \\alpha _ { k i } x _ { k } , \\quad i &#x3D; 1,2"}</script><link rel="canonical" href="https://hunlp.com/posts/25529.html"><link rel="icon" href="/img/favicon.png"><link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.2/css/all.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@9.12.0/styles/atom-one-light.css"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@400;600&amp;family=Source+Code+Pro"><link rel="stylesheet" href="/css/default.css"><style>body>.footer,body>.navbar,body>.section{opacity:0}</style><!--!--><script>var _hmt = _hmt || [];
+        (function() {
+            var hm = document.createElement("script");
+            hm.src = "//hm.baidu.com/hm.js?b99420d7a06d2b3361a8efeaf6e20764";
+            var s = document.getElementsByTagName("script")[0];
+            s.parentNode.insertBefore(hm, s);
+        })();</script><!--!--><!--!--><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/cookieconsent@3.1.1/build/cookieconsent.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lightgallery@1.6.8/dist/css/lightgallery.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/justifiedGallery@3.7.0/dist/css/justifiedGallery.min.css"><script src="https://www.googletagmanager.com/gtag/js?id=UA-131608076-1" async></script><script>window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+    
+        gtag('config', 'UA-131608076-1');</script><!--!--><!--!--><!--!--><script src="https://cdn.jsdelivr.net/npm/pace-js@1.0.2/pace.min.js"></script><!--!--><!--!--><meta name="generator" content="Hexo 5.4.0"></head><body class="is-3-column"><nav class="navbar navbar-main"><div class="container"><div class="navbar-brand justify-content-center"><a class="navbar-item navbar-logo" href="/"><img src="/img/logo.png" alt="MCFON" height="28"></a></div><div class="navbar-menu"><div class="navbar-start"><a class="navbar-item" href="/">主页</a><a class="navbar-item" href="/archives">归档</a><a class="navbar-item" href="/categories">分类</a><a class="navbar-item" href="/tags">标签</a><a class="navbar-item" href="/about">关于</a></div><div class="navbar-end"><a class="navbar-item" target="_blank" rel="noopener" title="Download on GitHub" href="https://github.com/ppoffice/hexo-theme-icarus"><i class="fab fa-github"></i></a><a class="navbar-item is-hidden-tablet catalogue" title="目录" href="javascript:;"><i class="fas fa-list-ul"></i></a><a class="navbar-item search" title="搜索" href="javascript:;"><i class="fas fa-search"></i></a></div></div></div></nav><section class="section"><div class="container"><div class="columns"><div class="column order-2 column-main is-8-tablet is-8-desktop is-9-widescreen"><div class="card"><article class="card-content article" role="article"><h1 class="title is-size-3 is-size-4-mobile has-text-weight-normal"><i class="fas fa-angle-double-right"></i>主成分分析</h1><div class="article-meta is-size-7 is-uppercase level is-mobile"><div class="level-left"><span class="level-item"><i class="far fa-calendar-alt"> </i><time dateTime="${date_xml(page.date)}" title="${date_xml(page.date)}">2021-07-24</time></span><span class="level-item is-hidden-mobile"><i class="far fa-calendar-check"> </i><time dateTime="${date_xml(page.updated)}" title="${date_xml(page.updated)}">2021-08-21</time></span><span class="level-item"><a class="link-muted" href="/categories/%E7%BB%9F%E8%AE%A1%E5%AD%A6%E4%B9%A0%E6%96%B9%E6%B3%95/">统计学习方法</a></span><span class="level-item">12 分钟读完 (大约1733个字)</span></div></div><div class="content"><p>1.假设<span class="math inline">\(x\)</span>为<span class="math inline">\(m\)</span> 维随机变量，其均值为<span class="math inline">\(\mu\)</span>，协方差矩阵为<span class="math inline">\(\Sigma\)</span>。</p>
+<p>考虑由<span class="math inline">\(m\)</span>维随机变量<span class="math inline">\(x\)</span>到<span class="math inline">\(m\)</span>维随机变量<span class="math inline">\(y\)</span>的线性变换 <span class="math display">\[y _ { i } = \alpha _ { i } ^ { T } x = \sum _ { k = 1 } ^ { m } \alpha _ { k i } x _ { k } , \quad i = 1,2 , \cdots , m\]</span> <span id="more"></span> 其中<span class="math inline">\(\alpha _ { i } ^ { T } = ( \alpha _ { 1 i } , \alpha _ { 2 i } , \cdots , \alpha _ { m i } )\)</span>。</p>
+<p>如果该线性变换满足以下条件，则称之为总体主成分：</p>
+<p>（1）<span class="math inline">\(\alpha _ { i } ^ { T } \alpha _ { i } = 1 , i = 1,2 , \cdots , m\)</span>；</p>
+<p>（2）<span class="math inline">\(\operatorname { cov } ( y _ { i } , y _ { j } ) = 0 ( i \neq j )\)</span>;</p>
+<p>（3）变量<span class="math inline">\(y_1\)</span>是<span class="math inline">\(x\)</span>的所有线性变换中方差最大的；<span class="math inline">\(y_2\)</span>是与<span class="math inline">\(y_1\)</span>不相关的<span class="math inline">\(x\)</span>的所有线性变换中方差最大的；一般地，<span class="math inline">\(y_i\)</span>是与<span class="math inline">\(y _ { 1 } , y _ { 2 } , \cdots , y _ { i - 1 } , ( i = 1,2 , \cdots , m )\)</span>都不相关的<span class="math inline">\(x\)</span>的所有线性变换中方差最大的；这时分别称<span class="math inline">\(y _ { 1 } , y _ { 2 } , \cdots , y _ { m }\)</span>为<span class="math inline">\(x\)</span>的第一主成分、第二主成分、…、第<span class="math inline">\(m\)</span>主成分。</p>
+<p>2.假设<span class="math inline">\(x\)</span>是<span class="math inline">\(m\)</span>维随机变量，其协方差矩阵是<span class="math inline">\(\Sigma\)</span>，<span class="math inline">\(\Sigma\)</span>的特征值分别是<span class="math inline">\(\lambda _ { 1 } \geq\lambda _ { 2 } \geq \cdots \geq \lambda _ { m } \geq 0\)</span>，特征值对应的单位特征向量分别是<span class="math inline">\(\alpha _ { 1 } , \alpha _ { 2 } , \cdots , \alpha _ { m }\)</span>，则<span class="math inline">\(x\)</span>的第2主成分可以写作</p>
+<p><span class="math display">\[y _ { i } = \alpha _ { i } ^ { T } x = \sum _ { k = 1 } ^ { m } \alpha _ { k i } x _ { k } , \quad i = 1,2 , \cdots , m\]</span> 并且，<span class="math inline">\(x\)</span>的第<span class="math inline">\(i\)</span>主成分的方差是协方差矩阵<span class="math inline">\(\Sigma\)</span>的第<span class="math inline">\(i\)</span>个特征值，即<span class="math display">\[\operatorname { var } ( y _ { i } ) = \alpha _ { i } ^ { T } \Sigma \alpha _ { i } = \lambda _ { i }\]</span></p>
+<p>3.主成分有以下性质：</p>
+<p>主成分<span class="math inline">\(y\)</span>的协方差矩阵是对角矩阵<span class="math display">\[\operatorname { cov } ( y ) = \Lambda = \operatorname { diag } ( \lambda _ { 1 } , \lambda _ { 2 } , \cdots , \lambda _ { m } )\]</span></p>
+<p>主成分<span class="math inline">\(y\)</span>的方差之和等于随机变量<span class="math inline">\(x\)</span>的方差之和 <span class="math display">\[\sum _ { i = 1 } ^ { m } \lambda _ { i } = \sum _ { i = 1 } ^ { m } \sigma _ { i i }\]</span> 其中<span class="math inline">\(\sigma _ { i i }\)</span>是<span class="math inline">\(x_2\)</span>的方差，即协方差矩阵<span class="math inline">\(\Sigma\)</span>的对角线元素。</p>
+<p>主成分<span class="math inline">\(y_k\)</span>与变量<span class="math inline">\(x_2\)</span>的相关系数<span class="math inline">\(\rho ( y _ { k } , x _ { i } )\)</span>称为因子负荷量（factor loading），它表示第<span class="math inline">\(k\)</span>个主成分<span class="math inline">\(y_k\)</span>与变量<span class="math inline">\(x\)</span>的相关关系，即<span class="math inline">\(y_k\)</span>对<span class="math inline">\(x\)</span>的贡献程度。 <span class="math display">\[\rho ( y _ { k } , x _ { i } ) = \frac { \sqrt { \lambda _ { k } } \alpha _ { i k } } { \sqrt { \sigma _ { i i } } } , \quad k , i = 1,2 , \cdots , m\]</span></p>
+<p>4.样本主成分分析就是基于样本协方差矩阵的主成分分析。</p>
+<p>给定样本矩阵 <span class="math display">\[X = \left[ \begin{array} { l l l l } { x _ { 1 } } &amp; { x _ { 2 } } &amp; { \cdots } &amp; { x _ { n } } \end{array} \right] = \left[ \begin{array} { c c c c } { x _ { 11 } } &amp; { x _ { 12 } } &amp; { \cdots } &amp; { x _ { 1 n } } \\ { x _ { 21 } } &amp; { x _ { 22 } } &amp; { \cdots } &amp; { x _ { 2 n } } \\ { \vdots } &amp; { \vdots } &amp; { } &amp; { \vdots } \\ { x _ { m 1 } } &amp; { x _ { m 2 } } &amp; { \cdots } &amp; { x _ { m n } } \end{array} \right]\]</span></p>
+<p>其中<span class="math inline">\(x _ { j } = ( x _ { 1 j } , x _ { 2 j } , \cdots , x _ { m j } ) ^ { T }\)</span>是<span class="math inline">\(x\)</span>的第<span class="math inline">\(j\)</span>个独立观测样本，<span class="math inline">\(j=1,2，…,n\)</span>。</p>
+<p><span class="math inline">\(X\)</span>的样本协方差矩阵 <span class="math display">\[\left. \begin{array} { c } { S = [ s _ { i j } ] _ { m \times m } , \quad s _ { i j } = \frac { 1 } { n - 1 } \sum _ { k = 1 } ^ { n } ( x _ { i k } - \overline { x } _ { i } ) ( x _ { j k } - \overline { x } _ { j } ) } \\ { i = 1,2 , \cdots , m , \quad j = 1,2 , \cdots , m } \end{array} \right.\]</span></p>
+<p>给定样本数据矩阵<span class="math inline">\(X\)</span>，考虑向量<span class="math inline">\(x\)</span>到<span class="math inline">\(y\)</span>的线性变换<span class="math display">\[y = A ^ { T } x\]</span> 这里 <span class="math display">\[A = \left[ \begin{array} { l l l l } { a _ { 1 } } &amp; { a _ { 2 } } &amp; { \cdots } &amp; { a _ { m } } \end{array} \right] = \left[ \begin{array} { c c c c } { a _ { 11 } } &amp; { a _ { 12 } } &amp; { \cdots } &amp; { a _ { 1 m } } \\ { a _ { 21 } } &amp; { a _ { 22 } } &amp; { \cdots } &amp; { a _ { 2 m } } \\ { \vdots } &amp; { \vdots } &amp; { } &amp; { \vdots } \\ { a _ { m 1 } } &amp; { a _ { m 2 } } &amp; { \cdots } &amp; { a _ { m m } } \end{array} \right]\]</span></p>
+<p>如果该线性变换满足以下条件，则称之为样本主成分。样本第一主成分<span class="math inline">\(y _ { 1 } = a _ { 1 } ^ { T } x\)</span>是在<span class="math inline">\(a _ { 1 } ^ { T } a _ { 1 } = 1\)</span>条件下，使得<span class="math inline">\(a _ { 1 } ^ { T } x _ { j } ( j = 1,2 , \cdots , n )\)</span>的样本方差<span class="math inline">\(a _ { 1 } ^ { T } S a _ { 1 }\)</span>最大的<span class="math inline">\(x\)</span>的线性变换；</p>
+<p>样本第二主成分<span class="math inline">\(y _ { 2 } = a _ { 2 } ^ { T } x\)</span>是在<span class="math inline">\(a _ { 2 } ^ { T } a _ { 2 } = 1\)</span>和<span class="math inline">\(a _ { 2 } ^ { T } x _ { j }\)</span>与<span class="math inline">\(a _ { 1 } ^ { T } x _ { j } ( j = 1,2 , \cdots , n )\)</span>的样本协方差<span class="math inline">\(a _ { 1 } ^ { T } S a _ { 2 } = 0\)</span>条件下，使得<span class="math inline">\(a _ { 2 } ^ { T } x _ { j } ( j = 1,2 , \cdots , n )\)</span>的样本方差<span class="math inline">\(a _ { 2 } ^ { T } S a _ { 2 }\)</span>最大的<span class="math inline">\(x\)</span>的线性变换；</p>
+<p>一般地，样本第<span class="math inline">\(i\)</span>主成分<span class="math inline">\(y _ { i } = a _ { i } ^ { T } x\)</span>是在<span class="math inline">\(a _ { i } ^ { T } a _ { i } = 1\)</span>和<span class="math inline">\(a _ { i } ^ { T } x _ { j }\)</span>与<span class="math inline">\(a _ { k } ^ { T } x _ { j } ( k &lt; i , j = 1,2 , \cdots , n )\)</span>的样本协方差<span class="math inline">\(a _ { k } ^ { T } S a _ { i } = 0\)</span>条件下，使得<span class="math inline">\(a _ { i } ^ { T } x _ { j } ( j = 1,2 , \cdots , n )\)</span>的样本方差<span class="math inline">\(a _ { k } ^ { T } S a _ { i }\)</span>最大的<span class="math inline">\(x\)</span>的线性变换。</p>
+<p>5.主成分分析方法主要有两种，可以通过相关矩阵的特征值分解或样本矩阵的奇异值分解进行。</p>
+<p>（1）相关矩阵的特征值分解算法。针对<span class="math inline">\(m \times n\)</span>样本矩阵<span class="math inline">\(X\)</span>，求样本相关矩阵 <span class="math display">\[R = \frac { 1 } { n - 1 } X X ^ { T }\]</span> 再求样本相关矩阵的<span class="math inline">\(k\)</span>个特征值和对应的单位特征向量，构造正交矩阵 <span class="math display">\[V = ( v _ { 1 } , v _ { 2 } , \cdots , v _ { k } )\]</span></p>
+<p><span class="math inline">\(V\)</span>的每一列对应一个主成分，得到<span class="math inline">\(k \times n\)</span>样本主成分矩阵 <span class="math display">\[Y = V ^ { T } X\]</span></p>
+<p>（2）矩阵<span class="math inline">\(X\)</span>的奇异值分解算法。针对<span class="math inline">\(m \times n\)</span>样本矩阵<span class="math inline">\(X\)</span> <span class="math display">\[X ^ { \prime } = \frac { 1 } { \sqrt { n - 1 } } X ^ { T }\]</span> 对矩阵<span class="math inline">\(X ^ { \prime }\)</span>进行截断奇异值分解，保留<span class="math inline">\(k\)</span>个奇异值、奇异向量，得到 <span class="math display">\[X ^ { \prime } = U S V ^ { T }\]</span> <span class="math inline">\(V\)</span>的每一列对应一个主成分，得到<span class="math inline">\(k \times n\)</span>样本主成分矩阵<span class="math inline">\(Y\)</span> <span class="math display">\[Y = V ^ { T } X\]</span></p>
+<p>本章代码直接使用Coursera机器学习课程的第六个编程练习。</p>
+<hr />
+<p>PCA（principal components analysis）即主成分分析技术旨在利用降维的思想，把多指标转化为少数几个综合指标。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">import</span> pandas <span class="keyword">as</span> pd</span><br><span class="line"><span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt</span><br><span class="line"><span class="keyword">import</span> seaborn <span class="keyword">as</span> sb</span><br><span class="line"><span class="keyword">from</span> scipy.io <span class="keyword">import</span> loadmat</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">data = loadmat(<span class="string">&#x27;data/ex7data1.mat&#x27;</span>)</span><br><span class="line"><span class="comment"># data</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">X = data[<span class="string">&#x27;X&#x27;</span>]</span><br><span class="line"></span><br><span class="line">fig, ax = plt.subplots(figsize=(<span class="number">12</span>,<span class="number">8</span>))</span><br><span class="line">ax.scatter(X[:, <span class="number">0</span>], X[:, <span class="number">1</span>])</span><br><span class="line">plt.show()</span><br></pre></td></tr></table></figure>
+<p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gto99ssk0yj60jd0cymx902.jpg" /></p>
+<p>PCA的算法相当简单。 在确保数据被归一化之后，输出仅仅是原始数据的协方差矩阵的奇异值分解。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">pca</span>(<span class="params">X</span>):</span></span><br><span class="line">    <span class="comment"># normalize the features</span></span><br><span class="line">    X = (X - X.mean()) / X.std()</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># compute the covariance matrix</span></span><br><span class="line">    X = np.matrix(X)</span><br><span class="line">    cov = (X.T * X) / X.shape[<span class="number">0</span>]</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># perform SVD</span></span><br><span class="line">    U, S, V = np.linalg.svd(cov)</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">return</span> U, S, V</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">U, S, V = pca(X)</span><br><span class="line">U, S, V</span><br></pre></td></tr></table></figure>
+<pre><code>(matrix([[-0.79241747, -0.60997914],
+         [-0.60997914,  0.79241747]]),
+ array([1.43584536, 0.56415464]),
+ matrix([[-0.79241747, -0.60997914],
+         [-0.60997914,  0.79241747]]))</code></pre>
+<p>现在我们有主成分（矩阵U），我们可以用这些来将原始数据投影到一个较低维的空间中。 对于这个任务，我们将实现一个计算投影并且仅选择顶部K个分量的函数，有效地减少了维数。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">project_data</span>(<span class="params">X, U, k</span>):</span></span><br><span class="line">    U_reduced = U[:,:k]</span><br><span class="line">    <span class="keyword">return</span> np.dot(X, U_reduced)</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Z = project_data(X, U, <span class="number">1</span>)</span><br><span class="line">Z</span><br></pre></td></tr></table></figure>
+<pre><code>matrix([[-4.74689738],
+        [-7.15889408],
+        [-4.79563345],
+        [-4.45754509],
+        [-4.80263579],
+        [-7.04081342],
+        [-4.97025076],
+        [-8.75934561],
+        [-6.2232703 ],
+        [-7.04497331],
+        [-6.91702866],
+        [-6.79543508],
+        [-6.3438312 ],
+        [-6.99891495],
+        [-4.54558119],
+        [-8.31574426],
+        [-7.16920841],
+        [-5.08083842],
+        [-8.54077427],
+        [-6.94102769],
+        [-8.5978815 ],
+        [-5.76620067],
+        [-8.2020797 ],
+        [-6.23890078],
+        [-4.37943868],
+        [-5.56947441],
+        [-7.53865023],
+        [-7.70645413],
+        [-5.17158343],
+        [-6.19268884],
+        [-6.24385246],
+        [-8.02715303],
+        [-4.81235176],
+        [-7.07993347],
+        [-5.45953289],
+        [-7.60014707],
+        [-4.39612191],
+        [-7.82288033],
+        [-3.40498213],
+        [-6.54290343],
+        [-7.17879573],
+        [-5.22572421],
+        [-4.83081168],
+        [-7.23907851],
+        [-4.36164051],
+        [-6.44590096],
+        [-2.69118076],
+        [-4.61386195],
+        [-5.88236227],
+        [-7.76732508]])</code></pre>
+<p>我们也可以通过反向转换步骤来恢复原始数据。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">recover_data</span>(<span class="params">Z, U, k</span>):</span></span><br><span class="line">    U_reduced = U[:,:k]</span><br><span class="line">    <span class="keyword">return</span> np.dot(Z, U_reduced.T)</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">X_recovered = recover_data(Z, U, <span class="number">1</span>)</span><br><span class="line">X_recovered</span><br></pre></td></tr></table></figure>
+<pre><code>matrix([[3.76152442, 2.89550838],
+        [5.67283275, 4.36677606],
+        [3.80014373, 2.92523637],
+        [3.53223661, 2.71900952],
+        [3.80569251, 2.92950765],
+        [5.57926356, 4.29474931],
+        [3.93851354, 3.03174929],
+        [6.94105849, 5.3430181 ],
+        [4.93142811, 3.79606507],
+        [5.58255993, 4.29728676],
+        [5.48117436, 4.21924319],
+        [5.38482148, 4.14507365],
+        [5.02696267, 3.8696047 ],
+        [5.54606249, 4.26919213],
+        [3.60199795, 2.77270971],
+        [6.58954104, 5.07243054],
+        [5.681006  , 4.37306758],
+        [4.02614513, 3.09920545],
+        [6.76785875, 5.20969415],
+        [5.50019161, 4.2338821 ],
+        [6.81311151, 5.24452836],
+        [4.56923815, 3.51726213],
+        [6.49947125, 5.00309752],
+        [4.94381398, 3.80559934],
+        [3.47034372, 2.67136624],
+        [4.41334883, 3.39726321],
+        [5.97375815, 4.59841938],
+        [6.10672889, 4.70077626],
+        [4.09805306, 3.15455801],
+        [4.90719483, 3.77741101],
+        [4.94773778, 3.80861976],
+        [6.36085631, 4.8963959 ],
+        [3.81339161, 2.93543419],
+        [5.61026298, 4.31861173],
+        [4.32622924, 3.33020118],
+        [6.02248932, 4.63593118],
+        [3.48356381, 2.68154267],
+        [6.19898705, 4.77179382],
+        [2.69816733, 2.07696807],
+        [5.18471099, 3.99103461],
+        [5.68860316, 4.37891565],
+        [4.14095516, 3.18758276],
+        [3.82801958, 2.94669436],
+        [5.73637229, 4.41568689],
+        [3.45624014, 2.66050973],
+        [5.10784454, 3.93186513],
+        [2.13253865, 1.64156413],
+        [3.65610482, 2.81435955],
+        [4.66128664, 3.58811828],
+        [6.1549641 , 4.73790627]])</code></pre>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">fig, ax = plt.subplots(figsize=(<span class="number">12</span>,<span class="number">8</span>))</span><br><span class="line">ax.scatter(<span class="built_in">list</span>(X_recovered[:, <span class="number">0</span>]), <span class="built_in">list</span>(X_recovered[:, <span class="number">1</span>]))</span><br><span class="line">plt.show()</span><br></pre></td></tr></table></figure>
+<p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gto97op486j60jm0cyq3002.jpg" /></p>
+<p>请注意，第一主成分的投影轴基本上是数据集中的对角线。 当我们将数据减少到一个维度时，我们失去了该对角线周围的变化，所以在我们的再现中，一切都沿着该对角线。</p>
+</div><div class="article-licensing box"><div class="licensing-title"><p>主成分分析</p><p><a href="https://hunlp.com/posts/25529.html">https://hunlp.com/posts/25529.html</a></p></div><div class="licensing-meta level is-mobile"><div class="level-left"><div class="level-item is-narrow"><div><h6>作者</h6><p>ฅ´ω`ฅ</p></div></div><div class="level-item is-narrow"><div><h6>发布于</h6><p>2021-07-24</p></div></div><div class="level-item is-narrow"><div><h6>更新于</h6><p>2021-08-21</p></div></div><div class="level-item is-narrow"><div><h6>许可协议</h6><p><a class="icons" rel="noopener" target="_blank" title="Creative Commons" href="https://creativecommons.org/"><i class="icon fab fa-creative-commons"></i></a><a class="icons" rel="noopener" target="_blank" title="Attribution" href="https://creativecommons.org/licenses/by/4.0/"><i class="icon fab fa-creative-commons-by"></i></a><a class="icons" rel="noopener" target="_blank" title="Noncommercial" href="https://creativecommons.org/licenses/by-nc/4.0/"><i class="icon fab fa-creative-commons-nc"></i></a></p></div></div></div></div></div><hr style="height:1px;margin:1rem 0"><div class="level is-mobile is-flex"><div class="article-tags is-size-7 is-uppercase"><i class="fas fa-tags has-text-grey"></i> <a class="link-muted" rel="tag" href="/tags/%E7%AC%94%E8%AE%B0/">笔记, </a><a class="link-muted" rel="tag" href="/tags/PCA/">PCA </a></div></div><div class="bdsharebuttonbox"><a class="bds_more" href="#" data-cmd="more"></a><a class="bds_qzone" href="#" data-cmd="qzone" title="分享到QQ空间"></a><a class="bds_tsina" href="#" data-cmd="tsina" title="分享到新浪微博"></a><a class="bds_tqq" href="#" data-cmd="tqq" title="分享到腾讯微博"></a><a class="bds_renren" href="#" data-cmd="renren" title="分享到人人网"></a><a class="bds_weixin" href="#" data-cmd="weixin" title="分享到微信"></a></div><script>window._bd_share_config = { "common": { "bdSnsKey": {}, "bdText": "", "bdMini": "2", "bdPic": "", "bdStyle": "0", "bdSize": "16" }, "share": {} }; with (document) 0[(getElementsByTagName('head')[0] || body).appendChild(createElement('script')).src = 'http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion=' + ~(-new Date() / 36e5)];</script></article></div><div class="card"><div class="card-content"><h3 class="menu-label has-text-centered">喜欢这篇文章？打赏一下作者吧</h3><div class="buttons is-centered"><a class="button donate" data-type="alipay"><span class="icon is-small"><i class="fab fa-alipay"></i></span><span>支付宝</span><span class="qrcode"><img src="/img/zfb.jpg" alt="支付宝"></span></a><a class="button donate" data-type="wechat"><span class="icon is-small"><i class="fab fa-weixin"></i></span><span>微信</span><span class="qrcode"><img src="/img/wx.jpg" alt="微信"></span></a></div></div></div><nav class="post-navigation mt-4 level is-mobile"><div class="level-start"><a class="article-nav-prev level level-item link-muted" href="/posts/22721.html"><i class="level-item fas fa-chevron-left"></i><span class="level-item">潜在语义分析</span></a></div><div class="level-end"><a class="article-nav-next level level-item link-muted" href="/posts/2771.html"><span class="level-item">奇异值分解</span><i class="level-item fas fa-chevron-right"></i></a></div></nav><div class="card"><div class="card-content"><h3 class="title is-5">评论</h3><div id="comment-container"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1.7.2/dist/gitalk.css"><script src="https://cdn.jsdelivr.net/npm/gitalk@1.7.2/dist/gitalk.min.js"></script><script>var gitalk = new Gitalk({
+            id: "b6f01545fa1ea598754a0c4d1cd2aab1",
+            repo: "Cartride.github.io",
+            owner: "Cartride",
+            clientID: "8f4a2426c347380a6ee4",
+            clientSecret: "8dc8cd44b071426b35d0bd60634941371170b798",
+            admin: ["Cartride"],
+            createIssueManually: false,
+            distractionFreeMode: false,
+            perPage: 10,
+            pagerDirection: "last",
+            
+            
+            enableHotKey: true,
+            
+        })
+        gitalk.render('comment-container')</script></div></div></div><div class="column column-left is-4-tablet is-4-desktop is-3-widescreen  order-1 is-sticky"><!--!--></div><!--!--></div></div></section><footer class="footer"><div class="container"><div class="level"><div class="level-start"><a class="footer-logo is-block mb-2" href="/"><img src="/img/logo.png" alt="MCFON" height="28"></a><p class="is-size-7"><span>&copy; 2022 ฅ´ω`ฅ</span>  Powered by <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a> &amp; <a href="https://github.com/ppoffice/hexo-theme-icarus" target="_blank" rel="noopener">Icarus</a></p></div><div class="level-end"><div class="field has-addons"><p class="control"><a class="button is-transparent is-large" target="_blank" rel="noopener" title="Creative Commons" href="https://creativecommons.org/"><i class="fab fa-creative-commons"></i></a></p><p class="control"><a class="button is-transparent is-large" target="_blank" rel="noopener" title="Attribution 4.0 International" href="https://creativecommons.org/licenses/by/4.0/"><i class="fab fa-creative-commons-by"></i></a></p><p class="control"><a class="button is-transparent is-large" target="_blank" rel="noopener" title="Download on GitHub" href="https://github.com/ppoffice/hexo-theme-icarus"><i class="fab fa-github"></i></a></p></div></div></div></div></footer><script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script><script src="https://cdn.jsdelivr.net/npm/moment@2.22.2/min/moment-with-locales.min.js"></script><script src="https://cdn.jsdelivr.net/npm/clipboard@2.0.4/dist/clipboard.min.js" defer></script><script>moment.locale("zh-CN");</script><script>var IcarusThemeSettings = {
+            article: {
+                highlight: {
+                    clipboard: true,
+                    fold: 'unfolded'
+                }
+            }
+        };</script><script src="/js/column.js"></script><script src="/js/animation.js"></script><a id="back-to-top" title="回到顶端" href="javascript:;"><i class="fas fa-chevron-up"></i></a><script src="/js/back_to_top.js" defer></script><!--!--><!--!--><!--!--><script src="https://cdn.jsdelivr.net/npm/cookieconsent@3.1.1/build/cookieconsent.min.js" defer></script><script>window.addEventListener("load", () => {
+      window.cookieconsent.initialise({
+        type: "info",
+        theme: "edgeless",
+        static: false,
+        position: "bottom-left",
+        content: {
+          message: "此网站使用Cookie来改善您的体验。",
+          dismiss: "知道了！",
+          allow: "允许使用Cookie",
+          deny: "拒绝",
+          link: "了解更多",
+          policy: "Cookie政策",
+          href: "https://www.cookiesandyou.com/",
+        },
+        palette: {
+          popup: {
+            background: "#edeff5",
+            text: "#838391"
+          },
+          button: {
+            background: "#4b81e8"
+          },
+        },
+      });
+    });</script><script src="https://cdn.jsdelivr.net/npm/lightgallery@1.6.8/dist/js/lightgallery.min.js" defer></script><script src="https://cdn.jsdelivr.net/npm/justifiedGallery@3.7.0/dist/js/jquery.justifiedGallery.min.js" defer></script><script>window.addEventListener("load", () => {
+            if (typeof $.fn.lightGallery === 'function') {
+                $('.article').lightGallery({ selector: '.gallery-item' });
+            }
+            if (typeof $.fn.justifiedGallery === 'function') {
+                if ($('.justified-gallery > p > .gallery-item').length) {
+                    $('.justified-gallery > p > .gallery-item').unwrap();
+                }
+                $('.justified-gallery').justifiedGallery();
+            }
+        });</script><!--!--><!--!--><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.css"><script src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.js" defer></script><script src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/contrib/auto-render.min.js" defer></script><script src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/contrib/mhchem.js" defer></script><script>window.addEventListener("load", function() {
+            document.querySelectorAll('[role="article"] > .content').forEach(function(element) {
+                renderMathInElement(element);
+            });
+        });</script><script type="text/x-mathjax-config">MathJax.Hub.Config({
+            'HTML-CSS': {
+                matchFontHeight: false
+            },
+            SVG: {
+                matchFontHeight: false
+            },
+            CommonHTML: {
+                matchFontHeight: false
+            },
+            tex2jax: {
+                inlineMath: [
+                    ['$','$'],
+                    ['\\(','\\)']
+                ]
+            }
+        });</script><script src="https://cdn.jsdelivr.net/npm/mathjax@2.7.5/unpacked/MathJax.js?config=TeX-MML-AM_CHTML" defer></script><!--!--><!--!--><!--!--><script src="/js/main.js" defer></script><div class="searchbox"><div class="searchbox-container"><div class="searchbox-header"><div class="searchbox-input-container"><input class="searchbox-input" type="text" placeholder="想要查找什么..."></div><a class="searchbox-close" href="javascript:;">×</a></div><div class="searchbox-body"></div></div></div><script src="/js/insight.js" defer></script><script>document.addEventListener('DOMContentLoaded', function () {
+            loadInsight({"contentUrl":"/content.json"}, {"hint":"想要查找什么...","untitled":"(无标题)","posts":"文章","pages":"页面","categories":"分类","tags":"标签"});
+        });</script></body></html>

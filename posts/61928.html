@@ -1,0 +1,406 @@
+<!doctype html>
+<html lang="zh"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"><meta><title>词表征与词向量 - MCFON</title><link rel="manifest" href="/manifest.json"><meta name="application-name" content="MCFON"><meta name="msapplication-TileImage" content="/img/favicon.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="MCFON"><meta name="apple-mobile-web-app-status-bar-style" content="default"><meta name="description" content="词表征(Word Representation) 文本数据经过预处理后，需要转化成数值特征，便于后续处理"><meta property="og:type" content="blog"><meta property="og:title" content="词表征与词向量"><meta property="og:url" content="https://hunlp.com/posts/61928.html"><meta property="og:site_name" content="MCFON"><meta property="og:description" content="词表征(Word Representation) 文本数据经过预处理后，需要转化成数值特征，便于后续处理"><meta property="og:locale" content="zh_CN"><meta property="og:image" content="https://tva1.sinaimg.cn/large/008i3skNly1gr7vx6kolqj30om0giac2.jpg"><meta property="og:image" content="https://tva1.sinaimg.cn/large/008i3skNly1gr7vxyxh3hj317l0r8q75.jpg"><meta property="og:image" content="https://tva1.sinaimg.cn/large/008i3skNly1gr7vy7en4oj60vf07s3zb02.jpg"><meta property="og:image" content="https://tva1.sinaimg.cn/large/008i3skNly1gr7vyexjotj30of0djwgq.jpg"><meta property="og:image" content="https://tva1.sinaimg.cn/large/008i3skNly1gr7vynzrghj30gy09rq3m.jpg"><meta property="og:image" content="https://tva1.sinaimg.cn/large/008i3skNly1gr7vyyda06j30mx0jhgn5.jpg"><meta property="og:image" content="https://tva1.sinaimg.cn/large/008i3skNly1gr7vzembpbj60lm0i6wfq02.jpg"><meta property="og:image" content="https://tva1.sinaimg.cn/large/008i3skNly1gr7vzq5jo3j30it098t9h.jpg"><meta property="og:image" content="https://tva1.sinaimg.cn/large/008i3skNly1gr7vzyspgrj30lm0i6dh0.jpg"><meta property="article:published_time" content="2021-06-02T17:03:38.000Z"><meta property="article:modified_time" content="2021-06-05T17:08:27.149Z"><meta property="article:author" content="ฅ´ω`ฅ"><meta property="article:tag" content="词表征"><meta property="article:tag" content="词向量"><meta property="twitter:card" content="summary"><meta property="twitter:image" content="https://tva1.sinaimg.cn/large/008i3skNly1gr7vx6kolqj30om0giac2.jpg"><script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","mainEntityOfPage":{"@type":"WebPage","@id":"https://hunlp.com/posts/61928.html"},"headline":"词表征与词向量","image":["https://tva1.sinaimg.cn/large/008i3skNly1gr7vx6kolqj30om0giac2.jpg","https://tva1.sinaimg.cn/large/008i3skNly1gr7vxyxh3hj317l0r8q75.jpg","https://tva1.sinaimg.cn/large/008i3skNly1gr7vy7en4oj60vf07s3zb02.jpg","https://tva1.sinaimg.cn/large/008i3skNly1gr7vyexjotj30of0djwgq.jpg","https://tva1.sinaimg.cn/large/008i3skNly1gr7vynzrghj30gy09rq3m.jpg","https://tva1.sinaimg.cn/large/008i3skNly1gr7vyyda06j30mx0jhgn5.jpg","https://tva1.sinaimg.cn/large/008i3skNly1gr7vzembpbj60lm0i6wfq02.jpg","https://tva1.sinaimg.cn/large/008i3skNly1gr7vzq5jo3j30it098t9h.jpg","https://tva1.sinaimg.cn/large/008i3skNly1gr7vzyspgrj30lm0i6dh0.jpg"],"datePublished":"2021-06-02T17:03:38.000Z","dateModified":"2021-06-05T17:08:27.149Z","author":{"@type":"Person","name":"ฅ´ω`ฅ"},"publisher":{"@type":"Organization","name":"MCFON","logo":{"@type":"ImageObject","url":"https://hunlp.com/img/logo.png"}},"description":"词表征(Word Representation) 文本数据经过预处理后，需要转化成数值特征，便于后续处理"}</script><link rel="canonical" href="https://hunlp.com/posts/61928.html"><link rel="icon" href="/img/favicon.png"><link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.2/css/all.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@9.12.0/styles/atom-one-light.css"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@400;600&amp;family=Source+Code+Pro"><link rel="stylesheet" href="/css/default.css"><style>body>.footer,body>.navbar,body>.section{opacity:0}</style><!--!--><script>var _hmt = _hmt || [];
+        (function() {
+            var hm = document.createElement("script");
+            hm.src = "//hm.baidu.com/hm.js?b99420d7a06d2b3361a8efeaf6e20764";
+            var s = document.getElementsByTagName("script")[0];
+            s.parentNode.insertBefore(hm, s);
+        })();</script><!--!--><!--!--><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/cookieconsent@3.1.1/build/cookieconsent.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lightgallery@1.6.8/dist/css/lightgallery.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/justifiedGallery@3.7.0/dist/css/justifiedGallery.min.css"><script src="https://www.googletagmanager.com/gtag/js?id=UA-131608076-1" async></script><script>window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+    
+        gtag('config', 'UA-131608076-1');</script><!--!--><!--!--><!--!--><script src="https://cdn.jsdelivr.net/npm/pace-js@1.0.2/pace.min.js"></script><!--!--><!--!--><meta name="generator" content="Hexo 5.4.0"></head><body class="is-3-column"><nav class="navbar navbar-main"><div class="container"><div class="navbar-brand justify-content-center"><a class="navbar-item navbar-logo" href="/"><img src="/img/logo.png" alt="MCFON" height="28"></a></div><div class="navbar-menu"><div class="navbar-start"><a class="navbar-item" href="/">主页</a><a class="navbar-item" href="/archives">归档</a><a class="navbar-item" href="/categories">分类</a><a class="navbar-item" href="/tags">标签</a><a class="navbar-item" href="/about">关于</a></div><div class="navbar-end"><a class="navbar-item" target="_blank" rel="noopener" title="Download on GitHub" href="https://github.com/ppoffice/hexo-theme-icarus"><i class="fab fa-github"></i></a><a class="navbar-item is-hidden-tablet catalogue" title="目录" href="javascript:;"><i class="fas fa-list-ul"></i></a><a class="navbar-item search" title="搜索" href="javascript:;"><i class="fas fa-search"></i></a></div></div></div></nav><section class="section"><div class="container"><div class="columns"><div class="column order-2 column-main is-8-tablet is-8-desktop is-9-widescreen"><div class="card"><article class="card-content article" role="article"><h1 class="title is-size-3 is-size-4-mobile has-text-weight-normal"><i class="fas fa-angle-double-right"></i>词表征与词向量</h1><div class="article-meta is-size-7 is-uppercase level is-mobile"><div class="level-left"><span class="level-item"><i class="far fa-calendar-alt"> </i><time dateTime="${date_xml(page.date)}" title="${date_xml(page.date)}">2021-06-03</time></span><span class="level-item is-hidden-mobile"><i class="far fa-calendar-check"> </i><time dateTime="${date_xml(page.updated)}" title="${date_xml(page.updated)}">2021-06-06</time></span><span class="level-item"><a class="link-muted" href="/categories/%E8%87%AA%E7%84%B6%E8%AF%AD%E8%A8%80%E5%A4%84%E7%90%86/">自然语言处理</a></span><span class="level-item">25 分钟读完 (大约3765个字)</span></div></div><div class="content"><h1 id="词表征word-representation">词表征(Word Representation)</h1>
+<p>文本数据经过预处理后，需要转化成数值特征，便于后续处理 <span id="more"></span> <strong>one-hot 表征</strong> (localist representation)： - 例如给定词典，包含<span class="math inline">\(10^7\)</span>个单词，则每个单词表示为 <span class="math inline">\(10^7\times 1\)</span> 的 one-hot 向量；“我们”表示为 <span class="math inline">\([0,0,...,0,0,1,0,0,0...0,0,0]_{(10^7,1)}\)</span>，1 的索引为“我们”在词典中的位置 - 句子或文档向量则可表示为 <span class="math inline">\(10^7\times 1\)</span> 的向量，词典中每个单词在句子或文档中是否出现；Bolean 向量。 - 也可以表示为，词典中每个单词在句子或文档中出现的次数；Count-based 句子向量</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 单词级 one-hot 编码</span></span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line">samples = [<span class="string">&#x27;The cat sat on the mat.&#x27;</span>, <span class="string">&#x27;The dog ate my homework.&#x27;</span>]</span><br><span class="line">token_index = &#123;&#125;</span><br><span class="line"><span class="keyword">for</span> sample <span class="keyword">in</span> samples:</span><br><span class="line">    <span class="keyword">for</span> word <span class="keyword">in</span> sample.split():</span><br><span class="line">        <span class="keyword">if</span> word <span class="keyword">not</span> <span class="keyword">in</span> token_index:</span><br><span class="line">            token_index[word] = <span class="built_in">len</span>(token_index) + <span class="number">1</span></span><br><span class="line"></span><br><span class="line">max_length = <span class="number">10</span></span><br><span class="line">results = np.zeros(shape=(<span class="built_in">len</span>(samples), max_length, <span class="built_in">len</span>(token_index) + <span class="number">1</span>))</span><br><span class="line"><span class="keyword">for</span> i, sample <span class="keyword">in</span> <span class="built_in">enumerate</span>(samples):</span><br><span class="line">    <span class="keyword">for</span> j, word <span class="keyword">in</span> <span class="built_in">list</span>(<span class="built_in">enumerate</span>(sample.split()))[:max_length]:</span><br><span class="line">        index = token_index.get(word)</span><br><span class="line">        results[i, j, index] = <span class="number">1.</span></span><br><span class="line"></span><br><span class="line">token_index, results</span><br></pre></td></tr></table></figure>
+<pre><code>(&#123;&#39;The&#39;: 1,
+  &#39;cat&#39;: 2,
+  &#39;sat&#39;: 3,
+  &#39;on&#39;: 4,
+  &#39;the&#39;: 5,
+  &#39;mat.&#39;: 6,
+  &#39;dog&#39;: 7,
+  &#39;ate&#39;: 8,
+  &#39;my&#39;: 9,
+  &#39;homework.&#39;: 10&#125;,
+ array([[[0., 1., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
+         [0., 0., 1., 0., 0., 0., 0., 0., 0., 0., 0.],
+         [0., 0., 0., 1., 0., 0., 0., 0., 0., 0., 0.],
+         [0., 0., 0., 0., 1., 0., 0., 0., 0., 0., 0.],
+         [0., 0., 0., 0., 0., 1., 0., 0., 0., 0., 0.],
+         [0., 0., 0., 0., 0., 0., 1., 0., 0., 0., 0.],
+         [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
+         [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
+         [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
+         [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.]],
+ 
+        [[0., 1., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
+         [0., 0., 0., 0., 0., 0., 0., 1., 0., 0., 0.],
+         [0., 0., 0., 0., 0., 0., 0., 0., 1., 0., 0.],
+         [0., 0., 0., 0., 0., 0., 0., 0., 0., 1., 0.],
+         [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 1.],
+         [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
+         [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
+         [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
+         [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
+         [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.]]]))</code></pre>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 字符级 one-hot 编码</span></span><br><span class="line"><span class="keyword">import</span> string</span><br><span class="line">samples = [<span class="string">&#x27;The cat sat on the mat.&#x27;</span>, <span class="string">&#x27;The dog ate my homework.&#x27;</span>]</span><br><span class="line"></span><br><span class="line">characters = string.printable</span><br><span class="line">token_index = <span class="built_in">dict</span>(<span class="built_in">zip</span>(characters, <span class="built_in">range</span>(<span class="number">1</span>, <span class="built_in">len</span>(characters) + <span class="number">1</span>)))</span><br><span class="line">max_length = <span class="number">50</span></span><br><span class="line"></span><br><span class="line">results = np.zeros((<span class="built_in">len</span>(samples), max_length, <span class="built_in">max</span>(token_index.values()) + <span class="number">1</span>))</span><br><span class="line"><span class="keyword">for</span> i, sample <span class="keyword">in</span> <span class="built_in">enumerate</span>(samples):</span><br><span class="line">    <span class="keyword">for</span> j, character <span class="keyword">in</span> <span class="built_in">enumerate</span>(sample):</span><br><span class="line">        index = token_index.get(character)</span><br><span class="line">        results[i, j, index] = <span class="number">1</span></span><br><span class="line">        </span><br><span class="line">token_index, results        </span><br></pre></td></tr></table></figure>
+<pre><code>(&#123;&#39;0&#39;: 1,
+  &#39;1&#39;: 2,
+  &#39;2&#39;: 3,
+  &#39;3&#39;: 4,
+  &#39;4&#39;: 5,
+  &#39;5&#39;: 6,
+  &#39;6&#39;: 7,
+  &#39;7&#39;: 8,
+  &#39;8&#39;: 9,
+  &#39;9&#39;: 10,
+  &#39;a&#39;: 11,
+  &#39;b&#39;: 12,
+  &#39;c&#39;: 13,
+  &#39;d&#39;: 14,
+  &#39;e&#39;: 15,
+  &#39;f&#39;: 16,
+  &#39;g&#39;: 17,
+  &#39;h&#39;: 18,
+  &#39;i&#39;: 19,
+  &#39;j&#39;: 20,
+  &#39;k&#39;: 21,
+  &#39;l&#39;: 22,
+  &#39;m&#39;: 23,
+  &#39;n&#39;: 24,
+  &#39;o&#39;: 25,
+  &#39;p&#39;: 26,
+  &#39;q&#39;: 27,
+  &#39;r&#39;: 28,
+  &#39;s&#39;: 29,
+  &#39;t&#39;: 30,
+  &#39;u&#39;: 31,
+  &#39;v&#39;: 32,
+  &#39;w&#39;: 33,
+  &#39;x&#39;: 34,
+  &#39;y&#39;: 35,
+  &#39;z&#39;: 36,
+  &#39;A&#39;: 37,
+  &#39;B&#39;: 38,
+  &#39;C&#39;: 39,
+  &#39;D&#39;: 40,
+  &#39;E&#39;: 41,
+  &#39;F&#39;: 42,
+  &#39;G&#39;: 43,
+  &#39;H&#39;: 44,
+  &#39;I&#39;: 45,
+  &#39;J&#39;: 46,
+  &#39;K&#39;: 47,
+  &#39;L&#39;: 48,
+  &#39;M&#39;: 49,
+  &#39;N&#39;: 50,
+  &#39;O&#39;: 51,
+  &#39;P&#39;: 52,
+  &#39;Q&#39;: 53,
+  &#39;R&#39;: 54,
+  &#39;S&#39;: 55,
+  &#39;T&#39;: 56,
+  &#39;U&#39;: 57,
+  &#39;V&#39;: 58,
+  &#39;W&#39;: 59,
+  &#39;X&#39;: 60,
+  &#39;Y&#39;: 61,
+  &#39;Z&#39;: 62,
+  &#39;!&#39;: 63,
+  &#39;&quot;&#39;: 64,
+  &#39;#&#39;: 65,
+  &#39;$&#39;: 66,
+  &#39;%&#39;: 67,
+  &#39;&amp;&#39;: 68,
+  &quot;&#39;&quot;: 69,
+  &#39;(&#39;: 70,
+  &#39;)&#39;: 71,
+  &#39;*&#39;: 72,
+  &#39;+&#39;: 73,
+  &#39;,&#39;: 74,
+  &#39;-&#39;: 75,
+  &#39;.&#39;: 76,
+  &#39;/&#39;: 77,
+  &#39;:&#39;: 78,
+  &#39;;&#39;: 79,
+  &#39;&lt;&#39;: 80,
+  &#39;=&#39;: 81,
+  &#39;&gt;&#39;: 82,
+  &#39;?&#39;: 83,
+  &#39;@&#39;: 84,
+  &#39;[&#39;: 85,
+  &#39;\\&#39;: 86,
+  &#39;]&#39;: 87,
+  &#39;^&#39;: 88,
+  &#39;_&#39;: 89,
+  &#39;`&#39;: 90,
+  &#39;&#123;&#39;: 91,
+  &#39;|&#39;: 92,
+  &#39;&#125;&#39;: 93,
+  &#39;~&#39;: 94,
+  &#39; &#39;: 95,
+  &#39;\t&#39;: 96,
+  &#39;\n&#39;: 97,
+  &#39;\r&#39;: 98,
+  &#39;\x0b&#39;: 99,
+  &#39;\x0c&#39;: 100&#125;,
+ array([[[0., 0., 0., ..., 0., 0., 0.],
+         [0., 0., 0., ..., 0., 0., 0.],
+         [0., 0., 0., ..., 0., 0., 0.],
+         ...,
+         [0., 0., 0., ..., 0., 0., 0.],
+         [0., 0., 0., ..., 0., 0., 0.],
+         [0., 0., 0., ..., 0., 0., 0.]],
+ 
+        [[0., 0., 0., ..., 0., 0., 0.],
+         [0., 0., 0., ..., 0., 0., 0.],
+         [0., 0., 0., ..., 0., 0., 0.],
+         ...,
+         [0., 0., 0., ..., 0., 0., 0.],
+         [0., 0., 0., ..., 0., 0., 0.],
+         [0., 0., 0., ..., 0., 0., 0.]]]))</code></pre>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># tf 实现 one-hot 编码，句子的 Bolean 向量</span></span><br><span class="line"><span class="keyword">from</span> tensorflow.keras.preprocessing.text <span class="keyword">import</span> Tokenizer</span><br><span class="line">samples = [<span class="string">&#x27;The cat sat on the mat.&#x27;</span>, <span class="string">&#x27;The dog ate my homework.&#x27;</span>]</span><br><span class="line"></span><br><span class="line">tokenizer = Tokenizer(num_words=<span class="number">20</span>) <span class="comment"># 只考虑前20个最常见的单词</span></span><br><span class="line">tokenizer.fit_on_texts(samples)</span><br><span class="line"></span><br><span class="line">sequences = tokenizer.texts_to_sequences(samples)  <span class="comment"># 整数索引列表</span></span><br><span class="line">one_hot_results = tokenizer.texts_to_matrix(samples,</span><br><span class="line">                                            mode=<span class="string">&#x27;binary&#x27;</span>)  <span class="comment"># one-hot 向量</span></span><br><span class="line">word_index = tokenizer.word_index  <span class="comment"># 单词-索引词典</span></span><br><span class="line"></span><br><span class="line">word_index, one_hot_results</span><br></pre></td></tr></table></figure>
+<pre><code>(&#123;&#39;the&#39;: 1,
+  &#39;cat&#39;: 2,
+  &#39;sat&#39;: 3,
+  &#39;on&#39;: 4,
+  &#39;mat&#39;: 5,
+  &#39;dog&#39;: 6,
+  &#39;ate&#39;: 7,
+  &#39;my&#39;: 8,
+  &#39;homework&#39;: 9&#125;,
+ array([[0., 1., 1., 1., 1., 1., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.,
+         0., 0., 0., 0.],
+        [0., 1., 0., 0., 0., 0., 1., 1., 1., 1., 0., 0., 0., 0., 0., 0.,
+         0., 0., 0., 0.]]))</code></pre>
+<p>使用<strong>散列技巧</strong>的单词级 one-hot 编码 - 当词汇表非常大大时，散列技巧降低向量长度 - 可能出现散列冲突</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">samples = [<span class="string">&#x27;The cat sat on the mat.&#x27;</span>, <span class="string">&#x27;The dog ate my homework.&#x27;</span>]</span><br><span class="line"></span><br><span class="line"><span class="comment"># 如词汇表有 10000 个单词时，将向量长度从 10000 降低到 1000</span></span><br><span class="line">dimensionality = <span class="number">1000</span></span><br><span class="line">max_length = <span class="number">10</span></span><br><span class="line"></span><br><span class="line">results = np.zeros(shape=(<span class="built_in">len</span>(samples), max_length, dimensionality))</span><br><span class="line"><span class="keyword">for</span> i, sample <span class="keyword">in</span> <span class="built_in">enumerate</span>(samples):</span><br><span class="line">    <span class="keyword">for</span> j, word <span class="keyword">in</span> <span class="built_in">list</span>(<span class="built_in">enumerate</span>(sample.split()))[:max_length]:</span><br><span class="line">        index = <span class="built_in">abs</span>(<span class="built_in">hash</span>(word)) % dimensionality</span><br><span class="line">        results[i, j, index] = <span class="number">1</span></span><br></pre></td></tr></table></figure>
+<p><span class="math inline">\(tf-idf\)</span> 表征</p>
+<p><span class="math display">\[tfidf(w)=tf(d,w)\times idf(w)\]</span></p>
+<ul>
+<li><span class="math inline">\(tf(d,w)\)</span> - 文档 d 中单词 w 的词频；</li>
+<li><span class="math inline">\(idf(w)=log\frac{N}{N_{w}}\)</span>，<span class="math inline">\(N\)</span> - 语料库的文档总数，<span class="math inline">\(N_{w}\)</span> - 词语 w 出现在多少个文档中</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> sklearn.feature_extraction.text <span class="keyword">import</span> TfidfVectorizer</span><br><span class="line">corpus = [</span><br><span class="line">    <span class="string">&#x27;This is the first document.&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;This document is the second document.&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;And this is the third one.&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;Is this the first document?&#x27;</span>,</span><br><span class="line">]</span><br><span class="line">vectorizer = TfidfVectorizer()</span><br><span class="line">X = vectorizer.fit_transform(corpus)</span><br><span class="line">X.todense()</span><br></pre></td></tr></table></figure>
+<pre><code>matrix([[0.        , 0.46979139, 0.58028582, 0.38408524, 0.        ,
+         0.        , 0.38408524, 0.        , 0.38408524],
+        [0.        , 0.6876236 , 0.        , 0.28108867, 0.        ,
+         0.53864762, 0.28108867, 0.        , 0.28108867],
+        [0.51184851, 0.        , 0.        , 0.26710379, 0.51184851,
+         0.        , 0.26710379, 0.51184851, 0.26710379],
+        [0.        , 0.46979139, 0.58028582, 0.38408524, 0.        ,
+         0.        , 0.38408524, 0.        , 0.38408524]])</code></pre>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">print</span>(vectorizer.get_feature_names())</span><br></pre></td></tr></table></figure>
+<pre><code>[&#39;and&#39;, &#39;document&#39;, &#39;first&#39;, &#39;is&#39;, &#39;one&#39;, &#39;second&#39;, &#39;the&#39;, &#39;third&#39;, &#39;this&#39;]</code></pre>
+<p><code>localist representation</code> 的缺点： 1. 稀疏性表征，向量长度为词典内单词总数 2. 无法表征单词的相似度，任意两个单词向量的点积为 0 3. 表达能力弱，如无法表达语义；同样 8 维向量，one-hot只能表示 8 个单词，而词向量每个元素取值连续，因此能表示无穷个单词</p>
+<h1 id="词向量">词向量</h1>
+<ul>
+<li><p>分布语义(distributional Semantic)，特定单词的含义由频繁出现在其前后的词决定 <span class="math inline">\(\Longrightarrow\)</span> 分布式表征，通过单词的上下文(context)表征单词。</p></li>
+<li><p>不同的单词，其上下文越相近，该单词的含义越相似。例如单词 w，其上下文由其前 n 个单词及其后 n 个单词的集合组成，n 表示窗口尺寸(fixed window)。如下所示，单词 "banking" 的上下文，窗口尺寸 <span class="math inline">\(n=5\)</span> : <span class="math display">\[
+\begin{align*}
+...goverment\ debt\ problems\ turning\ into\ &amp;\boxed{banking}\ crisises\ as\ happened\ in\ 2009 ...\\
+...saying\ that\ Europe\ needs\ unified\ &amp;\boxed{banking}\ regulation\ to\ replace\ the\ hodgepodge...\\
+...Indian\ has\ just\ given\ its\ &amp;\boxed{banking}\ system\ a\ shot\ in\ the\ arm...
+\end{align*}
+\]</span></p></li>
+<li><p>词向量，也称为 word embedding 或 word representation，将文本映射到特定维度的向量空间（vector space）中：</p>
+<ol type="1">
+<li>更致密的向量，</li>
+<li>点积表示不同词间的相似性，表达语义</li>
+<li>capacity，表达能力强，词向量每个元素取值连续，因此能表示无穷个单词</li>
+<li>泛化能力强，即在测试集上也有很好的效果，可用于迁移学习进行后续操作</li>
+</ol></li>
+</ul>
+<h2 id="训练词向量原理">训练词向量原理：</h2>
+<ul>
+<li>大量语料库，从中得出固定的词汇表，每个单词通过一个向量表示，向量维度 50、200或300</li>
+<li>按语料库中文本的顺序，遍历每一个位置，以该位置单词作为中心词 c，选定窗口尺寸 n，窗口内上下文单词为 o</li>
+<li>利用词向量的相似性，计算给定 c 时，o 的概率，或相反；c 的词向量就可以用来计算 o 中的单词</li>
+<li>不断调整词向量，最大化概率</li>
+</ul>
+<h2 id="skip-gram-model"><code>Skip-Gram Model</code></h2>
+<ul>
+<li>将文本按顺序，将固定窗口尺寸 n=2 内的单词，转变成 中心词-上下文词 组成的词对；中心词将作为输入，上下文词将作为训练标签。词汇表，10000个单词</li>
+</ul>
+<p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gr7vx6kolqj30om0giac2.jpg" /></p>
+<ul>
+<li>构建如下图神经网络，输入为中心词 ‘ants’ 的 one-hot 向量；隐藏层矩阵本质为词向量查找表 (<span class="math inline">\(10000\times 300\)</span>)，通过 one-hot 向量查找到 ’ants‘ 的词向量 (<span class="math inline">\(300,\)</span>)；再经过输出层矩阵 (<span class="math inline">\(300\times 10000\)</span>)的处理，得到 (<span class="math inline">\(10000,\)</span>) 的向量，为词汇表中每个单词的概率分布。</li>
+</ul>
+<p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gr7vxyxh3hj317l0r8q75.jpg" /></p>
+<ul>
+<li>例如，输入词对，（’ants‘，’car‘），训练目标：使得 ‘ants' 的上下文词 ’car‘ 的概率最大，而其它非上下文词的概率最小。最终得到隐藏层的权重矩阵即为所要得到的词向量，输出层矩阵则丢弃。</li>
+</ul>
+<p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gr7vy7en4oj60vf07s3zb02.jpg" /></p>
+<ul>
+<li>输出层有 (<span class="math inline">\(300\times 10000\)</span>) 个参数，且 softmax 函数还需要计算 <span class="math inline">\(\sum_i^{10000}{e^i}\)</span> ，模型最终的计算量会非常大</li>
+</ul>
+<h2 id="cbow模型">CBOW模型</h2>
+<ul>
+<li>与 skip-gram 相反，以 上下文词 作为输入，来训练模型，以最大化中心词的概率<br />
+<img src="https://tva1.sinaimg.cn/large/008i3skNly1gr7vyexjotj30of0djwgq.jpg" /></li>
+</ul>
+<h2 id="重采样">重采样</h2>
+<p>在语料中频繁出现的一些单词，对中心词并没有给出多大信息，如 (<code>fox</code>, <code>the</code>) 词对中的 <code>the</code>。Word2Vec 实现了 重采样机制，以解决该问题</p>
+<ul>
+<li><p>给定单词 <span class="math inline">\(w_i\)</span> ，其在语料库(<span class="math inline">\(10^6\)</span>个单词)中的词频为 <span class="math inline">\(z(w_i)\)</span></p></li>
+<li><p><code>sample</code> 参数决定出现多少重采样，值越小，单词越不可能被选择，sample=0.001</p></li>
+<li><p>重采样单词 <span class="math inline">\(w_i\)</span> 的概率为：</p>
+<p><span class="math display">\[P(w_i)=(\sqrt{\frac{z(w_i)}{0.001}}+1)\cdot \frac{0.001}{z(w_i)}\]</span></p></li>
+</ul>
+<p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gr7vynzrghj30gy09rq3m.jpg" /></p>
+<ul>
+<li><span class="math inline">\(P(w_i)=1.0\)</span>，当单词词频 <span class="math inline">\(z(w_i)&lt;=0.0026\)</span> 时，该单词 100% 会被选择</li>
+<li><span class="math inline">\(P(w_i)=0.5\)</span>，当单词词频 <span class="math inline">\(z(w_i)&lt;=0.00746\)</span> 时，该单词有 50% 可能性会被选择</li>
+<li><span class="math inline">\(P(w_i)=0.033\)</span>，当单词词频 <span class="math inline">\(z(w_i)&lt;=1.0\)</span> 时，该单词 3.3% 会被选择
+<ul>
+<li>即整个语料库由该单词组成</li>
+</ul></li>
+</ul>
+<p>重采样后，频繁出现的单词在采样时被选择的概率降低，而稀有词在采样时不会被忽略</p>
+<h1 id="加速训练">加速训练</h1>
+<p>由于输出层的<span class="math inline">\(softmax\)</span>函数会输出整个词汇表中所有单词的的概率，计算量非常大，两种方法加快训练速度： - <code>Hierarchical Softmax</code> - <code>Negative sampling</code></p>
+<h2 id="hierarchical-softmax"><code>Hierarchical Softmax</code></h2>
+<ul>
+<li>基于层级<span class="math inline">\(softmax\)</span>的模型，<span class="math inline">\(softmax\)</span>的输出不再是词汇表所有单词的概率分布，而是一颗<code>Huffman</code>树，其中叶子节点共<code>N</code>个，对应于<code>N</code>个单词，非叶子节点<code>N-1</code>个</li>
+</ul>
+<h4 id="霍夫曼树">霍夫曼树：</h4>
+<ul>
+<li>霍夫曼树(<code>Huffman Tree</code>)，一种满二叉树，其带权路径长最小，也称为最优二叉树
+<ul>
+<li>带权路径长，指的是所有叶子节点的权值与路径长的乘积之和；</li>
+<li>若叶子节点的权值都是已知的，使权值越大的叶子节点路径越小，则整棵树的带权路径长最小。</li>
+</ul></li>
+<li>构造霍夫曼树的目的是为了完成霍夫曼编码，变长、极少多余编码方案，使得频率高的字符对应的二进制位较短，频率低的字符对应的二进制位较长。相对于等长编码，将文件中每个字符转换为固定个数的二进制位</li>
+</ul>
+<blockquote>
+<p>霍夫曼树的构造，给定包含权重值为 <span class="math inline">\((w_1,w_2,...w_n)\)</span> 的节点列表： - 将节点列表按权重进行升序排列，并构建一颗空树 - 遍历排序后的节点，依次将其添加到树中，添加规则如下： - 若树为空，则作为根节点 - 若权重大于根节点权重，则该节点作为根节点右兄弟，生成一个新的根节点，权重为两者之和 - 若权重不大于根节点权重，则该节点作为根节点左兄弟，生成一个新的根节点，权重为两者之和 - 约定霍夫曼树左子树编码为0，右子树编码为1，左子树的权重小于右子树的权重； <img src="https://tva1.sinaimg.cn/large/008i3skNly1gr7vyyda06j30mx0jhgn5.jpg" /> - 权重越高的节点编码值越短，权重越低的编码值越长；保证了越常用的单词拥有越短的编码。</p>
+</blockquote>
+<h4 id="词汇表构建的霍夫曼树">词汇表构建的霍夫曼树</h4>
+<ul>
+<li>首先根据语料库，构建词典<span class="math inline">\(V\)</span>，然后以每个单词的词频为权重构建霍夫曼树，
+<ul>
+<li>出现越频繁的单词在树中深度越浅，越少见的词在越深；每个单词有其对应的由‘01’组成的编码</li>
+<li>如下图所示：<img src="https://tva1.sinaimg.cn/large/008i3skNly1gr7vzembpbj60lm0i6wfq02.jpg" /></li>
+<li>树中叶子节点即为每个单词，内部节点为模型参数</li>
+</ul></li>
+<li>在训练词对 ”深度：学习“ 时，目标为 “学习”，其路径为 <code>643</code>，编码为 <code>101</code>；
+<ul>
+<li>因此输入 ”深度“ 的词向量，经节点 6 处理，需要输出值 1；经节点 4 处理需要输出值 0；经过节点 3 处理，需要输出值 1 <img src="https://tva1.sinaimg.cn/large/008i3skNly1gr7vzq5jo3j30it098t9h.jpg" /></li>
+<li>输入词向量与 目标单词 的霍夫曼树路径中每个节点参数求 <strong>点积，然后<code>sigmoid</code>激活</strong> 处理得到的结果，要与每个编码值相同</li>
+<li>训练完成后，每个单词对应的词向量即为目标数据，霍夫曼树的节点参数被丢弃</li>
+</ul></li>
+<li>训练完成后，再次输入单词 ”深度“ 的词向量，经过节点 6 处理得到概率 0.55；
+<ul>
+<li>因为训练时，输入为 “深度”，目标单词会有很多，概率 0.55，说明 “深度”的目标单词中 55% 出现在节点 6 的右边，45% 出现在左边；</li>
+<li>“深度：的” 词对占所有 “深度”词对的 0.45*0.75 <img src="https://tva1.sinaimg.cn/large/008i3skNly1gr7vzyspgrj30lm0i6dh0.jpg" /></li>
+</ul></li>
+</ul>
+<h4 id="hierarchical-softmax-1"><code>Hierarchical Softmax</code>:</h4>
+<ul>
+<li><p>CBOW 模型中，给定上下文词 o，最大化中心词 c 的条件概率 <span class="math inline">\(P(c|o)\)</span></p>
+<ul>
+<li><span class="math inline">\(X_o\)</span>：上下文词向量平均后的向量，作为树的输入</li>
+<li><span class="math inline">\(p\)</span> ：表示从根节点出发到中心词 c 所代表的叶节点的路径</li>
+<li><span class="math inline">\(l\)</span>：表示路径包含的节点的个数</li>
+<li><span class="math inline">\(p_1, p_2, ...p_l\)</span>：表示路径 <span class="math inline">\(p\)</span> 中的节点</li>
+<li><span class="math inline">\(d_2 ,d_3, ...d_l \in{\{0,1\}}\)</span>：表示路径 <span class="math inline">\(p\)</span> 中每个节点的编码，0 或 1，根节点无编码</li>
+<li><span class="math inline">\(\theta_1, \theta_2,...\theta_{l-1}\)</span>：表示路径 <span class="math inline">\(p\)</span> 中非叶节点对应的参数向量</li>
+</ul>
+<p>中心词的条件概率，可以看作从根节点到中心词对应的叶子节点的路径的概率，该路径是唯一的；在树中选择左分支还是右分支，即可看作一个二分类问题，选择每个节点的概率： <span class="math display">\[
+\begin{align}P(d_j|X_o,\theta_{j-1})&amp;=\begin{cases}\sigma(X_o^T\theta_{j-1}),  &amp;d_j=0 \\1-\sigma(X_o^T\theta_{j-1}),  &amp;d_j=1\end{cases}\\&amp;=\left[\sigma(X_o^T\theta_{j-1})\right]^{1-d_j}\cdot \left[1-\sigma(X_o^T\theta_{j-1})\right]^{d_j}\end{align}
+\]</span> 中性词的概率，即为到中心词节点的路径中所有节点的概率的连乘： <span class="math display">\[
+P(c|o)=\prod_{j=2}^{l}P(d_j|X_o,\theta_{j-1})
+\]</span></p>
+<p>最大化模型的目标函数： <span class="math display">\[
+\begin{align}L&amp;=\sum_{c\in V}{logP(c|o)}\\&amp;=\sum_{c\in V}\sum_{j=2}^{l}\Big\{(1-d_j)\cdot log\left[\sigma(X_o^T\theta_{j-1})\right]+d_j\cdot log\left[1-\sigma(X_o^T\theta_{j-1})\right]\Big\}\\&amp;=\sum_{c\in V}\sum_{j=2}^{l}L(o,j)\end{align}
+\]</span> 最大化目标函数中的每一项，两个参数，节点参数 <span class="math inline">\(\theta_{j-1}\)</span>，输入的向量 <span class="math inline">\(X_o\)</span>，设定学习速率 <span class="math inline">\(\eta\)</span>。梯度下降法更新这两个参数： <span class="math display">\[
+\begin{align}\theta_{j-1}&amp;:\theta_{j-1}+\eta\cdot\frac{\partial L(o,j)}{\partial\theta_{j-1}}\\X_o&amp;:X_o+\eta\cdot\sum_{j=2}^{l}\frac{\partial L(o,j)}{\partial X_o}\end{align}
+\]</span> <span class="math inline">\(X_o\)</span> 为多个上下文词向量的平均，word2vec 直接将更新量应用到对应的那几个上下文词向量上</p></li>
+</ul>
+<h2 id="negative-sampling"><code>Negative Sampling</code></h2>
+<p>输出时，不再是计算整个词汇表的概率分布；而是从词汇表中选择一定量的负样本，再加上目标单词，计算这些单词的概率分布，训练时也只会更新这些单词对应的权重参数 - 如<code>(fox,quick)</code>词对，输出层矩阵<span class="math inline">\(300\times 10000\)</span>处理输入中心词<code>fox</code>词向量时，只从输出层矩阵中选择上下文词<code>quick</code>对应的那列权重向量<code>(positive word)</code>，以及随机选择的另外 5 个单词对应的权重向量，来进行更新，此时只需要更新 (<span class="math inline">\(300\times 6\)</span>) 个参数</p>
+<p>如何选择负样本(Negative Samples)： - 可以通过词频均匀采样：<span class="math inline">\(P(w_i)=\frac{f(w_i)}{\sum_{j=0}^{n}(f(w_j))}\)</span> - 效果最好的是 3/4 指数采样：<span class="math inline">\(P(w_i)=\frac{f(w_i)^{3/4}}{\sum_{j=0}^{n}(f(w_j)^{3/4})}\)</span> - <span class="math inline">\(f(w_i)\)</span> 为单词 <span class="math inline">\(w_i\)</span> 在语料库中出现的概率</p>
+<p>底层 C 语言实现了包含 100M 元素的数组，称为 unigram table。向表中填充单词对应的索引，该索引出现的次数由 <span class="math inline">\(P(w_i)\cdot 表的尺寸\)</span> 决定。选择负样本时，只要生成 <span class="math inline">\(0-100M\)</span> 内的 5 个随机数</p>
+<p><strong>参考文章</strong>：</p>
+<p>1.http://mccormickml.com/2016/04/19/word2vec-tutorial-the-skip-gram-model/ 2.http://mccormickml.com/2017/01/11/word2vec-tutorial-part-2-negative-sampling/ 3.https://ruder.io/word-embeddings-softmax/</p>
+</div><div class="article-licensing box"><div class="licensing-title"><p>词表征与词向量</p><p><a href="https://hunlp.com/posts/61928.html">https://hunlp.com/posts/61928.html</a></p></div><div class="licensing-meta level is-mobile"><div class="level-left"><div class="level-item is-narrow"><div><h6>作者</h6><p>ฅ´ω`ฅ</p></div></div><div class="level-item is-narrow"><div><h6>发布于</h6><p>2021-06-03</p></div></div><div class="level-item is-narrow"><div><h6>更新于</h6><p>2021-06-06</p></div></div><div class="level-item is-narrow"><div><h6>许可协议</h6><p><a class="icons" rel="noopener" target="_blank" title="Creative Commons" href="https://creativecommons.org/"><i class="icon fab fa-creative-commons"></i></a><a class="icons" rel="noopener" target="_blank" title="Attribution" href="https://creativecommons.org/licenses/by/4.0/"><i class="icon fab fa-creative-commons-by"></i></a><a class="icons" rel="noopener" target="_blank" title="Noncommercial" href="https://creativecommons.org/licenses/by-nc/4.0/"><i class="icon fab fa-creative-commons-nc"></i></a></p></div></div></div></div></div><hr style="height:1px;margin:1rem 0"><div class="level is-mobile is-flex"><div class="article-tags is-size-7 is-uppercase"><i class="fas fa-tags has-text-grey"></i> <a class="link-muted" rel="tag" href="/tags/%E8%AF%8D%E8%A1%A8%E5%BE%81/">词表征, </a><a class="link-muted" rel="tag" href="/tags/%E8%AF%8D%E5%90%91%E9%87%8F/">词向量 </a></div></div><div class="bdsharebuttonbox"><a class="bds_more" href="#" data-cmd="more"></a><a class="bds_qzone" href="#" data-cmd="qzone" title="分享到QQ空间"></a><a class="bds_tsina" href="#" data-cmd="tsina" title="分享到新浪微博"></a><a class="bds_tqq" href="#" data-cmd="tqq" title="分享到腾讯微博"></a><a class="bds_renren" href="#" data-cmd="renren" title="分享到人人网"></a><a class="bds_weixin" href="#" data-cmd="weixin" title="分享到微信"></a></div><script>window._bd_share_config = { "common": { "bdSnsKey": {}, "bdText": "", "bdMini": "2", "bdPic": "", "bdStyle": "0", "bdSize": "16" }, "share": {} }; with (document) 0[(getElementsByTagName('head')[0] || body).appendChild(createElement('script')).src = 'http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion=' + ~(-new Date() / 36e5)];</script></article></div><div class="card"><div class="card-content"><h3 class="menu-label has-text-centered">喜欢这篇文章？打赏一下作者吧</h3><div class="buttons is-centered"><a class="button donate" data-type="alipay"><span class="icon is-small"><i class="fab fa-alipay"></i></span><span>支付宝</span><span class="qrcode"><img src="/img/zfb.jpg" alt="支付宝"></span></a><a class="button donate" data-type="wechat"><span class="icon is-small"><i class="fab fa-weixin"></i></span><span>微信</span><span class="qrcode"><img src="/img/wx.jpg" alt="微信"></span></a></div></div></div><nav class="post-navigation mt-4 level is-mobile"><div class="level-start"><a class="article-nav-prev level level-item link-muted" href="/posts/52952.html"><i class="level-item fas fa-chevron-left"></i><span class="level-item">Transformer模型及源代码</span></a></div><div class="level-end"><a class="article-nav-next level level-item link-muted" href="/posts/51094.html"><span class="level-item">BiLSTM和CRF算法的序列标注原理</span><i class="level-item fas fa-chevron-right"></i></a></div></nav><div class="card"><div class="card-content"><h3 class="title is-5">评论</h3><div id="comment-container"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1.7.2/dist/gitalk.css"><script src="https://cdn.jsdelivr.net/npm/gitalk@1.7.2/dist/gitalk.min.js"></script><script>var gitalk = new Gitalk({
+            id: "b6559661945ba294f06dcb225fd8a76d",
+            repo: "Cartride.github.io",
+            owner: "Cartride",
+            clientID: "8f4a2426c347380a6ee4",
+            clientSecret: "8dc8cd44b071426b35d0bd60634941371170b798",
+            admin: ["Cartride"],
+            createIssueManually: false,
+            distractionFreeMode: false,
+            perPage: 10,
+            pagerDirection: "last",
+            
+            
+            enableHotKey: true,
+            
+        })
+        gitalk.render('comment-container')</script></div></div></div><div class="column column-left is-4-tablet is-4-desktop is-3-widescreen  order-1 is-sticky"><div class="card widget" id="toc" data-type="toc"><div class="card-content"><div class="menu"><h3 class="menu-label">目录</h3><ul class="menu-list"><li><a class="level is-mobile" href="#词表征word-representation"><span class="level-left"><span class="level-item">1</span><span class="level-item">词表征(Word Representation)</span></span></a></li><li><a class="level is-mobile" href="#词向量"><span class="level-left"><span class="level-item">2</span><span class="level-item">词向量</span></span></a><ul class="menu-list"><li><a class="level is-mobile" href="#训练词向量原理"><span class="level-left"><span class="level-item">2.1</span><span class="level-item">训练词向量原理：</span></span></a></li><li><a class="level is-mobile" href="#skip-gram-model"><span class="level-left"><span class="level-item">2.2</span><span class="level-item">Skip-Gram Model</span></span></a></li><li><a class="level is-mobile" href="#cbow模型"><span class="level-left"><span class="level-item">2.3</span><span class="level-item">CBOW模型</span></span></a></li><li><a class="level is-mobile" href="#重采样"><span class="level-left"><span class="level-item">2.4</span><span class="level-item">重采样</span></span></a></li></ul></li><li><a class="level is-mobile" href="#加速训练"><span class="level-left"><span class="level-item">3</span><span class="level-item">加速训练</span></span></a><ul class="menu-list"><li><a class="level is-mobile" href="#hierarchical-softmax"><span class="level-left"><span class="level-item">3.1</span><span class="level-item">Hierarchical Softmax</span></span></a><ul class="menu-list"><li><a class="level is-mobile" href="#hierarchical-softmax-1"><span class="level-left"><span class="level-item">3.1.1</span><span class="level-item">Hierarchical Softmax:</span></span></a></li></ul></li><li><a class="level is-mobile" href="#negative-sampling"><span class="level-left"><span class="level-item">3.2</span><span class="level-item">Negative Sampling</span></span></a></li></ul></li></ul></div></div><style>#toc .menu-list > li > a.is-active + .menu-list { display: block; }#toc .menu-list > li > a + .menu-list { display: none; }</style><script src="/js/toc.js" defer></script></div></div><!--!--></div></div></section><footer class="footer"><div class="container"><div class="level"><div class="level-start"><a class="footer-logo is-block mb-2" href="/"><img src="/img/logo.png" alt="MCFON" height="28"></a><p class="is-size-7"><span>&copy; 2022 ฅ´ω`ฅ</span>  Powered by <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a> &amp; <a href="https://github.com/ppoffice/hexo-theme-icarus" target="_blank" rel="noopener">Icarus</a></p></div><div class="level-end"><div class="field has-addons"><p class="control"><a class="button is-transparent is-large" target="_blank" rel="noopener" title="Creative Commons" href="https://creativecommons.org/"><i class="fab fa-creative-commons"></i></a></p><p class="control"><a class="button is-transparent is-large" target="_blank" rel="noopener" title="Attribution 4.0 International" href="https://creativecommons.org/licenses/by/4.0/"><i class="fab fa-creative-commons-by"></i></a></p><p class="control"><a class="button is-transparent is-large" target="_blank" rel="noopener" title="Download on GitHub" href="https://github.com/ppoffice/hexo-theme-icarus"><i class="fab fa-github"></i></a></p></div></div></div></div></footer><script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script><script src="https://cdn.jsdelivr.net/npm/moment@2.22.2/min/moment-with-locales.min.js"></script><script src="https://cdn.jsdelivr.net/npm/clipboard@2.0.4/dist/clipboard.min.js" defer></script><script>moment.locale("zh-CN");</script><script>var IcarusThemeSettings = {
+            article: {
+                highlight: {
+                    clipboard: true,
+                    fold: 'unfolded'
+                }
+            }
+        };</script><script src="/js/column.js"></script><script src="/js/animation.js"></script><a id="back-to-top" title="回到顶端" href="javascript:;"><i class="fas fa-chevron-up"></i></a><script src="/js/back_to_top.js" defer></script><!--!--><!--!--><!--!--><script src="https://cdn.jsdelivr.net/npm/cookieconsent@3.1.1/build/cookieconsent.min.js" defer></script><script>window.addEventListener("load", () => {
+      window.cookieconsent.initialise({
+        type: "info",
+        theme: "edgeless",
+        static: false,
+        position: "bottom-left",
+        content: {
+          message: "此网站使用Cookie来改善您的体验。",
+          dismiss: "知道了！",
+          allow: "允许使用Cookie",
+          deny: "拒绝",
+          link: "了解更多",
+          policy: "Cookie政策",
+          href: "https://www.cookiesandyou.com/",
+        },
+        palette: {
+          popup: {
+            background: "#edeff5",
+            text: "#838391"
+          },
+          button: {
+            background: "#4b81e8"
+          },
+        },
+      });
+    });</script><script src="https://cdn.jsdelivr.net/npm/lightgallery@1.6.8/dist/js/lightgallery.min.js" defer></script><script src="https://cdn.jsdelivr.net/npm/justifiedGallery@3.7.0/dist/js/jquery.justifiedGallery.min.js" defer></script><script>window.addEventListener("load", () => {
+            if (typeof $.fn.lightGallery === 'function') {
+                $('.article').lightGallery({ selector: '.gallery-item' });
+            }
+            if (typeof $.fn.justifiedGallery === 'function') {
+                if ($('.justified-gallery > p > .gallery-item').length) {
+                    $('.justified-gallery > p > .gallery-item').unwrap();
+                }
+                $('.justified-gallery').justifiedGallery();
+            }
+        });</script><!--!--><!--!--><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.css"><script src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.js" defer></script><script src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/contrib/auto-render.min.js" defer></script><script src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/contrib/mhchem.js" defer></script><script>window.addEventListener("load", function() {
+            document.querySelectorAll('[role="article"] > .content').forEach(function(element) {
+                renderMathInElement(element);
+            });
+        });</script><script type="text/x-mathjax-config">MathJax.Hub.Config({
+            'HTML-CSS': {
+                matchFontHeight: false
+            },
+            SVG: {
+                matchFontHeight: false
+            },
+            CommonHTML: {
+                matchFontHeight: false
+            },
+            tex2jax: {
+                inlineMath: [
+                    ['$','$'],
+                    ['\\(','\\)']
+                ]
+            }
+        });</script><script src="https://cdn.jsdelivr.net/npm/mathjax@2.7.5/unpacked/MathJax.js?config=TeX-MML-AM_CHTML" defer></script><!--!--><!--!--><!--!--><script src="/js/main.js" defer></script><div class="searchbox"><div class="searchbox-container"><div class="searchbox-header"><div class="searchbox-input-container"><input class="searchbox-input" type="text" placeholder="想要查找什么..."></div><a class="searchbox-close" href="javascript:;">×</a></div><div class="searchbox-body"></div></div></div><script src="/js/insight.js" defer></script><script>document.addEventListener('DOMContentLoaded', function () {
+            loadInsight({"contentUrl":"/content.json"}, {"hint":"想要查找什么...","untitled":"(无标题)","posts":"文章","pages":"页面","categories":"分类","tags":"标签"});
+        });</script></body></html>

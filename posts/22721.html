@@ -1,0 +1,271 @@
+<!doctype html>
+<html lang="zh"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"><meta><title>潜在语义分析 - MCFON</title><link rel="manifest" href="/manifest.json"><meta name="application-name" content="MCFON"><meta name="msapplication-TileImage" content="/img/favicon.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="MCFON"><meta name="apple-mobile-web-app-status-bar-style" content="default"><meta name="description" content="1.单词向量空间模型通过单词的向量表示文本的语义内容。以单词-文本矩阵\(X\)为输入，其中每一行对应一个单词，每一列对应一个文本，每一个元素表示单词在文本中的频数或权值（如TF-IDF） \[X &amp;#x3D; \left[ \begin{array} { c c c c } { x _ { 11 } } &amp;amp; { x _ { 12 } } &amp;amp; { \cdots } &amp;amp; { x _ {"><meta property="og:type" content="blog"><meta property="og:title" content="潜在语义分析"><meta property="og:url" content="https://hunlp.com/posts/22721.html"><meta property="og:site_name" content="MCFON"><meta property="og:description" content="1.单词向量空间模型通过单词的向量表示文本的语义内容。以单词-文本矩阵\(X\)为输入，其中每一行对应一个单词，每一列对应一个文本，每一个元素表示单词在文本中的频数或权值（如TF-IDF） \[X &amp;#x3D; \left[ \begin{array} { c c c c } { x _ { 11 } } &amp;amp; { x _ { 12 } } &amp;amp; { \cdots } &amp;amp; { x _ {"><meta property="og:locale" content="zh_CN"><meta property="og:image" content="https://hunlp.com/img/og_image.png"><meta property="article:published_time" content="2021-07-25T13:45:40.000Z"><meta property="article:modified_time" content="2021-08-21T03:42:30.152Z"><meta property="article:author" content="ฅ´ω`ฅ"><meta property="article:tag" content="笔记"><meta property="article:tag" content="LSA"><meta property="twitter:card" content="summary"><meta property="twitter:image" content="/img/og_image.png"><script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","mainEntityOfPage":{"@type":"WebPage","@id":"https://hunlp.com/posts/22721.html"},"headline":"潜在语义分析","image":["https://hunlp.com/img/og_image.png"],"datePublished":"2021-07-25T13:45:40.000Z","dateModified":"2021-08-21T03:42:30.152Z","author":{"@type":"Person","name":"ฅ´ω`ฅ"},"publisher":{"@type":"Organization","name":"MCFON","logo":{"@type":"ImageObject","url":"https://hunlp.com/img/logo.png"}},"description":"1.单词向量空间模型通过单词的向量表示文本的语义内容。以单词-文本矩阵\\(X\\)为输入，其中每一行对应一个单词，每一列对应一个文本，每一个元素表示单词在文本中的频数或权值（如TF-IDF） \\[X &#x3D; \\left[ \\begin{array} { c c c c } { x _ { 11 } } &amp; { x _ { 12 } } &amp; { \\cdots } &amp; { x _ {"}</script><link rel="canonical" href="https://hunlp.com/posts/22721.html"><link rel="icon" href="/img/favicon.png"><link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.2/css/all.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@9.12.0/styles/atom-one-light.css"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@400;600&amp;family=Source+Code+Pro"><link rel="stylesheet" href="/css/default.css"><style>body>.footer,body>.navbar,body>.section{opacity:0}</style><!--!--><script>var _hmt = _hmt || [];
+        (function() {
+            var hm = document.createElement("script");
+            hm.src = "//hm.baidu.com/hm.js?b99420d7a06d2b3361a8efeaf6e20764";
+            var s = document.getElementsByTagName("script")[0];
+            s.parentNode.insertBefore(hm, s);
+        })();</script><!--!--><!--!--><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/cookieconsent@3.1.1/build/cookieconsent.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lightgallery@1.6.8/dist/css/lightgallery.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/justifiedGallery@3.7.0/dist/css/justifiedGallery.min.css"><script src="https://www.googletagmanager.com/gtag/js?id=UA-131608076-1" async></script><script>window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+    
+        gtag('config', 'UA-131608076-1');</script><!--!--><!--!--><!--!--><script src="https://cdn.jsdelivr.net/npm/pace-js@1.0.2/pace.min.js"></script><!--!--><!--!--><meta name="generator" content="Hexo 5.4.0"></head><body class="is-3-column"><nav class="navbar navbar-main"><div class="container"><div class="navbar-brand justify-content-center"><a class="navbar-item navbar-logo" href="/"><img src="/img/logo.png" alt="MCFON" height="28"></a></div><div class="navbar-menu"><div class="navbar-start"><a class="navbar-item" href="/">主页</a><a class="navbar-item" href="/archives">归档</a><a class="navbar-item" href="/categories">分类</a><a class="navbar-item" href="/tags">标签</a><a class="navbar-item" href="/about">关于</a></div><div class="navbar-end"><a class="navbar-item" target="_blank" rel="noopener" title="Download on GitHub" href="https://github.com/ppoffice/hexo-theme-icarus"><i class="fab fa-github"></i></a><a class="navbar-item is-hidden-tablet catalogue" title="目录" href="javascript:;"><i class="fas fa-list-ul"></i></a><a class="navbar-item search" title="搜索" href="javascript:;"><i class="fas fa-search"></i></a></div></div></div></nav><section class="section"><div class="container"><div class="columns"><div class="column order-2 column-main is-8-tablet is-8-desktop is-9-widescreen"><div class="card"><article class="card-content article" role="article"><h1 class="title is-size-3 is-size-4-mobile has-text-weight-normal"><i class="fas fa-angle-double-right"></i>潜在语义分析</h1><div class="article-meta is-size-7 is-uppercase level is-mobile"><div class="level-left"><span class="level-item"><i class="far fa-calendar-alt"> </i><time dateTime="${date_xml(page.date)}" title="${date_xml(page.date)}">2021-07-25</time></span><span class="level-item is-hidden-mobile"><i class="far fa-calendar-check"> </i><time dateTime="${date_xml(page.updated)}" title="${date_xml(page.updated)}">2021-08-21</time></span><span class="level-item"><a class="link-muted" href="/categories/%E7%BB%9F%E8%AE%A1%E5%AD%A6%E4%B9%A0%E6%96%B9%E6%B3%95/">统计学习方法</a></span><span class="level-item">25 分钟读完 (大约3766个字)</span></div></div><div class="content"><p>1.单词向量空间模型通过单词的向量表示文本的语义内容。以单词-文本矩阵<span class="math inline">\(X\)</span>为输入，其中每一行对应一个单词，每一列对应一个文本，每一个元素表示单词在文本中的频数或权值（如TF-IDF） <span class="math display">\[X = \left[ \begin{array} { c c c c } { x _ { 11 } } &amp; { x _ { 12 } } &amp; { \cdots } &amp; { x _ { 1 n } } \\ { x _ { 21 } } &amp; { x _ { 22 } } &amp; { \cdots } &amp; { x _ { 2 n } } \\ { \vdots } &amp; { \vdots } &amp; { } &amp; { \vdots } \\ { x _ { m 1 } } &amp; { x _ { m 2 } } &amp; { \cdots } &amp; { x _ { m n } } \end{array} \right]\]</span> 单词向量空间模型认为，这个矩阵的每一列向量是单词向量，表示一个文本，两个单词向量的内积或标准化内积表示文本之间的语义相似度。 <span id="more"></span> 2.话题向量空间模型通过话题的向量表示文本的语义内容。假设有话题文本矩阵<span class="math display">\[Y = \left[ \begin{array} { c c c c } { y _ { 11 } } &amp; { y _ { 12 } } &amp; { \cdots } &amp; { y _ { 1 n } } \\ { y _ { 21 } } &amp; { y _ { 22 } } &amp; { \cdots } &amp; { y _ { 2 n } } \\ { \vdots } &amp; { \vdots } &amp; { } &amp; { \vdots } \\ { y _ { k 1 } } &amp; { y _ { k 2 } } &amp; { \cdots } &amp; { y _ { k n } } \end{array} \right]\]</span> 其中每一行对应一个话题，每一列对应一个文本每一个元素表示话题在文本中的权值。话题向量空间模型认为，这个矩阵的每一列向量是话题向量，表示一个文本，两个话题向量的内积或标准化内积表示文本之间的语义相似度。假设有单词话题矩阵<span class="math inline">\(T\)</span> <span class="math display">\[T = \left[ \begin{array} { c c c c } { t _ { 11 } } &amp; { t _ { 12 } } &amp; { \cdots } &amp; { t _ { 1 k } } \\ { t _ { 21 } } &amp; { t _ { 22 } } &amp; { \cdots } &amp; { t _ { 2 k } } \\ { \vdots } &amp; { \vdots } &amp; { } &amp; { \vdots } \\ { t _ { m 1 } } &amp; { t _ { m 2 } } &amp; { \cdots } &amp; { t _ { m k } } \end{array} \right]\]</span> 其中每一行对应一个单词，每一列对应一个话题，每一个元素表示单词在话题中的权值。</p>
+<p>给定一个单词文本矩阵<span class="math inline">\(X\)</span> <span class="math display">\[X = \left[ \begin{array} { c c c c } { x _ { 11 } } &amp; { x _ { 12 } } &amp; { \cdots } &amp; { x _ { 1 n } } \\ { x _ { 21 } } &amp; { x _ { 22 } } &amp; { \cdots } &amp; { x _ { 2 n } } \\ { \vdots } &amp; { \vdots } &amp; { } &amp; { \vdots } \\ { x _ { m 1 } } &amp; { x _ { m 2 } } &amp; { \cdots } &amp; { x _ { m n } } \end{array} \right]\]</span></p>
+<p>潜在语义分析的目标是，找到合适的单词-话题矩阵<span class="math inline">\(T\)</span>与话题文本矩阵<span class="math inline">\(Y\)</span>，将单词文本矩阵<span class="math inline">\(X\)</span>近似的表示为<span class="math inline">\(T\)</span>与<span class="math inline">\(Y\)</span>的乘积形式。 <span class="math display">\[X \approx T Y\]</span></p>
+<p>等价地，潜在语义分析将文本在单词向量空间的表示X通过线性变换<span class="math inline">\(T\)</span>转换为话题向量空间中的表示<span class="math inline">\(Y\)</span>。</p>
+<p>潜在语义分析的关键是对单词-文本矩阵进行以上的矩阵因子分解（话题分析）</p>
+<p>3.潜在语义分析的算法是奇异值分解。通过对单词文本矩阵进行截断奇异值分解，得到 <span class="math display">\[X \approx U _ { k } \Sigma _ { k } V _ { k } ^ { T } = U _ { k } ( \Sigma _ { k } V _ { k } ^ { T } )\]</span></p>
+<p>矩阵<span class="math inline">\(U_k\)</span>表示话题空间，矩阵<span class="math inline">\(( \Sigma _ { k } V _ { k } ^ { T } )\)</span>是文本在话题空间的表示。</p>
+<p>4.非负矩阵分解也可以用于话题分析。非负矩阵分解将非负的单词文本矩阵近似分解成两个非负矩阵<span class="math inline">\(W\)</span>和<span class="math inline">\(H\)</span>的乘积，得到 <span class="math display">\[X \approx W H\]</span></p>
+<p>矩阵<span class="math inline">\(W\)</span>表示话题空间，矩阵<span class="math inline">\(H\)</span>是文本在话题空间的表示。</p>
+<p>非负矩阵分解可以表为以下的最优化问题： <span class="math display">\[\left. \begin{array} { l } { \operatorname { min } _ { W , H } \| X - W H \| ^ { 2 } } \\ { \text { s.t. } W , H \geq 0 } \end{array} \right.\]</span> 非负矩阵分解的算法是迭代算法。乘法更新规则的迭代算法，交替地对<span class="math inline">\(W\)</span>和<span class="math inline">\(H\)</span>进行更新。本质是梯度下降法，通过定义特殊的步长和非负的初始值，保证迭代过程及结果的矩阵<span class="math inline">\(W\)</span>和<span class="math inline">\(H\)</span>均为非负。</p>
+<hr />
+<p><strong>LSA</strong> 是一种无监督学习方法，主要用于文本的话题分析，其特点是通过矩阵分解发现文本与单词之间的基于话题的语义关系。也称为潜在语义索引（Latent semantic indexing, LSI）。</p>
+<p>LSA 使用的是非概率的话题分析模型。将文本集合表示为<strong>单词-文本矩阵</strong>，对单词-文本矩阵进行<strong>奇异值分解</strong>，从而得到话题向量空间，以及文本在话题向量空间的表示。</p>
+<p><strong>非负矩阵分解</strong>（non-negative matrix factorization, NMF）是另一种矩阵的因子分解方法，其特点是分解的矩阵非负。</p>
+<h2 id="单词向量空间">单词向量空间</h2>
+<p>word vector space model</p>
+<p>给定一个文本，用一个向量表示该文本的”语义“， 向量的<strong>每一维对应一个单词</strong>，其数值为该单词在该文本中出现的频数或权值；基本假设是文本中所有单词的出现情况表示了文本的语义内容，文本集合中的每个文本都表示为一个向量，存在于一个向量空间；向量空间的度量，如内积或标准化<strong>内积</strong>表示文本之间的<strong>相似度</strong>。</p>
+<p>给定一个含有<span class="math inline">\(n\)</span>个文本的集合<span class="math inline">\(D=({d_{1}, d_{2},...,d_{n}})\)</span>，以及在所有文本中出现的<span class="math inline">\(m\)</span>个单词的集合<span class="math inline">\(W=({w_{1},w_{2},...,w_{m}})\)</span>. 将单词在文本的出现的数据用一个单词-文本矩阵（word-document matrix）表示，记作<span class="math inline">\(X\)</span>:</p>
+<p>$ X = \begin{bmatrix} x_{11} &amp; x_{12}&amp; x_{1n}&amp; \ x_{21}&amp; x_{22}&amp; x_{2n}&amp; \ &amp; &amp; &amp; \ x_{m1}&amp; x_{m2}&amp; x_{mn}&amp; \end{bmatrix} $</p>
+<p>这是一个<span class="math inline">\(m*n\)</span>矩阵，元素<span class="math inline">\(x_{ij}\)</span>表示单词<span class="math inline">\(w_{i}\)</span>在文本<span class="math inline">\(d_{j}\)</span>中出现的频数或权值。由于单词的种类很多，而每个文本中出现单词的种类通常较少，所有单词-文本矩阵是一个稀疏矩阵。</p>
+<p>权值通常用单词<strong>频率-逆文本率</strong>（term frequency-inverse document frequency, TF-IDF）表示：</p>
+<p><span class="math inline">\(TF-IDF(t, d ) = TF(t, d) * IDF(t)\)</span>,</p>
+<p>其中，<span class="math inline">\(TF(t,d)\)</span>为单词<span class="math inline">\(t\)</span>在文本<span class="math inline">\(d\)</span>中出现的概率，<span class="math inline">\(IDF(t)\)</span>是逆文本率，用来衡量单词<span class="math inline">\(t\)</span>对表示语义所起的重要性，</p>
+<p><span class="math inline">\(IDF(t) = log(\frac{len(D)}{len(t \in D) + 1})\)</span>.</p>
+<p>单词向量空间模型的优点是<strong>模型简单，计算效率高</strong>。因为单词向量通常是稀疏的，单词向量空间模型也有一定的局限性，体现在内积相似度未必能够准确表达两个文本的语义相似度上。因为自然语言的单词具有一词多义性（polysemy）及多词一义性（synonymy）。</p>
+<h2 id="话题向量空间">话题向量空间</h2>
+<p><strong>1. 话题向量空间</strong>：</p>
+<p>给定一个含有<span class="math inline">\(n\)</span>个文本的集合<span class="math inline">\(D=({d_{1}, d_{2},...,d_{n}})\)</span>，以及在所有文本中出现的<span class="math inline">\(m\)</span>个单词的集合<span class="math inline">\(W=({w_{1},w_{2},...,w_{m}})\)</span>. 可以获得其单词-文本矩阵<span class="math inline">\(X\)</span>:</p>
+<p>$ X = \begin{bmatrix} x_{11} &amp; x_{12}&amp; x_{1n}&amp; \ x_{21}&amp; x_{22}&amp; x_{2n}&amp; \ &amp; &amp; &amp; \ x_{m1}&amp; x_{m2}&amp; x_{mn}&amp; \end{bmatrix} $</p>
+<p>假设所有文本共含有<span class="math inline">\(k\)</span>个话题。假设每个话题由一个定义在单词集合<span class="math inline">\(W\)</span>上的<span class="math inline">\(m\)</span>维向量表示，称为话题向量，即：<br />
+<span class="math inline">\(t_{l} = \begin{bmatrix} t_{1l}\\ t_{2l}\\ \vdots \\ t_{ml}\end{bmatrix}, l=1,2,...,k\)</span></p>
+<p>其中<span class="math inline">\(t_{il}\)</span>单词<span class="math inline">\(w_{i}\)</span>在话题<span class="math inline">\(t_{l}\)</span>的权值，<span class="math inline">\(i=1,2,...,m\)</span>, 权值越大，该单词在该话题中的重要程度就越高。这<span class="math inline">\(k\)</span>个话题向量 <span class="math inline">\(t_{1},t_{2},...,t_{k}\)</span>张成一个话题向量空间（topic vector space）， 维数为<span class="math inline">\(k\)</span>.<strong>话题向量空间是单词向量空间的一个子空间</strong>。</p>
+<p>话题向量空间<span class="math inline">\(T\)</span>：</p>
+<p>$ T = \begin{bmatrix} t_{11} &amp; t_{12}&amp; t_{1k}&amp; \ t_{21}&amp; t_{22}&amp; t_{2k}&amp; \ &amp; &amp; &amp; \ t_{m1}&amp; t_{m2}&amp; t_{mk}&amp; \end{bmatrix} $</p>
+<p>矩阵<span class="math inline">\(T\)</span>,称为<strong>单词-话题矩阵</strong>。 <span class="math inline">\(T = [t_{1}, t_{2}, ..., t_{k}]\)</span></p>
+<p><strong>2. 文本在话题向量空间中的表示</strong> ：</p>
+<p>考虑文本集合<span class="math inline">\(D\)</span>的文本<span class="math inline">\(d_{j}\)</span>, 在单词向量空间中由一个向量<span class="math inline">\(x_{j}\)</span>表示，将<span class="math inline">\(x_{j}\)</span>投影到话题向量空间<span class="math inline">\(T\)</span>中，得到话题向量空间的一个向量<span class="math inline">\(y_{j}\)</span>, <span class="math inline">\(y_{j}\)</span>是一个<span class="math inline">\(k\)</span>维向量：</p>
+<p><span class="math inline">\(y_{j} = \begin{bmatrix} y_{1j}\\ y_{2j}\\ \vdots \\ y_{kj}\end{bmatrix}, j=1,2,...,n\)</span></p>
+<p>其中，<span class="math inline">\(y_{lj}\)</span>是文本<span class="math inline">\(d_{j}\)</span>在话题<span class="math inline">\(t_{l}\)</span>中的权值， <span class="math inline">\(l = 1,2,..., k\)</span>, 权值越大，该话题在该文本中的重要程度就越高。</p>
+<p>矩阵<span class="math inline">\(Y\)</span> 表示话题在文本中出现的情况，称为话题-文本矩阵（topic-document matrix）,记作：</p>
+<p>$ Y = \begin{bmatrix} y_{11} &amp; y_{12}&amp; y_{1n}&amp; \ y_{21}&amp; y_{22}&amp; y_{2n}&amp; \ &amp; &amp; &amp; \ y_{k1}&amp; y_{k2}&amp; y_{kn}&amp; \end{bmatrix} $</p>
+<p>也可写成： <span class="math inline">\(Y = [y_{1}, y_{2} ..., y_{n}]\)</span></p>
+<p><strong>3. 从单词向量空间到话题向量空间的线性变换</strong>：</p>
+<p>如此，单词向量空间的文本向量<span class="math inline">\(x_{j}\)</span>可以通过他在话题空间中的向量<span class="math inline">\(y_{j}\)</span>近似表示，具体地由<span class="math inline">\(k\)</span>个话题向量以<span class="math inline">\(y_{j}\)</span>为系数的线性组合近似表示：</p>
+<p><span class="math inline">\(x_{j} = y_{1j}t_{1} + y_{2j}t_{2} + ... + y_{yj}t_{k}, j = 1,2,..., n\)</span></p>
+<p>所以，单词-文本矩阵<span class="math inline">\(X\)</span>可以近似的表示为单词-话题矩阵<span class="math inline">\(T\)</span>与话题-文本矩阵<span class="math inline">\(Y\)</span>的乘积形式。</p>
+<p><span class="math inline">\(X \approx TY\)</span></p>
+<p>直观上，潜在语义分析是将单词向量空间的表示通过线性变换转换为在话题向量空间中的表示。这个线性变换由矩阵因子分解式的形式体现。</p>
+<h3 id="潜在语义分析算法">潜在语义分析算法</h3>
+<p>潜在语义分析利用矩阵奇异值分解，具体地，对单词-文本矩阵进行奇异值分解，将其左矩阵作为话题向量空间，将其对角矩阵与右矩阵的乘积作为文本在话题向量空间的表示。</p>
+<p>给定一个含有<span class="math inline">\(n\)</span>个文本的集合<span class="math inline">\(D=({d_{1}, d_{2},...,d_{n}})\)</span>，以及在所有文本中出现的<span class="math inline">\(m\)</span>个单词的集合<span class="math inline">\(W=({w_{1},w_{2},...,w_{m}})\)</span>. 可以获得其单词-文本矩阵<span class="math inline">\(X\)</span>:<br />
+$ X = \begin{bmatrix} x_{11} &amp; x_{12}&amp; x_{1n}&amp; \ x_{21}&amp; x_{22}&amp; x_{2n}&amp; \ &amp; &amp; &amp; \ x_{m1}&amp; x_{m2}&amp; x_{mn}&amp; \end{bmatrix} $</p>
+<p><strong>截断奇异值分解</strong>：</p>
+<p>潜在语义分析根据确定的话题数<span class="math inline">\(k\)</span>对单词-文本矩阵<span class="math inline">\(X\)</span>进行截断奇异值分解：</p>
+<p>$ X U_{k}<em>{k}V</em>{k}^{T} = \begin{bmatrix} <em>{1} &amp; </em>{2}&amp; &amp; <em>{k} \end{bmatrix}\begin{bmatrix} </em>{1} &amp; 0&amp; 0&amp; 0\ 0&amp; <em>{2}&amp; 0&amp; 0\ 0&amp; 0&amp; &amp; 0\ 0&amp; 0&amp; 0&amp; </em>{k} \end{bmatrix}\begin{bmatrix} v_{1}^{T}\ v_{2}^{T}\ \ v_{k}^{T}\end{bmatrix} $</p>
+<p>矩阵<span class="math inline">\(U_{k}\)</span>的每一个列向量 <span class="math inline">\(u_{1}, u_{2},..., u_{k}\)</span> 表示一个话题，称为<strong>话题向量</strong>。由这 <span class="math inline">\(k\)</span> 个话题向量张成一个子空间：</p>
+<p>$ U_{k} = \begin{bmatrix} u_{1} &amp; u_{2}&amp; &amp; u_{k} \end{bmatrix} $</p>
+<p>称为<strong>话题向量空间</strong>。</p>
+<p>综上， 可以通过对单词-文本矩阵的奇异值分解进行潜在语义分析：</p>
+<p>$ X U_{k} <em>{k} V</em>{k}^{T} = U_{k}(<em>{k}V</em>{k}^{T})$</p>
+<p>得到话题空间 <span class="math inline">\(U_{k}\)</span> ， 以及文本在话题空间的表示(<span class="math inline">\(\Sigma_{k}V_{k}^{T}\)</span>).</p>
+<h3 id="非负矩阵分解算法">非负矩阵分解算法</h3>
+<p>非负矩阵分解也可以用于话题分析。对单词-文本矩阵进行非负矩阵分解，将<strong>其左矩阵作为话题向量空间</strong>，将其<strong>右矩阵作为文本在话题向量空间的表示</strong>。</p>
+<h4 id="非负矩阵分解">非负矩阵分解</h4>
+<p>若一个矩阵的索引元素非负，则该矩阵为非负矩阵。若<span class="math inline">\(X\)</span>是非负矩阵，则： <span class="math inline">\(X &gt;= 0\)</span>.</p>
+<p>给定一个非负矩阵<span class="math inline">\(X\)</span>, 找到两个非负矩阵<span class="math inline">\(W &gt;= 0\)</span> 和 <span class="math inline">\(H&gt;= 0\)</span>, 使得：</p>
+<p>$ X WH$</p>
+<p>即非负矩阵<span class="math inline">\(X\)</span>分解为两个非负矩阵<span class="math inline">\(W\)</span>和<span class="math inline">\(H\)</span>的乘积形式，成为非负矩阵分解。因为<span class="math inline">\(WH\)</span>与<span class="math inline">\(X\)</span>完全相等很难实现，所以只要求近似相等。</p>
+<p>假设非负矩阵<span class="math inline">\(X\)</span>是<span class="math inline">\(m\times n\)</span>矩阵，非负矩阵<span class="math inline">\(W\)</span>和<span class="math inline">\(H\)</span>分别为 <span class="math inline">\(m\times k\)</span> 矩阵和 <span class="math inline">\(k\times n\)</span> 矩阵。假设 <span class="math inline">\(k &lt; min(m, n)\)</span> 即<span class="math inline">\(W\)</span> 和 <span class="math inline">\(H\)</span> 小于原矩阵 <span class="math inline">\(X\)</span>, 所以非负矩阵分解是对原数据的压缩。</p>
+<p>称 <span class="math inline">\(W\)</span> 为基矩阵， <span class="math inline">\(H\)</span> 为系数矩阵。非负矩阵分解旨在用较少的基向量，系数向量来表示为较大的数据矩阵。</p>
+<p>令 <span class="math inline">\(W = \begin{bmatrix} w_{1} &amp; w_{2}&amp; \cdots&amp; w_{k} \end{bmatrix}\)</span> 为话题向量空间， <span class="math inline">\(w_{1}, w_{2}, ..., w_{k}\)</span> 表示文本集合的 <span class="math inline">\(k\)</span> 个话题， 令 <span class="math inline">\(H = \begin{bmatrix} h_{1} &amp; h_{2}&amp; \cdots&amp; h_{n} \end{bmatrix}\)</span> 为文本在话题向量空间的表示， <span class="math inline">\(h_{1}, h_{2},..., h_{n}\)</span> 表示文本集合的 <span class="math inline">\(n\)</span> 个文本。</p>
+<h5 id="算法">算法</h5>
+<p>非负矩阵分解可以形式化为最优化问题求解。可以利用平方损失或散度来作为损失函数。</p>
+<p>目标函数 <span class="math inline">\(|| X - WH ||^{2}\)</span> 关于 <span class="math inline">\(W\)</span> 和 <span class="math inline">\(H\)</span> 的最小化，满足约束条件 <span class="math inline">\(W, H &gt;= 0\)</span>, 即：</p>
+<p><span class="math inline">\(\underset{W,H}{min} || X - WH ||^{2}\)</span></p>
+<p><span class="math inline">\(s.t. W, H &gt;= 0\)</span></p>
+<p>乘法更新规则：</p>
+<p><span class="math inline">\(W_{il} \leftarrow W_{il}\frac{(XH^{T})_{il}}{(WHH^{T})_{il}}\)</span> （17.33）</p>
+<p><span class="math inline">\(H_{lj} \leftarrow H_{lj}\frac{(W^{T}X)_{lj}}{(W^{T}WH)_{lj}}\)</span> （17.34）</p>
+<p>选择初始矩阵 <span class="math inline">\(W\)</span> 和 <span class="math inline">\(H\)</span> 为非负矩阵，可以保证迭代过程及结果的矩阵 <span class="math inline">\(W\)</span> 和 <span class="math inline">\(H\)</span> 非负。</p>
+<p><strong>算法 17.1 （非负矩阵分解的迭代算法）</strong></p>
+<p>输入： 单词-文本矩阵 <span class="math inline">\(X &gt;= 0\)</span>, 文本集合的话题个数 <span class="math inline">\(k\)</span>, 最大迭代次数 <span class="math inline">\(t\)</span>；<br />
+输出： 话题矩阵 <span class="math inline">\(W\)</span>, 文本表示矩阵 <span class="math inline">\(H\)</span>。</p>
+<p><strong>1)</strong>. 初始化</p>
+<p><span class="math inline">\(W&gt;=0\)</span>, 并对 <span class="math inline">\(W\)</span> 的每一列数据归一化；<br />
+<span class="math inline">\(H&gt;=0\)</span>；</p>
+<p><strong>2)</strong>. 迭代</p>
+<p>对迭代次数由1到<span class="math inline">\(t\)</span>执行下列步骤：<br />
+a. 更新<span class="math inline">\(W\)</span>的元素，对 <span class="math inline">\(l\)</span> 从1到 <span class="math inline">\(k,i\)</span>从1到<span class="math inline">\(m\)</span>按(17.33)更新 <span class="math inline">\(W_{il}\)</span>;<br />
+a. 更新<span class="math inline">\(H\)</span>的元素，对 <span class="math inline">\(l\)</span> 从1到 <span class="math inline">\(k,j\)</span>从1到<span class="math inline">\(m\)</span>按(17.34)更新 <span class="math inline">\(H_{lj}\)</span>;</p>
+<h3 id="图例-17.1">图例 17.1</h3>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">from</span> sklearn.decomposition <span class="keyword">import</span> TruncatedSVD</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">X = [[<span class="number">2</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>], [<span class="number">0</span>, <span class="number">2</span>, <span class="number">0</span>, <span class="number">0</span>], [<span class="number">0</span>, <span class="number">0</span>, <span class="number">1</span>, <span class="number">0</span>], [<span class="number">0</span>, <span class="number">0</span>, <span class="number">2</span>, <span class="number">3</span>], [<span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">1</span>], [<span class="number">1</span>, <span class="number">2</span>, <span class="number">2</span>, <span class="number">1</span>]]</span><br><span class="line">X = np.asarray(X);X</span><br></pre></td></tr></table></figure>
+<pre><code>array([[2, 0, 0, 0],
+       [0, 2, 0, 0],
+       [0, 0, 1, 0],
+       [0, 0, 2, 3],
+       [0, 0, 0, 1],
+       [1, 2, 2, 1]])</code></pre>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 奇异值分解</span></span><br><span class="line">U,sigma,VT=np.linalg.svd(X)</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">U</span><br></pre></td></tr></table></figure>
+<pre><code>array([[-7.84368672e-02, -2.84423033e-01,  8.94427191e-01,
+        -2.15138396e-01, -6.45002451e-02, -2.50012770e-01],
+       [-1.56873734e-01, -5.68846066e-01, -4.47213595e-01,
+        -4.30276793e-01, -1.29000490e-01, -5.00025540e-01],
+       [-1.42622354e-01,  1.37930417e-02, -1.25029761e-16,
+         6.53519444e-01,  3.88575115e-01, -6.33553733e-01],
+       [-7.28804669e-01,  5.53499910e-01, -2.24565656e-16,
+        -1.56161345e-01, -3.23288048e-01, -1.83248673e-01],
+       [-1.47853320e-01,  1.75304609e-01,  8.49795536e-18,
+        -4.87733411e-01,  8.40863653e-01,  4.97204799e-02],
+       [-6.29190197e-01, -5.08166890e-01, -1.60733896e-16,
+         2.81459486e-01,  1.29000490e-01,  5.00025540e-01]])</code></pre>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sigma</span><br></pre></td></tr></table></figure>
+<pre><code>array([4.47696617, 2.7519661 , 2.        , 1.17620428])</code></pre>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">VT</span><br></pre></td></tr></table></figure>
+<pre><code>array([[-1.75579600e-01, -3.51159201e-01, -6.38515454e-01,
+        -6.61934313e-01],
+       [-3.91361272e-01, -7.82722545e-01,  3.79579831e-02,
+         4.82432341e-01],
+       [ 8.94427191e-01, -4.47213595e-01, -2.23998094e-16,
+         5.45344065e-17],
+       [-1.26523351e-01, -2.53046702e-01,  7.68672366e-01,
+        -5.73674125e-01]])</code></pre>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 截断奇异值分解</span></span><br><span class="line"></span><br><span class="line">svd = TruncatedSVD(n_components=<span class="number">3</span>, n_iter=<span class="number">7</span>, random_state=<span class="number">42</span>)</span><br><span class="line">svd.fit(X)  </span><br></pre></td></tr></table></figure>
+<pre><code>TruncatedSVD(algorithm=&#39;randomized&#39;, n_components=3, n_iter=7, random_state=42,
+             tol=0.0)</code></pre>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">print</span>(svd.explained_variance_ratio_)</span><br></pre></td></tr></table></figure>
+<pre><code>[0.39945801 0.34585056 0.18861789]</code></pre>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">print</span>(svd.explained_variance_ratio_.<span class="built_in">sum</span>())</span><br></pre></td></tr></table></figure>
+<pre><code>0.933926460028446</code></pre>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">print</span>(svd.singular_values_)</span><br></pre></td></tr></table></figure>
+<pre><code>[4.47696617 2.7519661  2.        ]</code></pre>
+<h4 id="非负矩阵分解-1">非负矩阵分解</h4>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">inverse_transform</span>(<span class="params">W, H</span>):</span></span><br><span class="line">    <span class="comment"># 重构</span></span><br><span class="line">    <span class="keyword">return</span> W.dot(H)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">loss</span>(<span class="params">X, X_</span>):</span></span><br><span class="line">    <span class="comment">#计算重构误差</span></span><br><span class="line">    <span class="keyword">return</span> ((X - X_) * (X - X_)).<span class="built_in">sum</span>()</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 算法 17.1</span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MyNMF</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">fit</span>(<span class="params">self, X, k, t</span>):</span></span><br><span class="line">        m, n = X.shape</span><br><span class="line">        </span><br><span class="line">        W = np.random.rand(m, k)</span><br><span class="line">        W = W/W.<span class="built_in">sum</span>(axis=<span class="number">0</span>)</span><br><span class="line">        </span><br><span class="line">        H = np.random.rand(k, n)</span><br><span class="line">        </span><br><span class="line">        i = <span class="number">1</span></span><br><span class="line">        <span class="keyword">while</span> i &lt; t:</span><br><span class="line">            </span><br><span class="line">            W = W * X.dot(H.T) / W.dot(H).dot(H.T)</span><br><span class="line">            </span><br><span class="line">            H = H * (W.T).dot(X) / (W.T).dot(W).dot(H)</span><br><span class="line">            </span><br><span class="line">            i += <span class="number">1</span></span><br><span class="line">            </span><br><span class="line">        <span class="keyword">return</span> W, H</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">model = MyNMF()</span><br><span class="line">W, H = model.fit(X, <span class="number">3</span>, <span class="number">200</span>)</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">W</span><br></pre></td></tr></table></figure>
+<pre><code>array([[0.00000000e+00, 4.27327705e-01, 6.30117924e-27],
+       [5.11680721e-97, 8.57828102e-01, 0.00000000e+00],
+       [2.97520805e-88, 2.39454414e-18, 4.36332453e-01],
+       [2.15653741e+00, 3.38756557e-21, 8.38350315e-01],
+       [7.36106818e-01, 1.00339294e-54, 8.72892573e-38],
+       [6.78344810e-01, 1.07009504e+00, 8.57259947e-01]])</code></pre>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">H</span><br></pre></td></tr></table></figure>
+<pre><code>array([[7.14647214e-10, 1.01233436e-03, 3.76097657e-02, 1.35755597e+00],
+       [9.30509415e-01, 1.86788842e+00, 1.16682319e-02, 4.54479182e-03],
+       [4.95440453e-03, 6.18432747e-04, 2.28890170e+00, 8.61836630e-02]])</code></pre>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 重构</span></span><br><span class="line">X_ = inverse_transform(W, H);X_</span><br></pre></td></tr></table></figure>
+<pre><code>array([[3.97632453e-01, 7.98200474e-01, 4.98615876e-03, 1.94211546e-03],
+       [7.98217125e-01, 1.60232718e+00, 1.00093372e-02, 3.89865014e-03],
+       [2.16176748e-03, 2.69842277e-04, 9.98722093e-01, 3.76047290e-02],
+       [4.15352814e-03, 2.70160021e-03, 2.00000833e+00, 2.99987233e+00],
+       [5.26056687e-10, 7.45186228e-04, 2.76848049e-02, 9.99306203e-01],
+       [9.99980721e-01, 2.00003500e+00, 2.00018226e+00, 9.99636205e-01]])</code></pre>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 重构误差</span></span><br><span class="line"></span><br><span class="line">loss(X, X_)</span><br></pre></td></tr></table></figure>
+<pre><code>4.002356735601103</code></pre>
+<h3 id="使用-sklearn-计算">使用 sklearn 计算</h3>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> sklearn.decomposition <span class="keyword">import</span> NMF</span><br><span class="line">model = NMF(n_components=<span class="number">3</span>, init=<span class="string">&#x27;random&#x27;</span>, max_iter=<span class="number">200</span>, random_state=<span class="number">0</span>)</span><br><span class="line">W = model.fit_transform(X)</span><br><span class="line">H = model.components_</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">W</span><br></pre></td></tr></table></figure>
+<pre><code>array([[0.        , 0.53849498, 0.        ],
+       [0.        , 1.07698996, 0.        ],
+       [0.69891361, 0.        , 0.        ],
+       [1.39782972, 0.        , 1.97173859],
+       [0.        , 0.        , 0.65783848],
+       [1.39783002, 1.34623756, 0.65573258]])</code></pre>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">H</span><br></pre></td></tr></table></figure>
+<pre><code>array([[0.00000000e+00, 0.00000000e+00, 1.43078959e+00, 1.71761682e-03],
+       [7.42810976e-01, 1.48562195e+00, 0.00000000e+00, 3.30264644e-04],
+       [0.00000000e+00, 0.00000000e+00, 0.00000000e+00, 1.52030365e+00]])</code></pre>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">X__ = inverse_transform(W, H);X__</span><br></pre></td></tr></table></figure>
+<pre><code>array([[3.99999983e-01, 7.99999966e-01, 0.00000000e+00, 1.77845853e-04],
+       [7.99999966e-01, 1.59999993e+00, 0.00000000e+00, 3.55691707e-04],
+       [0.00000000e+00, 0.00000000e+00, 9.99998311e-01, 1.20046577e-03],
+       [0.00000000e+00, 0.00000000e+00, 2.00000021e+00, 3.00004230e+00],
+       [0.00000000e+00, 0.00000000e+00, 0.00000000e+00, 1.00011424e+00],
+       [1.00000003e+00, 2.00000007e+00, 2.00000064e+00, 9.99758185e-01]])</code></pre>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">loss(X, X__)</span><br></pre></td></tr></table></figure>
+<pre><code>4.000001672582457</code></pre>
+</div><div class="article-licensing box"><div class="licensing-title"><p>潜在语义分析</p><p><a href="https://hunlp.com/posts/22721.html">https://hunlp.com/posts/22721.html</a></p></div><div class="licensing-meta level is-mobile"><div class="level-left"><div class="level-item is-narrow"><div><h6>作者</h6><p>ฅ´ω`ฅ</p></div></div><div class="level-item is-narrow"><div><h6>发布于</h6><p>2021-07-25</p></div></div><div class="level-item is-narrow"><div><h6>更新于</h6><p>2021-08-21</p></div></div><div class="level-item is-narrow"><div><h6>许可协议</h6><p><a class="icons" rel="noopener" target="_blank" title="Creative Commons" href="https://creativecommons.org/"><i class="icon fab fa-creative-commons"></i></a><a class="icons" rel="noopener" target="_blank" title="Attribution" href="https://creativecommons.org/licenses/by/4.0/"><i class="icon fab fa-creative-commons-by"></i></a><a class="icons" rel="noopener" target="_blank" title="Noncommercial" href="https://creativecommons.org/licenses/by-nc/4.0/"><i class="icon fab fa-creative-commons-nc"></i></a></p></div></div></div></div></div><hr style="height:1px;margin:1rem 0"><div class="level is-mobile is-flex"><div class="article-tags is-size-7 is-uppercase"><i class="fas fa-tags has-text-grey"></i> <a class="link-muted" rel="tag" href="/tags/%E7%AC%94%E8%AE%B0/">笔记, </a><a class="link-muted" rel="tag" href="/tags/LSA/">LSA </a></div></div><div class="bdsharebuttonbox"><a class="bds_more" href="#" data-cmd="more"></a><a class="bds_qzone" href="#" data-cmd="qzone" title="分享到QQ空间"></a><a class="bds_tsina" href="#" data-cmd="tsina" title="分享到新浪微博"></a><a class="bds_tqq" href="#" data-cmd="tqq" title="分享到腾讯微博"></a><a class="bds_renren" href="#" data-cmd="renren" title="分享到人人网"></a><a class="bds_weixin" href="#" data-cmd="weixin" title="分享到微信"></a></div><script>window._bd_share_config = { "common": { "bdSnsKey": {}, "bdText": "", "bdMini": "2", "bdPic": "", "bdStyle": "0", "bdSize": "16" }, "share": {} }; with (document) 0[(getElementsByTagName('head')[0] || body).appendChild(createElement('script')).src = 'http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion=' + ~(-new Date() / 36e5)];</script></article></div><div class="card"><div class="card-content"><h3 class="menu-label has-text-centered">喜欢这篇文章？打赏一下作者吧</h3><div class="buttons is-centered"><a class="button donate" data-type="alipay"><span class="icon is-small"><i class="fab fa-alipay"></i></span><span>支付宝</span><span class="qrcode"><img src="/img/zfb.jpg" alt="支付宝"></span></a><a class="button donate" data-type="wechat"><span class="icon is-small"><i class="fab fa-weixin"></i></span><span>微信</span><span class="qrcode"><img src="/img/wx.jpg" alt="微信"></span></a></div></div></div><nav class="post-navigation mt-4 level is-mobile"><div class="level-start"><a class="article-nav-prev level level-item link-muted" href="/posts/29662.html"><i class="level-item fas fa-chevron-left"></i><span class="level-item">概率潜在语义分析</span></a></div><div class="level-end"><a class="article-nav-next level level-item link-muted" href="/posts/25529.html"><span class="level-item">主成分分析</span><i class="level-item fas fa-chevron-right"></i></a></div></nav><div class="card"><div class="card-content"><h3 class="title is-5">评论</h3><div id="comment-container"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1.7.2/dist/gitalk.css"><script src="https://cdn.jsdelivr.net/npm/gitalk@1.7.2/dist/gitalk.min.js"></script><script>var gitalk = new Gitalk({
+            id: "a6468e1b51bf3c75fb280279a7d92322",
+            repo: "Cartride.github.io",
+            owner: "Cartride",
+            clientID: "8f4a2426c347380a6ee4",
+            clientSecret: "8dc8cd44b071426b35d0bd60634941371170b798",
+            admin: ["Cartride"],
+            createIssueManually: false,
+            distractionFreeMode: false,
+            perPage: 10,
+            pagerDirection: "last",
+            
+            
+            enableHotKey: true,
+            
+        })
+        gitalk.render('comment-container')</script></div></div></div><div class="column column-left is-4-tablet is-4-desktop is-3-widescreen  order-1 is-sticky"><div class="card widget" id="toc" data-type="toc"><div class="card-content"><div class="menu"><h3 class="menu-label">目录</h3><ul class="menu-list"><li><a class="level is-mobile" href="#单词向量空间"><span class="level-left"><span class="level-item">1</span><span class="level-item">单词向量空间</span></span></a></li><li><a class="level is-mobile" href="#话题向量空间"><span class="level-left"><span class="level-item">2</span><span class="level-item">话题向量空间</span></span></a><ul class="menu-list"><li><a class="level is-mobile" href="#潜在语义分析算法"><span class="level-left"><span class="level-item">2.1</span><span class="level-item">潜在语义分析算法</span></span></a></li><li><a class="level is-mobile" href="#非负矩阵分解算法"><span class="level-left"><span class="level-item">2.2</span><span class="level-item">非负矩阵分解算法</span></span></a><ul class="menu-list"><li><a class="level is-mobile" href="#非负矩阵分解"><span class="level-left"><span class="level-item">2.2.1</span><span class="level-item">非负矩阵分解</span></span></a></li></ul></li><li><a class="level is-mobile" href="#图例-17.1"><span class="level-left"><span class="level-item">2.3</span><span class="level-item">图例 17.1</span></span></a><ul class="menu-list"><li><a class="level is-mobile" href="#非负矩阵分解-1"><span class="level-left"><span class="level-item">2.3.1</span><span class="level-item">非负矩阵分解</span></span></a></li></ul></li><li><a class="level is-mobile" href="#使用-sklearn-计算"><span class="level-left"><span class="level-item">2.4</span><span class="level-item">使用 sklearn 计算</span></span></a></li></ul></li></ul></div></div><style>#toc .menu-list > li > a.is-active + .menu-list { display: block; }#toc .menu-list > li > a + .menu-list { display: none; }</style><script src="/js/toc.js" defer></script></div></div><!--!--></div></div></section><footer class="footer"><div class="container"><div class="level"><div class="level-start"><a class="footer-logo is-block mb-2" href="/"><img src="/img/logo.png" alt="MCFON" height="28"></a><p class="is-size-7"><span>&copy; 2022 ฅ´ω`ฅ</span>  Powered by <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a> &amp; <a href="https://github.com/ppoffice/hexo-theme-icarus" target="_blank" rel="noopener">Icarus</a></p></div><div class="level-end"><div class="field has-addons"><p class="control"><a class="button is-transparent is-large" target="_blank" rel="noopener" title="Creative Commons" href="https://creativecommons.org/"><i class="fab fa-creative-commons"></i></a></p><p class="control"><a class="button is-transparent is-large" target="_blank" rel="noopener" title="Attribution 4.0 International" href="https://creativecommons.org/licenses/by/4.0/"><i class="fab fa-creative-commons-by"></i></a></p><p class="control"><a class="button is-transparent is-large" target="_blank" rel="noopener" title="Download on GitHub" href="https://github.com/ppoffice/hexo-theme-icarus"><i class="fab fa-github"></i></a></p></div></div></div></div></footer><script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script><script src="https://cdn.jsdelivr.net/npm/moment@2.22.2/min/moment-with-locales.min.js"></script><script src="https://cdn.jsdelivr.net/npm/clipboard@2.0.4/dist/clipboard.min.js" defer></script><script>moment.locale("zh-CN");</script><script>var IcarusThemeSettings = {
+            article: {
+                highlight: {
+                    clipboard: true,
+                    fold: 'unfolded'
+                }
+            }
+        };</script><script src="/js/column.js"></script><script src="/js/animation.js"></script><a id="back-to-top" title="回到顶端" href="javascript:;"><i class="fas fa-chevron-up"></i></a><script src="/js/back_to_top.js" defer></script><!--!--><!--!--><!--!--><script src="https://cdn.jsdelivr.net/npm/cookieconsent@3.1.1/build/cookieconsent.min.js" defer></script><script>window.addEventListener("load", () => {
+      window.cookieconsent.initialise({
+        type: "info",
+        theme: "edgeless",
+        static: false,
+        position: "bottom-left",
+        content: {
+          message: "此网站使用Cookie来改善您的体验。",
+          dismiss: "知道了！",
+          allow: "允许使用Cookie",
+          deny: "拒绝",
+          link: "了解更多",
+          policy: "Cookie政策",
+          href: "https://www.cookiesandyou.com/",
+        },
+        palette: {
+          popup: {
+            background: "#edeff5",
+            text: "#838391"
+          },
+          button: {
+            background: "#4b81e8"
+          },
+        },
+      });
+    });</script><script src="https://cdn.jsdelivr.net/npm/lightgallery@1.6.8/dist/js/lightgallery.min.js" defer></script><script src="https://cdn.jsdelivr.net/npm/justifiedGallery@3.7.0/dist/js/jquery.justifiedGallery.min.js" defer></script><script>window.addEventListener("load", () => {
+            if (typeof $.fn.lightGallery === 'function') {
+                $('.article').lightGallery({ selector: '.gallery-item' });
+            }
+            if (typeof $.fn.justifiedGallery === 'function') {
+                if ($('.justified-gallery > p > .gallery-item').length) {
+                    $('.justified-gallery > p > .gallery-item').unwrap();
+                }
+                $('.justified-gallery').justifiedGallery();
+            }
+        });</script><!--!--><!--!--><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.css"><script src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.js" defer></script><script src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/contrib/auto-render.min.js" defer></script><script src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/contrib/mhchem.js" defer></script><script>window.addEventListener("load", function() {
+            document.querySelectorAll('[role="article"] > .content').forEach(function(element) {
+                renderMathInElement(element);
+            });
+        });</script><script type="text/x-mathjax-config">MathJax.Hub.Config({
+            'HTML-CSS': {
+                matchFontHeight: false
+            },
+            SVG: {
+                matchFontHeight: false
+            },
+            CommonHTML: {
+                matchFontHeight: false
+            },
+            tex2jax: {
+                inlineMath: [
+                    ['$','$'],
+                    ['\\(','\\)']
+                ]
+            }
+        });</script><script src="https://cdn.jsdelivr.net/npm/mathjax@2.7.5/unpacked/MathJax.js?config=TeX-MML-AM_CHTML" defer></script><!--!--><!--!--><!--!--><script src="/js/main.js" defer></script><div class="searchbox"><div class="searchbox-container"><div class="searchbox-header"><div class="searchbox-input-container"><input class="searchbox-input" type="text" placeholder="想要查找什么..."></div><a class="searchbox-close" href="javascript:;">×</a></div><div class="searchbox-body"></div></div></div><script src="/js/insight.js" defer></script><script>document.addEventListener('DOMContentLoaded', function () {
+            loadInsight({"contentUrl":"/content.json"}, {"hint":"想要查找什么...","untitled":"(无标题)","posts":"文章","pages":"页面","categories":"分类","tags":"标签"});
+        });</script></body></html>
