@@ -11,7 +11,7 @@ $(function () { //获取处理友链数据
         data = data.filter((item, a, b) => item.valid != 0).sort(function (a, b) {
             return Math.random() > .5 ? -1 : 1;
         });
-        $('.links-content').append("<div class='friend-title-item'><br>大佬们<br><br><hr></div>");
+        $('.links-content').append("<div class='friend-title-item'><br>学习网站<br><br><hr></div>");
         $.each(data, function (i, e) {
             var html = "<div class=\"friend-card-item\">";
             if (e.src == undefined) {
@@ -30,7 +30,7 @@ $(function () { //获取处理友链数据
 
         // 过期的
         if (notValid.length > 0) {
-            $('.links-content').append("<div class='friend-title-item'><br>异常的大佬们<br><br><hr></div></div>");
+            $('.links-content').append("<div class='friend-title-item'><br>友情链接<br><br><hr></div></div>");
             $.each(notValid, function (i, e) {
                 var html = "<div class=\"friend-card-item\">";
                 html += "    <img class=\"ava\" src=\"/img/nopic.jpeg\" title=\"图片链接不可用，使用的默认图片\">";
