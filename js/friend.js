@@ -33,7 +33,7 @@ $(function () { //获取处理友链数据
             $('.links-content').append("<div class='friend-title-item'><br>异常的大佬们<br><br><hr></div></div>");
             $.each(notValid, function (i, e) {
                 var html = "<div class=\"friend-card-item\">";
-                html += "    <img class=\"ava\" src=\"/img/nopic.jpg\" title=\"图片链接不可用，使用的默认图片\">";
+                html += "    <img class=\"ava\" src=\"/img/nopic.jpeg\" title=\"图片链接不可用，使用的默认图片\">";
                 html +=
                     "<div class='text-desc' title=\""+e.desc+"\">    网址：<a href=\"" + e.url + "\" target=\"_blank\">" + e.name + "</a>" +
                     "    <br>访问时间：" + e.stopTime +
