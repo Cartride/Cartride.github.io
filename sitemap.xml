@@ -1530,14 +1530,14 @@
   </url>
   
   <url>
-    <loc>https://hunlp.com/tags/PCA/</loc>
+    <loc>https://hunlp.com/tags/%E5%A5%87%E5%BC%82%E5%80%BC%E5%88%86%E8%A7%A3/</loc>
     <lastmod>2022-04-02</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
-    <loc>https://hunlp.com/tags/%E5%A5%87%E5%BC%82%E5%80%BC%E5%88%86%E8%A7%A3/</loc>
+    <loc>https://hunlp.com/tags/PCA/</loc>
     <lastmod>2022-04-02</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -1558,14 +1558,14 @@
   </url>
   
   <url>
-    <loc>https://hunlp.com/tags/LDA/</loc>
+    <loc>https://hunlp.com/tags/PageRank/</loc>
     <lastmod>2022-04-02</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
-    <loc>https://hunlp.com/tags/PageRank/</loc>
+    <loc>https://hunlp.com/tags/LDA/</loc>
     <lastmod>2022-04-02</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -1677,6 +1677,13 @@
   </url>
   
   <url>
+    <loc>https://hunlp.com/tags/%E9%93%BE%E8%A1%A8/</loc>
+    <lastmod>2022-04-02</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
     <loc>https://hunlp.com/tags/HMM/</loc>
     <lastmod>2022-04-02</lastmod>
     <changefreq>daily</changefreq>
@@ -1692,13 +1699,6 @@
   
   <url>
     <loc>https://hunlp.com/tags/%E4%BC%98%E5%8C%96%E7%AE%97%E6%B3%95/</loc>
-    <lastmod>2022-04-02</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://hunlp.com/tags/%E9%93%BE%E8%A1%A8/</loc>
     <lastmod>2022-04-02</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -1768,14 +1768,14 @@
   </url>
   
   <url>
-    <loc>https://hunlp.com/tags/Monte-Carlo/</loc>
+    <loc>https://hunlp.com/tags/K%E8%87%82%E8%80%81%E8%99%8E%E6%9C%BA/</loc>
     <lastmod>2022-04-02</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
-    <loc>https://hunlp.com/tags/K%E8%87%82%E8%80%81%E8%99%8E%E6%9C%BA/</loc>
+    <loc>https://hunlp.com/tags/Monte-Carlo/</loc>
     <lastmod>2022-04-02</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -1985,6 +1985,13 @@
   </url>
   
   <url>
+    <loc>https://hunlp.com/tags/%E5%86%B3%E7%AD%96%E6%A0%91/</loc>
+    <lastmod>2022-04-02</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
     <loc>https://hunlp.com/tags/%E7%BD%91%E6%98%93%E4%BA%91%E9%9F%B3%E4%B9%90/</loc>
     <lastmod>2022-04-02</lastmod>
     <changefreq>daily</changefreq>
@@ -2000,13 +2007,6 @@
   
   <url>
     <loc>https://hunlp.com/tags/%E7%89%88%E6%9D%83/</loc>
-    <lastmod>2022-04-02</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://hunlp.com/tags/%E5%86%B3%E7%AD%96%E6%A0%91/</loc>
     <lastmod>2022-04-02</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
