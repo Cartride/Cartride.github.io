@@ -1516,20 +1516,6 @@
   </url>
   
   <url>
-    <loc>https://hunlp.com/tags/%E5%A5%87%E5%BC%82%E5%80%BC%E5%88%86%E8%A7%A3/</loc>
-    <lastmod>2022-04-02</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://hunlp.com/tags/PCA/</loc>
-    <lastmod>2022-04-02</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
     <loc>https://hunlp.com/tags/LeetCode/</loc>
     <lastmod>2022-04-02</lastmod>
     <changefreq>daily</changefreq>
@@ -1538,6 +1524,20 @@
   
   <url>
     <loc>https://hunlp.com/tags/Binary-Tree/</loc>
+    <lastmod>2022-04-02</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://hunlp.com/tags/%E5%A5%87%E5%BC%82%E5%80%BC%E5%88%86%E8%A7%A3/</loc>
+    <lastmod>2022-04-02</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://hunlp.com/tags/PCA/</loc>
     <lastmod>2022-04-02</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -1628,14 +1628,14 @@
   </url>
   
   <url>
-    <loc>https://hunlp.com/tags/Google-apac/</loc>
+    <loc>https://hunlp.com/tags/Dynamic-Programming/</loc>
     <lastmod>2022-04-02</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
-    <loc>https://hunlp.com/tags/Dynamic-Programming/</loc>
+    <loc>https://hunlp.com/tags/Google-apac/</loc>
     <lastmod>2022-04-02</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -1698,14 +1698,14 @@
   </url>
   
   <url>
-    <loc>https://hunlp.com/tags/%E9%93%BE%E8%A1%A8/</loc>
+    <loc>https://hunlp.com/tags/%E5%8A%A8%E6%80%81%E5%9B%9E%E5%BD%92/</loc>
     <lastmod>2022-04-02</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
-    <loc>https://hunlp.com/tags/%E5%8A%A8%E6%80%81%E5%9B%9E%E5%BD%92/</loc>
+    <loc>https://hunlp.com/tags/%E9%93%BE%E8%A1%A8/</loc>
     <lastmod>2022-04-02</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -1880,6 +1880,13 @@
   </url>
   
   <url>
+    <loc>https://hunlp.com/tags/XGBoost/</loc>
+    <lastmod>2022-04-02</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
     <loc>https://hunlp.com/tags/Paper/</loc>
     <lastmod>2022-04-02</lastmod>
     <changefreq>daily</changefreq>
@@ -1888,13 +1895,6 @@
   
   <url>
     <loc>https://hunlp.com/tags/Machine-Learning/</loc>
-    <lastmod>2022-04-02</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://hunlp.com/tags/XGBoost/</loc>
     <lastmod>2022-04-02</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
