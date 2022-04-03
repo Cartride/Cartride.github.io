@@ -1,1 +1,3 @@
+layout: false
+---
 google.com, pub-4145019924567174, DIRECT, f08c47fec0942fa0
