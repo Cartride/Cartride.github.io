@@ -10347,13 +10347,13 @@ body > .section {
   margin-bottom: 2rem;
 }
 .comments {
-  border-radius: $custom-radius !important;
+  border-radius: 8px !important;
 }
 .vheader-item label::after {
   content: '：';
 }
 .veditor {
-  background: url("$comment-bg-url") no-repeat right !important;
+  background: url("/img/comment-bg.png") no-repeat right !important;
 }
 .veditor:focus {
   background-position-y: 200px !important;

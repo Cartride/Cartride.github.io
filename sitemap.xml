@@ -1544,7 +1544,21 @@
   </url>
   
   <url>
+    <loc>https://hunlp.com/tags/LDA/</loc>
+    <lastmod>2022-04-04</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
     <loc>https://hunlp.com/tags/PLSA/</loc>
+    <lastmod>2022-04-04</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://hunlp.com/tags/PageRank/</loc>
     <lastmod>2022-04-04</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -1558,21 +1572,7 @@
   </url>
   
   <url>
-    <loc>https://hunlp.com/tags/LDA/</loc>
-    <lastmod>2022-04-04</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
     <loc>https://hunlp.com/tags/turtle/</loc>
-    <lastmod>2022-04-04</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://hunlp.com/tags/PageRank/</loc>
     <lastmod>2022-04-04</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -1915,14 +1915,14 @@
   </url>
   
   <url>
-    <loc>https://hunlp.com/tags/%E5%9B%BE%E8%AE%BA/</loc>
+    <loc>https://hunlp.com/tags/%E8%81%9A%E7%B1%BB/</loc>
     <lastmod>2022-04-04</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
-    <loc>https://hunlp.com/tags/%E8%81%9A%E7%B1%BB/</loc>
+    <loc>https://hunlp.com/tags/%E5%9B%BE%E8%AE%BA/</loc>
     <lastmod>2022-04-04</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
