@@ -6,6 +6,21 @@ body {
   background-attachment: fixed;
   background-size: cover;
 }
+.card {
+  overflow: visible;
+  transition: background-color 0.5s ease;
+  background-color: rgba(255,255,255,0.95);
+}
+.card:hover {
+  background-color: #fff;
+}
+.card.card-transparent {
+  background-color: transparent !important;
+}
+.card.card-transparent .level-start,
+.card.card-transparent .level-end {
+  overflow: hidden;
+}
 .widget {
   background-color: rgba(255,255,255,0.812);
 }
