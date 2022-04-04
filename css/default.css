@@ -10346,6 +10346,19 @@ body > .section {
   -webkit-tap-highlight-color: rgba(0,0,0,0);
   margin-bottom: 2rem;
 }
+.comments {
+  border-radius: $custom-radius !important;
+}
+.vheader-item label::after {
+  content: '：';
+}
+.veditor {
+  background: url("$comment-bg-url") no-repeat right !important;
+}
+.veditor:focus {
+  background-position-y: 200px !important;
+  transition: all 0.2s ease-in-out 0s !important;
+}
 .ml-0,
 .mx-0 {
   margin-left: 0 !important;
