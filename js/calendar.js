@@ -1,30 +1,33 @@
 let myChart = echarts.init(document.getElementById('post-calendar'));
-    <%
-    var nameMap = (config.language && config.language.indexOf('zh') >= 0) ? 'cn' : 'en';
-    var titleText = (config.language && config.language.indexOf('zh') >= 0) ? '文章日历' : 'Post Calendar';
-    // calculate range.
-    var startDate = moment().subtract(1, 'years');
+    ${
+    var nameMap = language.indexOf('zh') >= 0 ? 'cn' : 'en';
+    var titleText = language.indexOf('zh') >= 0 ? '文章贡献' : 'Post Calendar';
+
+    // ======================= calculate range.
+    var startDate = moment().subtract(0.70, 'years');
     var endDate = moment();
     var rangeArr = '["' + startDate.format('YYYY-MM-DD') + '", "' + endDate.format('YYYY-MM-DD') + '"]';
+
     // post and count map.
     var dateMap = new Map();
     site.posts.forEach(function (post) {
-        var date = post.date.format('YYYY-MM-DD');
-        var count = dateMap.get(date);
-        dateMap.set(date, count == null || count == undefined ? 1 : count + 1);
+        var date1 = post.date.format('YYYY-MM-DD');
+        var count = dateMap.get(date1);
+        dateMap.set(date1, count == null || count == undefined ? 1 : count + 1);
     });
+
     // loop the data for the current year, generating the number of post per day
     var i = 0;
     var datePosts = '[';
     var dayTime = 3600 * 24 * 1000;
     for (var time = startDate; time <= endDate; time += dayTime) {
-        var date = moment(time).format('YYYY-MM-DD');
-        datePosts = (i === 0 ? datePosts + '["' : datePosts + ', ["') + date + '", '
-                + (dateMap.has(date) ? dateMap.get(date) : 0) + ']';
+        var date1 = moment(time).format('YYYY-MM-DD');
+        datePosts = (i === 0 ? datePosts + '["' : datePosts + ', ["') + date1 + '", '
+            + (dateMap.has(date1) ? dateMap.get(date1) : 0) + ']';
         i++;
     }
     datePosts += ']';
-    %>
+    }
     let option = {
         title: {
             top: 0,
@@ -61,7 +64,7 @@ let myChart = echarts.init(document.getElementById('post-calendar'));
         },
         calendar: [{
             left: 'center',
-            range: <%- rangeArr %>,
+            range: ${ rangeArr },
             cellSize: [13, 13],
             splitLine: {
                 show: false
