@@ -38,9 +38,7 @@
       window.addEventListener('hashchange', switchTab, false);
   })();
   </script><!-- hexo injector head_end end --><meta name="generator" content="Hexo 6.1.0"></head><body class="is-3-column"><nav class="navbar navbar-main"><div class="container navbar-container"><div class="navbar-brand justify-content-center"><a class="navbar-item navbar-logo" href="/"><img src="/img/logo.png" alt="MCFON" height="28"></a></div><div class="navbar-menu"><div class="navbar-start"><a class="navbar-item" href="/">主页</a><a class="navbar-item is-active" href="/archives">归档</a><a class="navbar-item" href="/categories">分类</a><a class="navbar-item" href="/tags">标签</a><a class="navbar-item" href="/about">关于</a><a class="navbar-item" href="/friend">友链</a></div><div class="navbar-end"><a class="navbar-item" target="_blank" rel="noopener" title="Download on GitHub" href="https://github.com/ppoffice/hexo-theme-icarus"><i class="fab fa-github"></i></a><a class="navbar-item search" title="搜索" href="javascript:;"><i class="fas fa-search"></i></a></div></div></div></nav><section class="section"><div class="container"><div class="columns"><div class="column order-2 column-main is-8-tablet is-8-desktop is-6-widescreen"><div class="card"><div class="card-content"><div style="post-calendar-pre"><div id="post-calendar"></div></div><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/echarts@4.3.0/dist/echarts.min.js"></script><script type="text/javascript">function loadEchart(){
-            if($("#post-calendar").length <= 0){
-                return;
-            }
+            
             $.getScript('https://cdn.jsdelivr.net/npm/echarts@4.3.0/dist/echarts.min.js', function () { 
             let myChart = echarts.init(document.getElementById('post-calendar'));
             let option = {

@@ -1551,6 +1551,13 @@
   </url>
   
   <url>
+    <loc>https://hunlp.com/tags/MCMC/</loc>
+    <lastmod>2022-04-04</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
     <loc>https://hunlp.com/tags/LDA/</loc>
     <lastmod>2022-04-04</lastmod>
     <changefreq>daily</changefreq>
@@ -1559,13 +1566,6 @@
   
   <url>
     <loc>https://hunlp.com/tags/PageRank/</loc>
-    <lastmod>2022-04-04</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://hunlp.com/tags/MCMC/</loc>
     <lastmod>2022-04-04</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -1677,13 +1677,6 @@
   </url>
   
   <url>
-    <loc>https://hunlp.com/tags/HMM/</loc>
-    <lastmod>2022-04-04</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
     <loc>https://hunlp.com/tags/spark/</loc>
     <lastmod>2022-04-04</lastmod>
     <changefreq>daily</changefreq>
@@ -1706,6 +1699,13 @@
   
   <url>
     <loc>https://hunlp.com/tags/%E5%8A%A8%E6%80%81%E5%9B%9E%E5%BD%92/</loc>
+    <lastmod>2022-04-04</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://hunlp.com/tags/HMM/</loc>
     <lastmod>2022-04-04</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -1768,14 +1768,14 @@
   </url>
   
   <url>
-    <loc>https://hunlp.com/tags/Monte-Carlo/</loc>
+    <loc>https://hunlp.com/tags/K%E8%87%82%E8%80%81%E8%99%8E%E6%9C%BA/</loc>
     <lastmod>2022-04-04</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
-    <loc>https://hunlp.com/tags/K%E8%87%82%E8%80%81%E8%99%8E%E6%9C%BA/</loc>
+    <loc>https://hunlp.com/tags/Monte-Carlo/</loc>
     <lastmod>2022-04-04</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -1810,14 +1810,14 @@
   </url>
   
   <url>
-    <loc>https://hunlp.com/tags/ammersley-Clifford/</loc>
+    <loc>https://hunlp.com/tags/Python/</loc>
     <lastmod>2022-04-04</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
-    <loc>https://hunlp.com/tags/Python/</loc>
+    <loc>https://hunlp.com/tags/ammersley-Clifford/</loc>
     <lastmod>2022-04-04</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
