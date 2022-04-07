@@ -11835,7 +11835,7 @@ figure.highlight .section {
 }
 加个背景图片,
 body {
-  background-image: url("https://cdn.jsdelivr.net/gh/leicancun/img@main/images/background.webp");
+  background-image: url("/img/bg.png");
   background-position: center center;
   background-repeat: no-repeat;
   background-attachment: fixed;
